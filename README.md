@@ -1,7 +1,7 @@
 # Astro
 A space-themed Social Media platform.
 
-Created by: Justin Schulz, Sean Tank, Yao Wang, Nicholas MMM, and Bowen Sittler
+Created by: Justin Schulz, Sean Tank, Yao Wang, Nicholas Mahengamra Maftiga Masqueito, and Bowen Sittler
 
 # Technologies (so far...)
 - ASP.NET (frontend UI)
