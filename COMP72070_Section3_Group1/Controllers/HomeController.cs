@@ -27,6 +27,21 @@ namespace COMP72070_Section3_Group1.Controllers
             return View();
         }
 
+        public IActionResult AstroFans()
+        {
+            return View();
+        }
+
+        public IActionResult AstroMessage()
+        {
+            return View();
+        }
+
+        public IActionResult AstroSpace()
+        {
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
