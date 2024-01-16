@@ -22,6 +22,10 @@ namespace COMP72070_Section3_Group1.Controllers
         {
             return View();
         }
+        public IActionResult AstroPost()
+        {
+            return View();
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
