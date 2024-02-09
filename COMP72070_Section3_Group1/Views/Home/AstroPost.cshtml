@@ -1,6 +1,46 @@
 ﻿@{
     ViewData["Title"] = "AstroPost";
+    // string OpenPopup()
+    // {
+    //     return "<h1> This Is Modeless Popup Window</h1>";
+    // }
 }
 
-<h1 style="color: white">AstroPost</h1>
+<!DOCTYPE html>
 
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>AstroPost</title>
+</head>
+<body>
+    <h1 style="color: white">AstroPost</h1>
+    <h1 style="color: white">Hello Web Pages</h1>
+    <p style="color: white">The time is @DateTime.Now</p>
+
+    @* <input type="button" id="btnpopu" value="Open Modeless popup" onclick="ShowPopup();" />
+    <script type="text/javascript">
+        ShowPopup = function () {
+
+        }
+    </script> *@
+    <button onclick="myFunction()">Click Me</button>
+
+
+    <div id="myDIV">
+        This is my DIV element.
+    </div>
+    <script>
+        function myFunction() {
+            var x = document.getElementById("myDIV");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        }
+    </script>
+
+
+</body>
+</html>
