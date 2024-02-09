@@ -1,7 +1,14 @@
+using COMP72070_Section3_Group1.Controllers;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+Account accountInstance = new Account();
+
+builder.Services.AddSingleton<Account>(accountInstance);
+
 
 var app = builder.Build();
 
