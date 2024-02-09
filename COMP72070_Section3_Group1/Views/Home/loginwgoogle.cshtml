@@ -1,5 +1,53 @@
 ﻿@{
     ViewData["Title"] = "loginwgoogle";
 }
-<h1>@ViewData["Title"]</h1>
-<p>Hello click here to login!</p>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+
+        .login-container {
+            text-align: center;
+            padding: 50px;
+            margin-top: 250px;
+            background-color: white;
+            border-radius: 75px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        h1 {
+            color: #333;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .login-button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4285f4;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            .login-button:hover {
+                background-color: #347ae3;
+            }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <h1>Login With Google!</h1>
+        <button class="login-button">Google</button>
+    </div>
+
+</body>
+</html>
