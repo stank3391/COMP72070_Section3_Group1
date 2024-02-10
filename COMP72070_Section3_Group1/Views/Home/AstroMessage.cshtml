@@ -2,5 +2,48 @@
     ViewData["Title"] = "AstroMessage";
 }
 
-<h1 style="color: white">AstroMessage</h1>
+<h1 style="color: white; text-align: center; background-color: #333; margin: 0; padding: 20px;">AstroMessage</h1>
 
+<div class="sidebar" style="">
+    <h2>Conversations</h2>
+    <ul class="conversation-list">
+        <!-- TODO: script or function? to load convos -->
+        <li>Conversation 1</li>
+        <li>Conversation 2</li>
+        <li>Conversation 3</li>
+    </ul>
+</div>
+<div class="chat-display">
+    <h2>Selected Conversation</h2>
+    <!-- TODO: Changes based on selected convo -->
+    <p>Message from Conversation 1...</p>
+</div>
+
+<!-- My lovely styles B-) -->
+<style>
+    .sidebar {
+        float: left;
+        width: 20%;
+        padding: 20px;
+        background-color: #f1f1f1;
+    }
+    .chat-display {
+        float: left;
+        width: 80%;
+        padding: 20px;
+        background-color: #f1f1f1;
+    }
+    .conversation-list {
+        list-style-type: none;
+        padding: 0;
+    }
+    .conversation-list li {
+        padding: 8px;
+        margin-bottom: 8px;
+        background-color: #ddd;
+        cursor: pointer;
+    }
+    .conversation-list li:hover {
+        background-color: #bbb;
+    }
+</style>
