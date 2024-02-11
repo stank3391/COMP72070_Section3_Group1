@@ -1,0 +1,108 @@
+﻿@* @{
+    ViewData["Title"] = "AstroPost";
+    // string OpenPopup()
+    // {
+    //     return "<h1> This Is Modeless Popup Window</h1>";
+    // }
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>AstroPost</title>
+</head>
+<body>
+    <h1 style="color: white">AstroPost</h1>
+    <h1 style="color: white">Hello Web Pages</h1>
+    <p style="color: white">The time is @DateTime.Now</p>
+
+    @* <input type="button" id="btnpopu" value="Open Modeless popup" onclick="ShowPopup();" />
+    <script type="text/javascript">
+        ShowPopup = function () {
+
+        }
+    </script> 
+    <button onclick="myFunction()">Click Me</button>
+
+
+    <div id="myDIV">
+        This is my DIV element.
+    </div>
+    <script>
+        function myFunction() {
+            var x = document.getElementById("myDIV");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        }
+    </script>
+
+
+</body>
+</html> *@
+
+
+
+
+@{
+    ViewData["Title"] = "post";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+
+        .post-container {
+            text-align: center;
+            padding: 50px;
+            margin-top: 50px;
+            background-color: white;
+            border-radius: 50px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        h1 {
+            color: #333;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .post-button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4285f4;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .post-button:hover {
+            background-color: #347ae3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="post-container">
+        <h1>Post</h1>
+        <hr></hr>
+        <textarea rows="12" cols="60" name="content">Write here...</textarea>
+        <br></br>
+        <button class="post-button">Insert Image</button>
+        <button class="post-button">Post</button>
+        <p>0/256</p>
+    </div>
+
+</body>
+</html>
