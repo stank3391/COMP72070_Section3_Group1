@@ -1,7 +1,14 @@
+using COMP72070_Section3_Group1.Controllers;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+Account accountInstance = new Account();
+
+builder.Services.AddSingleton<Account>(accountInstance);
+
 
 var app = builder.Build();
 
@@ -22,6 +29,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=loginwgoogle}/{id?}");
 
 app.Run();
