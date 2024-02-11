@@ -11,4 +11,8 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\images\93063_6354_nasa-releases-cosmic-feast-for-the-eyes-snapped-by-webb-telescope_full.webp.png" />
+  </ItemGroup>
+
 </Project>
