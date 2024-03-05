@@ -21,9 +21,9 @@ class TcpServer
 
         while (true)
         {
-            Console.WriteLine("waaiting... ");
+            Console.WriteLine("waiting... ");
             TcpClient client = server.AcceptTcpClient();
-            Console.WriteLine("conceted!");
+            Console.WriteLine("connected!");
 
             data = "";
 
@@ -33,7 +33,7 @@ class TcpServer
             while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
             {
                 data = Encoding.ASCII.GetString(bytes, 0, i);
-                Console.WriteLine("recvd: " +  data);
+                Console.WriteLine("received: " +  data);
 
                 data = "i have it";
                 byte[] msg = Encoding.ASCII.GetBytes(data);

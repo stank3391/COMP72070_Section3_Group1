@@ -48,7 +48,7 @@ namespace COMP72070_Section3_Group1.Controllers
                     var bytesRead = await networkStream.ReadAsync(buffer, 0, buffer.Length);
                     var response = Encoding.ASCII.GetString(buffer, 0, bytesRead);
 
-                    Console.WriteLine("recevd: " + response);
+                    Console.WriteLine("received: " + response);
                 }
             }
             catch (Exception ex)
