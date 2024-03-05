@@ -1,4 +1,6 @@
 using COMP72070_Section3_Group1.Controllers;
+using System.Net.Sockets;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,8 +29,12 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.UseWebSockets();
+
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=loginwgoogle}/{id?}");
+    pattern: "{controller=Home}/{action=Run}/{id?}");
+
+
 
 app.Run();
