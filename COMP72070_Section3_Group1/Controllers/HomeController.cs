@@ -2,6 +2,11 @@ using System.Diagnostics;
 using COMP72070_Section3_Group1.Models;
 using Microsoft.AspNetCore.Mvc;
 
+// tcp stuff
+using System.Net.Sockets;
+using System.Text;
+
+
 namespace COMP72070_Section3_Group1.Controllers
 {
     public class HomeController : Controller
@@ -14,7 +19,6 @@ namespace COMP72070_Section3_Group1.Controllers
             _logger = logger;
             _account = account;
         }
-
         public IActionResult Index()
         {
             return View(_account);
@@ -54,5 +58,6 @@ namespace COMP72070_Section3_Group1.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
     }
 }
