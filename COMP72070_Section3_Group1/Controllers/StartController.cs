@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using COMP72070_Section3_Group1.Models;
+using Microsoft.AspNetCore.Mvc;
 using System.Net.Sockets;
 using System.Text;
 
 namespace COMP72070_Section3_Group1.Controllers
 {
-    public class RunController : Controller
+    public class StartController : Controller
     {
         public async Task<IActionResult> Index()
         {
@@ -35,6 +36,12 @@ namespace COMP72070_Section3_Group1.Controllers
                     var response = Encoding.ASCII.GetString(buffer, 0, bytesRead);
 
                     Console.WriteLine("received: " + response);
+
+                    // save to Test Data
+                    TestData testData = new TestData();
+                    testData.SetData(response);
+
+                    return View(testData);
                 }
             }
             catch (Exception ex)
@@ -45,6 +52,8 @@ namespace COMP72070_Section3_Group1.Controllers
             {
                 // client.Close(); 
             }
+            
+
             return View();
         }
 

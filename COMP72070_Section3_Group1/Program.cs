@@ -33,7 +33,7 @@ app.UseWebSockets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Run}/{action=Index}/{id?}");
+    pattern: "{controller=Start}/{action=Index}/{id?}");
 
 
 
