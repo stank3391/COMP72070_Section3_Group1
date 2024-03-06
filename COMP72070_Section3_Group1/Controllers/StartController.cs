@@ -37,11 +37,7 @@ namespace COMP72070_Section3_Group1.Controllers
 
                     Console.WriteLine("received: " + response);
 
-                    // save to Test Data
-                    TestData testData = new TestData();
-                    testData.SetData(response);
-
-                    return View(testData);
+                    return View();
                 }
             }
             catch (Exception ex)
