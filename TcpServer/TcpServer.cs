@@ -26,11 +26,15 @@ public class TcpServer
     {
         while (!this.IsStop)
         {
-            TcpClient client = this.Listener.AcceptTcpClientAsync().Result;
+            TcpClient tcpClient = this.Listener.AcceptTcpClientAsync().Result;
 
-            string clientInfo = client.Client.RemoteEndPoint.ToString(); // ignore warning 
+            string clientInfo = tcpClient.Client.RemoteEndPoint.ToString(); // ignore warning 
 
             Console.WriteLine("Connected to: " + clientInfo);
+
+            // add client to list of connections
+            Client client = new Client(tcpClient);
+            this.Connections.Add(client);
 
             Task.Run(() => HandleClient(client)); // becuase async version of AcceptTcpClientAsync() is used 
 
@@ -38,20 +42,16 @@ public class TcpServer
     }
 
     // runs in a separate thread per client
-    private void HandleClient(TcpClient tcpClient)
+    private void HandleClient(Client client)
     {
-       
-        // add client to list of connections
-        Client client = new Client(tcpClient);
-        this.Connections.Add(client);
 
-        
+
         byte[] bufferIn = new byte[1024]; // buffer for incoming data
         byte[] bufferOut = new byte[1024]; // buffer for outgoing data
         string data = string.Empty; // parsed data from buffer
         NetworkStream stream; // stream for reading and writing data
 
-        stream = tcpClient.GetStream();
+        stream = client.TcpClient.GetStream();
 
         // read incoming data
         stream.Read(bufferIn, 0, bufferIn.Length);
@@ -66,10 +66,10 @@ public class TcpServer
 
 
 
-        
+
         //////////////////////////////end///////////////////////////////
         // end connection
-        tcpClient.Close();
+        client.TcpClient.Close();
 
         // remove client from list of connections
         this.Connections.Remove(client);

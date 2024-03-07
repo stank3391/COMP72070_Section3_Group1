@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 // Represents a client that connects to the server
 public class Client
 {
-    private TcpClient TcpClient { set; get; } // The TcpClient object 
+    public TcpClient TcpClient { get; private set; } // The TcpClient object 
 
     public bool IsAuthenticated { get; set; } // Indicates if the client is authenticated
 
