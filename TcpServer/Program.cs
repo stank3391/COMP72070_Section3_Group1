@@ -9,7 +9,5 @@ class Program
     {
         TcpServer server = new TcpServer();
         server.Start();
-
-        
     }
 }

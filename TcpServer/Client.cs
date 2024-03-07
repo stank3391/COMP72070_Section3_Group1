@@ -5,16 +5,24 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
+// Represents a client that connects to the server
 public class Client
 {
-    private TcpClient TcpClient { set; get; }
+    private TcpClient TcpClient { set; get; } // The TcpClient object 
 
-    public bool IsAuthenticated { get; set; }
+    public bool IsAuthenticated { get; set; } // Indicates if the client is authenticated
 
+    // Constructor
     public Client(TcpClient client)
     {
         this.TcpClient = client;
         this.IsAuthenticated = false;
     }
-}
 
+    // Authenticates the client, for now it just sets the IsAuthenticated property to true
+    public bool Authenticate()
+    {
+        this.IsAuthenticated = true;
+        return true;
+    }
+}

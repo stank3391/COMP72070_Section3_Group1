@@ -21,7 +21,7 @@ public class TcpServer
         Console.WriteLine("Server started. Listenting for clients.\n");
     }
 
-    // starts the server and listens for clients
+    // Listens and connects to clients. Adds the client to the list of connections
     public void Start()
     {
         while (!this.IsStop)
@@ -31,12 +31,12 @@ public class TcpServer
 
             Console.WriteLine("Connected to: " + client.ToString());
 
-            Task.Run(() => HandleClient(client));
+            Task.Run(() => HandleClient(client)); // becuase async version of AcceptTcpClientAsync is used
 
         }
     }
 
-    // handles the client
+    // runs in a separate thread per client
     private void HandleClient(TcpClient client)
     {
         byte[] bufferIn = new byte[1024]; // buffer for incoming data
