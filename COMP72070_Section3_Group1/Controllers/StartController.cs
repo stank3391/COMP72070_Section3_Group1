@@ -14,43 +14,34 @@ namespace COMP72070_Section3_Group1.Controllers
             using var client = new TcpClient();
             var serverIp = "127.0.0.1";
             var serverPort = 27000;
-            try
+
+
+            await client.ConnectAsync(serverIp, serverPort);
+
+            if (client.Connected)
             {
+                Console.WriteLine("Connected to server");
+                var networkStream = client.GetStream();
 
-                await client.ConnectAsync(serverIp, serverPort);
+                // send
+                var msg = "Hello";
+                var data = Encoding.ASCII.GetBytes(msg);
+                await networkStream.WriteAsync(data, 0, data.Length);
+                Console.WriteLine("sent: " + msg);
 
-                if (client.Connected)
-                {
-                    Console.WriteLine("Connected to server");
-                    var networkStream = client.GetStream();
+                // recv
+                var buffer = new byte[1024];
+                var bytesRead = await networkStream.ReadAsync(buffer, 0, buffer.Length);
+                var response = Encoding.ASCII.GetString(buffer, 0, bytesRead);
 
-                    // send
-                    var msg = "Hello";
-                    var data = Encoding.ASCII.GetBytes(msg);
-                    await networkStream.WriteAsync(data, 0, data.Length);
-                    Console.WriteLine("sent: " + msg);
-
-                    // recv
-                    var buffer = new byte[1024];
-                    var bytesRead = await networkStream.ReadAsync(buffer, 0, buffer.Length);
-                    var response = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-
-                    Console.WriteLine("received: " + response);
-
-                    return View();
-                }
+                Console.WriteLine("received: " + response);
+                return RedirectToAction("Index", "Home");
             }
-            catch (Exception ex)
+            else
             {
-                Console.WriteLine("Failed..." + ex.Message);
+                Console.WriteLine("Failed to connect to server");
+                return RedirectToAction("Error", "Home");
             }
-            finally
-            {
-                // client.Close(); 
-            }
-            
-
-            return View();
         }
 
     }
