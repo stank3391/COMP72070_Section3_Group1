@@ -27,24 +27,31 @@ public class TcpServer
         while (!this.IsStop)
         {
             TcpClient client = this.Listener.AcceptTcpClientAsync().Result;
-            this.Connections.Add(new Client(client));
 
-            Console.WriteLine("Connected to: " + client.ToString());
+            string clientInfo = client.Client.RemoteEndPoint.ToString(); // ignore warning 
 
-            Task.Run(() => HandleClient(client)); // becuase async version of AcceptTcpClientAsync is used
+            Console.WriteLine("Connected to: " + clientInfo);
+
+            Task.Run(() => HandleClient(client)); // becuase async version of AcceptTcpClientAsync() is used 
 
         }
     }
 
     // runs in a separate thread per client
-    private void HandleClient(TcpClient client)
+    private void HandleClient(TcpClient tcpClient)
     {
+       
+        // add client to list of connections
+        Client client = new Client(tcpClient);
+        this.Connections.Add(client);
+
+        
         byte[] bufferIn = new byte[1024]; // buffer for incoming data
         byte[] bufferOut = new byte[1024]; // buffer for outgoing data
         string data = string.Empty; // parsed data from buffer
         NetworkStream stream; // stream for reading and writing data
 
-        stream = client.GetStream();
+        stream = tcpClient.GetStream();
 
         // read incoming data
         stream.Read(bufferIn, 0, bufferIn.Length);
@@ -56,9 +63,17 @@ public class TcpServer
         bufferOut = Encoding.ASCII.GetBytes("Hello from server");
         stream.Write(bufferOut, 0, bufferOut.Length);
         Console.WriteLine("Sent: Hello from server");
-       
 
-        //client.Close();
+
+
+        
+        //////////////////////////////end///////////////////////////////
+        // end connection
+        tcpClient.Close();
+
+        // remove client from list of connections
+        this.Connections.Remove(client);
+
     }
 
 }
