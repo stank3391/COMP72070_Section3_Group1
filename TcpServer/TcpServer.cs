@@ -6,52 +6,59 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-
 public class TcpServer
 {
-    private TcpListener listener;
-    private int port;
-
-    private IPAddress localAddr = IPAddress.Any;
-    // private IPAddress localAddr = IPAddress.Parse("127.0.0.1");
+    private TcpListener Listener;
+    private int Port = 27000;
+    private IPAddress LocalAddress = IPAddress.Any;
+    private bool IsStop = false;
+    private List<Client> Connections { get; set; } = new List<Client>();
 
     public TcpServer()
     {
-        this.port = 27000;
-        this.listener = new TcpListener(this.localAddr, this.port);
-        this.listener.Start();
+        this.Listener = new TcpListener(this.LocalAddress, this.Port);
+        this.Listener.Start();
+        Console.WriteLine("Server started. Listenting for clients.\n");
     }
 
+    // starts the server and listens for clients
     public void Start()
     {
-        byte[] bytes = new byte[256];
-        String data;
-
-        while (true)
+        while (!this.IsStop)
         {
-            Console.WriteLine("waiting... ");
-            TcpClient client = this.listener.AcceptTcpClient();
-            Console.WriteLine("connected!");
+            TcpClient client = this.Listener.AcceptTcpClientAsync().Result;
+            this.Connections.Add(new Client(client));
 
-            data = "";
+            Console.WriteLine("Connected to: " + client.ToString());
 
-            NetworkStream stream = client.GetStream();
+            Task.Run(() => HandleClient(client));
 
-            int i;
-            while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
-            {
-                data = Encoding.ASCII.GetString(bytes, 0, i);
-                Console.WriteLine("received: " + data);
-
-                data = "i have it";
-                byte[] msg = Encoding.ASCII.GetBytes(data);
-
-                stream.Write(msg, 0, msg.Length);
-                Console.WriteLine("sent: " + data);
-            }
-
-            client.Close();
         }
+    }
+
+    // handles the client
+    private void HandleClient(TcpClient client)
+    {
+        byte[] bufferIn = new byte[1024]; // buffer for incoming data
+        byte[] bufferOut = new byte[1024]; // buffer for outgoing data
+        string data = string.Empty; // parsed data from buffer
+        NetworkStream stream; // stream for reading and writing data
+
+        stream = client.GetStream();
+
+        // read incoming data
+        stream.Read(bufferIn, 0, bufferIn.Length);
+        data = Encoding.ASCII.GetString(bufferIn, 0, bufferIn.Length);
+        Console.WriteLine("Received: " + data);
+
+
+        // send response
+        bufferOut = Encoding.ASCII.GetBytes("Hello from server");
+        stream.Write(bufferOut, 0, bufferOut.Length);
+        Console.WriteLine("Sent: Hello from server");
+       
+
+        //client.Close();
     }
 
 }
