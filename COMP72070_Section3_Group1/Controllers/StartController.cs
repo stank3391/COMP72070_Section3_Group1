@@ -8,46 +8,63 @@ namespace COMP72070_Section3_Group1.Controllers
 {
     public class StartController : Controller
     {
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             Console.WriteLine("RUNNN");
 
-            using var client = new TcpClient();
-            var serverIp = "127.0.0.1";
-            var serverPort = 27000;
+            TcpClient me = new TcpClient();
+            string serverIp = "127.0.0.1";
+            int serverPort = 27000;
 
 
-            await client.ConnectAsync(serverIp, serverPort);
+            me.Connect(serverIp, serverPort);
 
-            if (client.Connected)
+            if (me.Connected)
             {
                 Console.WriteLine("Connected to server");
-                var networkStream = client.GetStream();
 
-                // send
-                //byte[] data = new byte[5] { 'H', 'e', 'l', 'l', 'o'};
-                //var data = Encoding.ASCII.GetBytes(msg);
-                //await networkStream.WriteAsync(data, 0, data.Length);
-                //Console.WriteLine("sent: " + msg);
 
-                char[] data = ['H', 'e', 'l', 'l', 'o' ];
-                Packet myPacket = new Packet();
-                myPacket.header.msgLen = 5;
-                myPacket.header.Source = 1;
-                myPacket.header.messageType = Packet.Type.Post;
-                myPacket.header.pictureFlag = false;
-                myPacket.Body = System.Text.Encoding.UTF8.GetBytes(data);
 
-                var TxBuffer = Packet.SerializePacket(myPacket);
-                await networkStream.WriteAsync(TxBuffer, 0, TxBuffer.Length);
-                Console.WriteLine("sent: " + TxBuffer);
+                /*
+                 * SAMPLE CODE: SEND PACKET START
+                 */
 
-                // recv
-                var buffer = new byte[1024];
-                var bytesRead = await networkStream.ReadAsync(buffer, 0, buffer.Length);
-                var response = Encoding.ASCII.GetString(buffer, 0, bytesRead);
+                // create a packet
+                Packet packetOut = new Packet(Packet.Type.Post, false, Encoding.ASCII.GetBytes("Herro from client!!"));
 
-                Console.WriteLine("received: " + response);
+                // serialize the packet
+                byte[] serializedPacket = Packet.SerializePacket(packetOut);
+
+                // send the packet to the server
+                NetworkStream stream = me.GetStream();
+                stream.Write(serializedPacket, 0, serializedPacket.Length);
+
+                Console.WriteLine("Packet sent: \n" + packetOut.ToString());
+
+                /*
+                 * SAMPLE CODE: SEND PACKET END
+                 */
+
+
+                /*
+                 * SAMPLE CODE: RECEIVE PACKET START
+                 */
+
+                // receive data from server
+                byte[] bufferIn = new byte[1024]; // buffer for incoming data
+                stream.Read(bufferIn, 0, bufferIn.Length);
+
+                // deserialize the packet
+                Packet packetIn = Packet.DeserializePacket(bufferIn);
+
+                // print the packet
+                Console.WriteLine("Packet received: \n" + packetIn.ToString());
+
+                /*
+                 * SAMPLE CODE: SEND PACKET END
+                 */
+
+
                 return RedirectToAction("Index", "Home");
             }
             else

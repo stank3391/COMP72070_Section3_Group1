@@ -1,4 +1,5 @@
 ﻿using COMP72070_Section3_Group1.Controllers;
+using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
@@ -10,8 +11,8 @@ public class Packet
 
     public struct Header
     {
-        public int msgLen { get; set; }
-        public int source { get; set; };// Change this datatype
+        public int bodyLen { get; set; }
+        public int source { get; set; } // Change this datatype
         public Type messageType { get; set; }
         public bool pictureFlag { get; set; }
     } 
@@ -19,23 +20,26 @@ public class Packet
     // properties
     public Header header;
 
-    public byte[] body 
+    private byte[] _body = null;
+
+    public byte[] body
     {
         get
         {
-            return body;
+            return _body;
         }
+
         set
         {
-            body = value;
-            header.msgLen = body.Length;
+            _body = value;
+            header.bodyLen = _body.Length;
         }
     }
 
     // constructor
     public Packet()
     {
-      
+      // nothing
     }
     public Packet(Type messageType,bool pictureFlag, byte[] body)
     {
@@ -52,7 +56,7 @@ public class Packet
             using (BinaryWriter writer = new BinaryWriter(memoryStream))
             {
                 // Serialize the packet header
-                writer.Write(packet.header.msgLen);
+                writer.Write(packet.header.bodyLen);
                 writer.Write(packet.header.source);
                 writer.Write((int)packet.header.messageType);
                 writer.Write(packet.header.pictureFlag);
@@ -73,13 +77,13 @@ public class Packet
             using (BinaryReader reader = new BinaryReader(memoryStream))
             {
                 // Deserialize the packet header
-                packet.header.msgLen = reader.ReadInt32();
+                packet.header.bodyLen = reader.ReadInt32();
                 packet.header.source = reader.ReadInt32();
                 packet.header.messageType = (Type)reader.ReadInt32();
                 packet.header.pictureFlag = reader.ReadBoolean();
 
                 // Deserialize the packet body
-                packet.body = reader.ReadBytes(packet.header.msgLen);
+                packet.body = reader.ReadBytes(packet.header.bodyLen);
             }
         }
         return packet;
@@ -88,11 +92,12 @@ public class Packet
     public override string ToString()
     {
         string str = "Packet:\n";
-        str += "Message Length: " + header.msgLen + "\n";
+        str += "Message Length: " + header.bodyLen + "\n";
         str += "Source: " + header.source + "\n";
         str += "Message Type: " + header.messageType + "\n";
         str += "Picture Flag: " + header.pictureFlag + "\n";
-        str += "Body: " + body + "\n";
+        string bodyStr = Encoding.ASCII.GetString(body);
+        str += "Body: " + bodyStr + "\n";
         return str;
     }
 }

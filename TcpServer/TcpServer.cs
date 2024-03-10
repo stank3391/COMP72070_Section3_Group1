@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 public class TcpServer
 {
+    
     private TcpListener Listener;
     private int Port = 27000;
     private IPAddress LocalAddress = IPAddress.Any;
@@ -41,38 +42,46 @@ public class TcpServer
         }
     }
 
+    // MAIN FUNCTION TO COMMUNICAT WITH CLIENT
     // runs in a separate thread per client
     private void HandleClient(Client client)
     {
 
-
         byte[] bufferIn = new byte[1024]; // buffer for incoming data
         byte[] bufferOut = new byte[1024]; // buffer for outgoing data
         string data = string.Empty; // parsed data from buffer
-        NetworkStream stream; // stream for reading and writing data
+        NetworkStream stream = client.TcpClient.GetStream(); // stream for reading and writing data
 
-        stream = client.TcpClient.GetStream();
+        bool isDisconnect = false;
+        while (!isDisconnect)
+        {
+            // receive data from client
+            stream.Read(bufferIn, 0, bufferIn.Length);
 
-        // read incoming data
-        stream.Read(bufferIn, 0, bufferIn.Length);
-        data = Encoding.ASCII.GetString(bufferIn, 0, bufferIn.Length);
-        Console.WriteLine("Received: " + data);
+            // deserialize the packet
+            Packet packetIn = Packet.DeserializePacket(bufferIn);
 
-
-        // send response
-        bufferOut = Encoding.ASCII.GetBytes("Hello from server");
-        stream.Write(bufferOut, 0, bufferOut.Length);
-        Console.WriteLine("Sent: Hello from server");
-
+            // print the packet
+            Console.WriteLine("Packet received:\n" + packetIn.ToString());
 
 
 
-        //////////////////////////////end///////////////////////////////
-        // end connection
-        client.TcpClient.Close();
+            // send packet to client
+            Packet packetOut = new Packet(Packet.Type.Post, false, Encoding.ASCII.GetBytes("Herro from server!!"));
+            byte[] serializedPacket = Packet.SerializePacket(packetOut);
+            stream.Write(serializedPacket, 0, serializedPacket.Length);
+            Console.WriteLine("Packet sent:\n" + packetOut.ToString());
 
-        // remove client from list of connections
-        this.Connections.Remove(client);
+            //////////////////////////////end///////////////////////////////
+
+            if (!client.TcpClient.Connected)
+            {
+                Console.WriteLine("Client disconnected: " + client.TcpClient.Client.RemoteEndPoint.ToString());
+                client.TcpClient.Close();
+                this.Connections.Remove(client);
+            }
+
+        }
 
     }
 
