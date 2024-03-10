@@ -8,13 +8,17 @@ using System.Threading.Tasks;
 
 public class TcpServer
 {
-    
-    private TcpListener Listener;
+    private TcpListener Listener; 
     private int Port = 27000;
     private IPAddress LocalAddress = IPAddress.Any;
-    private bool IsStop = false;
-    private List<Client> Connections { get; set; } = new List<Client>();
 
+
+    private bool IsStop = false; // flag to stop the server
+    private List<Client> Connections { get; set; } = new List<Client>(); // list of connections for managing clients
+
+    /// <summary>
+    /// Constructor for the TcpServer class
+    /// </summary>
     public TcpServer()
     {
         this.Listener = new TcpListener(this.LocalAddress, this.Port);
@@ -22,28 +26,29 @@ public class TcpServer
         Console.WriteLine("Server started. Listenting for clients.\n");
     }
 
-    // Listens and connects to clients. Adds the client to the list of connections
+    /// <summary>
+    /// Listens and connects to clients. 
+    /// Adds the client to the list of connections.
+    /// </summary>
     public void Start()
     {
         while (!this.IsStop)
         {
             TcpClient tcpClient = this.Listener.AcceptTcpClientAsync().Result;
 
-            string clientInfo = tcpClient.Client.RemoteEndPoint.ToString(); // ignore warning 
-
-            Console.WriteLine("Connected to: " + clientInfo);
-
             // add client to list of connections
             Client client = new Client(tcpClient);
             this.Connections.Add(client);
+            Console.WriteLine($"Connected to: {client.ToString()}");
 
             Task.Run(() => HandleClient(client)); // becuase async version of AcceptTcpClientAsync() is used 
 
         }
     }
 
-    // MAIN FUNCTION TO COMMUNICAT WITH CLIENT
-    // runs in a separate thread per client
+    /// <summary>
+    /// MAIN FUNCTION TO COMMUNICATE WITH CLIENT!
+    /// </summary>
     private void HandleClient(Client client)
     {
 
@@ -62,21 +67,21 @@ public class TcpServer
             Packet packetIn = Packet.DeserializePacket(bufferIn);
 
             // print the packet
-            Console.WriteLine("Packet received:\n" + packetIn.ToString());
+            Console.WriteLine($"Packet received: {packetIn.ToString()}\n");
 
-
+            client.Authenticate();
 
             // send packet to client
             Packet packetOut = new Packet(Packet.Type.Post, false, Encoding.ASCII.GetBytes("Herro from server!!"));
             byte[] serializedPacket = Packet.SerializePacket(packetOut);
             stream.Write(serializedPacket, 0, serializedPacket.Length);
-            Console.WriteLine("Packet sent:\n" + packetOut.ToString());
+            Console.WriteLine($"Packet sent: {packetOut.ToString()}\n");
 
             //////////////////////////////end///////////////////////////////
 
             if (!client.TcpClient.Connected)
             {
-                Console.WriteLine("Client disconnected: " + client.TcpClient.Client.RemoteEndPoint.ToString());
+                Console.WriteLine($"Client disconnected: {client.ToString()}\n");
                 client.TcpClient.Close();
                 this.Connections.Remove(client);
             }

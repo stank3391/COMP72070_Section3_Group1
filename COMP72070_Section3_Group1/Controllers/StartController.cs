@@ -39,7 +39,7 @@ namespace COMP72070_Section3_Group1.Controllers
                 NetworkStream stream = me.GetStream();
                 stream.Write(serializedPacket, 0, serializedPacket.Length);
 
-                Console.WriteLine("Packet sent: \n" + packetOut.ToString());
+                Console.WriteLine($"Packet sent: {packetOut.ToString()}\n");
 
                 /*
                  * SAMPLE CODE: SEND PACKET END
@@ -58,7 +58,7 @@ namespace COMP72070_Section3_Group1.Controllers
                 Packet packetIn = Packet.DeserializePacket(bufferIn);
 
                 // print the packet
-                Console.WriteLine("Packet received: \n" + packetIn.ToString());
+                Console.WriteLine($"Packet received: {packetIn.ToString()}\n");
 
                 /*
                  * SAMPLE CODE: SEND PACKET END
