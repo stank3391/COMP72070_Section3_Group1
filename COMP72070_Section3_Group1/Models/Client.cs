@@ -41,4 +41,25 @@ public class Client
 
         return str;
     }
+
+    public void SendPacket(Packet packet)
+    {
+        // serialize the packet
+        byte[] serializedPacket = Packet.SerializePacket(packet);
+
+        // send the packet to the client
+        NetworkStream stream = this.TcpClient.GetStream();
+        stream.Write(serializedPacket, 0, serializedPacket.Length);
+    }
+
+    public void ReceivePacket(Packet packet)
+    {
+        // receive data from client
+        byte[] bufferIn = new byte[1024]; // buffer for incoming data
+        NetworkStream stream = this.TcpClient.GetStream();
+        stream.Read(bufferIn, 0, bufferIn.Length);
+
+        // deserialize the packet
+        packet = Packet.DeserializePacket(bufferIn);
+    }
 }

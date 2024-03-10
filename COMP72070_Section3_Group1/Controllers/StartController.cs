@@ -12,14 +12,14 @@ namespace COMP72070_Section3_Group1.Controllers
         {
             Console.WriteLine("RUNNN");
 
-            TcpClient me = new TcpClient();
+            Client client = new Client(new TcpClient());
             string serverIp = "127.0.0.1";
             int serverPort = 27000;
 
 
-            me.Connect(serverIp, serverPort);
+            client.TcpClient.Connect(serverIp, serverPort);
 
-            if (me.Connected)
+            if (client.TcpClient.Connected)
             {
                 Console.WriteLine("Connected to server");
 
@@ -36,7 +36,7 @@ namespace COMP72070_Section3_Group1.Controllers
                 byte[] serializedPacket = Packet.SerializePacket(packetOut);
 
                 // send the packet to the server
-                NetworkStream stream = me.GetStream();
+                NetworkStream stream = client.TcpClient.GetStream();
                 stream.Write(serializedPacket, 0, serializedPacket.Length);
 
                 Console.WriteLine($"Packet sent: {packetOut.ToString()}\n");
