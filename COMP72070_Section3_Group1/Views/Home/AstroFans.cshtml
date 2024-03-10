@@ -4,18 +4,12 @@
 
 <h1 style="color: white">AstroFans</h1>
 
-<!-- button to run packet receive example-->
-<button id="runSampleCode">GANG!</button>
-
-<!-- div to display information from received packet-->
-<div id="packetInfo" style="color: white">
-
-
-</div>
+<form asp-controller="Start" asp-action="ExampleSendMsg" method="post" >
+    <label for="inputText">Enter Text:</label>
+    <input type="text" id="inputText" name="inputText" required />
+    <button type="submit">submit</button>
+</form>
 
 <!-- button press function-->
 
-@{
 
-    
-}

@@ -55,7 +55,7 @@ public class TcpServer
         byte[] bufferIn = new byte[1024]; // buffer for incoming data
         byte[] bufferOut = new byte[1024]; // buffer for outgoing data
         string data = string.Empty; // parsed data from buffer
-        NetworkStream stream = client.TcpClient.GetStream(); // stream for reading and writing data
+        NetworkStream stream = client.tcpClient.GetStream(); // stream for reading and writing data
 
         bool isDisconnect = false;
         while (!isDisconnect)
@@ -67,22 +67,22 @@ public class TcpServer
             Packet packetIn = Packet.DeserializePacket(bufferIn);
 
             // print the packet
-            Console.WriteLine($"Packet received: {packetIn.ToString()}\n");
+            Console.WriteLine($"Packet received:\n{packetIn.ToString()}\n");
 
             client.Authenticate();
 
             // send packet to client
-            Packet packetOut = new Packet(Packet.Type.Post, false, Encoding.ASCII.GetBytes("Herro from server!!"));
+            Packet packetOut = new Packet(Packet.Type.Post, false, Encoding.ASCII.GetBytes("I got it!!!"));
             byte[] serializedPacket = Packet.SerializePacket(packetOut);
             stream.Write(serializedPacket, 0, serializedPacket.Length);
-            Console.WriteLine($"Packet sent: {packetOut.ToString()}\n");
+            Console.WriteLine($"Packet sent:\n{packetOut.ToString()}\n");
 
             //////////////////////////////end///////////////////////////////
 
-            if (!client.TcpClient.Connected)
+            if (!client.tcpClient.Connected)
             {
                 Console.WriteLine($"Client disconnected: {client.ToString()}\n");
-                client.TcpClient.Close();
+                client.tcpClient.Close();
                 this.Connections.Remove(client);
             }
 

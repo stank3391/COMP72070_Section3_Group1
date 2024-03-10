@@ -1,77 +1,66 @@
 ﻿using COMP72070_Section3_Group1.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Newtonsoft.Json;
 using System.Net.Sockets;
 using System.Text;
 
 namespace COMP72070_Section3_Group1.Controllers
 {
+    /// <summary>
+    /// THIS MUST RUN FIRST 
+    /// Will redirect to the home/index page dw
+    /// </summary>
     public class StartController : Controller
     {
+        private readonly ClientManager clientManager;
+
+        public StartController(ClientManager clientManager)
+        {
+            this.clientManager = clientManager;
+        }
+
+        /// <summary>
+        /// First action when entering StartView
+        /// </summary>
         public IActionResult Index()
         {
-            Console.WriteLine("RUNNN");
+            Console.WriteLine("RUNNNN");
 
-            Client client = new Client(new TcpClient());
-            string serverIp = "127.0.0.1";
-            int serverPort = 27000;
-
-
-            client.TcpClient.Connect(serverIp, serverPort);
-
-            if (client.TcpClient.Connected)
+            
+            if (HttpContext.Session.GetString("Client") == null) // if the client is not alrdy conected
             {
-                Console.WriteLine("Connected to server");
+                Client client = new Client();
+                client.connect();
 
+                HttpContext.Session.SetString("Client", "Connected"); // set the session variable to concneted
+                
+                // add the client to the client manager
+                int key = clientManager.AddClient(client);
 
-
-                /*
-                 * SAMPLE CODE: SEND PACKET START
-                 */
-
-                // create a packet
-                Packet packetOut = new Packet(Packet.Type.Post, false, Encoding.ASCII.GetBytes("Herro from client!!"));
-
-                // serialize the packet
-                byte[] serializedPacket = Packet.SerializePacket(packetOut);
-
-                // send the packet to the server
-                NetworkStream stream = client.TcpClient.GetStream();
-                stream.Write(serializedPacket, 0, serializedPacket.Length);
-
-                Console.WriteLine($"Packet sent: {packetOut.ToString()}\n");
-
-                /*
-                 * SAMPLE CODE: SEND PACKET END
-                 */
-
-
-                /*
-                 * SAMPLE CODE: RECEIVE PACKET START
-                 */
-
-                // receive data from server
-                byte[] bufferIn = new byte[1024]; // buffer for incoming data
-                stream.Read(bufferIn, 0, bufferIn.Length);
-
-                // deserialize the packet
-                Packet packetIn = Packet.DeserializePacket(bufferIn);
-
-                // print the packet
-                Console.WriteLine($"Packet received: {packetIn.ToString()}\n");
-
-                /*
-                 * SAMPLE CODE: SEND PACKET END
-                 */
-
-
-                return RedirectToAction("Index", "Home");
+                HttpContext.Session.SetInt32("ClientKey", key); // set the session variable to the client id
+                
             }
-            else
-            {
-                Console.WriteLine("Failed to connect to server");
-                return RedirectToAction("Error", "Home");
-            }
+
+            return RedirectToAction("Index", "Home"); // redirect to the home page
+        }
+
+        /// <summary>
+        /// Action to send a message to the server
+        /// </summary>
+        [HttpPost]
+        public IActionResult ExampleSendMsg(string inputText)
+        {
+            Packet packet = new Packet(Packet.Type.Post, false, Encoding.ASCII.GetBytes(inputText)); // create a packet
+
+            int clientKey = (int)HttpContext.Session.GetInt32("ClientKey"); // get the client id from the session variable
+
+            Client client = clientManager.GetClient(clientKey); // get the client from the client manager
+
+            client.SendPacket(packet); // send the packet
+
+            return RedirectToAction("AstroFans", "Home"); 
         }
     }
 }

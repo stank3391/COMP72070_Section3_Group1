@@ -38,7 +38,7 @@ public class Packet
     // constructor
     public Packet()
     {
-      // nothing
+
     }
     public Packet(Type messageType,bool pictureFlag, byte[] body)
     {
