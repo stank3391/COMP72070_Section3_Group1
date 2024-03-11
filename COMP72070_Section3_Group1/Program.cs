@@ -11,6 +11,9 @@ Account accountInstance = new Account();
 
 builder.Services.AddSingleton<Account>(accountInstance);
 
+builder.Services.AddSingleton<ClientManager>(new ClientManager());
+
+builder.Services.AddSession(); // options => { //some stuff }
 
 var app = builder.Build();
 
@@ -29,6 +32,8 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.UseSession();
+
 app.UseWebSockets();
 
 app.MapControllerRoute(
@@ -36,5 +41,6 @@ app.MapControllerRoute(
     pattern: "{controller=Start}/{action=Index}/{id?}");
 
 
+ClientManager clientManager = new ClientManager();
 
 app.Run();

@@ -1,48 +1,82 @@
 ﻿using COMP72070_Section3_Group1.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Newtonsoft.Json;
 using System.Net.Sockets;
 using System.Text;
 
 namespace COMP72070_Section3_Group1.Controllers
 {
+    /// <summary>
+    /// THIS MUST RUN FIRST 
+    /// Will redirect to the home/index page dw
+    /// </summary>
     public class StartController : Controller
     {
-        public async Task<IActionResult> Index()
+        private readonly ClientManager clientManager;
+
+        public StartController(ClientManager clientManager)
         {
-            Console.WriteLine("RUNNN");
-
-            using var client = new TcpClient();
-            var serverIp = "127.0.0.1";
-            var serverPort = 27000;
-
-
-            await client.ConnectAsync(serverIp, serverPort);
-
-            if (client.Connected)
-            {
-                Console.WriteLine("Connected to server");
-                var networkStream = client.GetStream();
-
-                // send
-                var msg = "Hello";
-                var data = Encoding.ASCII.GetBytes(msg);
-                await networkStream.WriteAsync(data, 0, data.Length);
-                Console.WriteLine("sent: " + msg);
-
-                // recv
-                var buffer = new byte[1024];
-                var bytesRead = await networkStream.ReadAsync(buffer, 0, buffer.Length);
-                var response = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-
-                Console.WriteLine("received: " + response);
-                return RedirectToAction("Index", "Home");
-            }
-            else
-            {
-                Console.WriteLine("Failed to connect to server");
-                return RedirectToAction("Error", "Home");
-            }
+            this.clientManager = clientManager;
         }
 
+        /// <summary>
+        /// First action when entering StartView
+        /// </summary>
+        public IActionResult Index()
+        {
+            Console.WriteLine("RUNNNN");
+
+            
+            if (HttpContext.Session.GetString("Client") == null) // if the client is not alrdy conected
+            {
+                Client client = new Client();
+                client.connect();
+
+                HttpContext.Session.SetString("Client", "Connected"); // set the session variable to concneted
+                
+                // add the client to the client manager
+                int key = clientManager.AddClient(client);
+
+                HttpContext.Session.SetInt32("ClientKey", key); // set the session variable to the client id
+                
+            }
+
+            return RedirectToAction("Index", "Home"); // redirect to the home page
+        }
+
+        /// <summary>
+        /// Action to send a message to the server
+        /// </summary>
+        [HttpPost]
+        public IActionResult ExampleSendMsg(string inputText)
+        {
+            Packet packet = new Packet(Packet.Type.Post, false, Encoding.ASCII.GetBytes(inputText)); // create a packet
+
+            int clientKey = (int)HttpContext.Session.GetInt32("ClientKey"); // get the client id from the session variable
+
+            Client client = clientManager.GetClient(clientKey); // get the client from the client manager
+
+            client.SendPacket(packet); // send the packet
+
+            return RedirectToAction("AstroFans", "Home");
+        }
+
+        public IActionResult ExampleAccount(string username, string password)
+        {
+            string combinedInfo = $"Username: {username}, Password: {password}";
+
+            Packet packet = new Packet(Packet.Type.Post, false, Encoding.ASCII.GetBytes(combinedInfo));
+
+            int clientKey = (int)HttpContext.Session.GetInt32("ClientKey");
+
+            Client client = clientManager.GetClient(clientKey);
+
+            client.SendPacket(packet);
+
+            // Return to the current view
+            return RedirectToAction("loginwgoogle", "Home");
+        }
     }
 }
