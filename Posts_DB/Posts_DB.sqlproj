@@ -64,7 +64,7 @@
   <ItemGroup>
     <Build Include="dbo\Tables\tbl_Users.sql" />
     <Build Include="dbo\Tables\tbl_Post.sql" />
-    <Build Include="dbo\Tables\tbl_Message.sql" />
     <Build Include="dbo\Tables\tbl_Token.sql" />
+    <Build Include="dbo\Tables\tbl_Message.sql" />
   </ItemGroup>
 </Project>

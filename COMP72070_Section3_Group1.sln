@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TcpServer", "TcpServer\TcpS
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Posts_DB", "Posts_DB\Posts_DB.sqlproj", "{CA1749AA-36E9-45BC-8C5F-9A0198A2DB66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AstroServer", "AstroServer\AstroServer.csproj", "{7CDC6503-CD10-47BB-B7FA-B03DF8A3D69B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AstroServer", "AstroServer\AstroServer.csproj", "{B8BABF9A-5B01-4CC1-BAD3-E042EE971DAB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,10 +31,10 @@ Global
 		{CA1749AA-36E9-45BC-8C5F-9A0198A2DB66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA1749AA-36E9-45BC-8C5F-9A0198A2DB66}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CA1749AA-36E9-45BC-8C5F-9A0198A2DB66}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{7CDC6503-CD10-47BB-B7FA-B03DF8A3D69B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7CDC6503-CD10-47BB-B7FA-B03DF8A3D69B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7CDC6503-CD10-47BB-B7FA-B03DF8A3D69B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7CDC6503-CD10-47BB-B7FA-B03DF8A3D69B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8BABF9A-5B01-4CC1-BAD3-E042EE971DAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8BABF9A-5B01-4CC1-BAD3-E042EE971DAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8BABF9A-5B01-4CC1-BAD3-E042EE971DAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8BABF9A-5B01-4CC1-BAD3-E042EE971DAB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

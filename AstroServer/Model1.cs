@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace AstroServer
 {
-    public partial class Entity : DbContext
+    public partial class Model1 : DbContext
     {
-        public Entity()
+        public Model1()
             : base("name=Entity")
         {
         }
