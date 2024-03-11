@@ -60,7 +60,23 @@ namespace COMP72070_Section3_Group1.Controllers
 
             client.SendPacket(packet); // send the packet
 
-            return RedirectToAction("AstroFans", "Home"); 
+            return RedirectToAction("AstroFans", "Home");
+        }
+
+        public IActionResult ExampleAccount(string username, string password)
+        {
+            string combinedInfo = $"Username: {username}, Password: {password}";
+
+            Packet packet = new Packet(Packet.Type.Post, false, Encoding.ASCII.GetBytes(combinedInfo));
+
+            int clientKey = (int)HttpContext.Session.GetInt32("ClientKey");
+
+            Client client = clientManager.GetClient(clientKey);
+
+            client.SendPacket(packet);
+
+            // Return to the current view
+            return RedirectToAction("loginwgoogle", "Home");
         }
     }
 }
