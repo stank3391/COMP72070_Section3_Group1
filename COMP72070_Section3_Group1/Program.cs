@@ -1,4 +1,6 @@
 using COMP72070_Section3_Group1.Controllers;
+using System.Net.Sockets;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,9 @@ Account accountInstance = new Account();
 
 builder.Services.AddSingleton<Account>(accountInstance);
 
+builder.Services.AddSingleton<ClientManager>(new ClientManager());
+
+builder.Services.AddSession(); // options => { //some stuff }
 
 var app = builder.Build();
 
@@ -27,8 +32,15 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.UseSession();
+
+app.UseWebSockets();
+
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=loginwgoogle}/{id?}");
+    pattern: "{controller=Start}/{action=Index}/{id?}");
+
+
+ClientManager clientManager = new ClientManager();
 
 app.Run();

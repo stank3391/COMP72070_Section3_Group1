@@ -4,8 +4,7 @@
     {
         public int Id { get; set; } = -1;
         public string userName { get; set; } = "test";
-        //email??
-        //password??
-        //whatever
+        
+        
     }
 }
