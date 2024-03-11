@@ -5,10 +5,12 @@ using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using String = System.String;
 
-
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Office2016.Excel;
+using System.Drawing.Drawing2D;
+
 
 namespace COMP72070_Section3_Group1.Controllers
 {
@@ -16,8 +18,36 @@ namespace COMP72070_Section3_Group1.Controllers
     {
         public async Task<IActionResult> Index()
         {
+            String docName = "testexcel.xlsx";
 
-            InsertText("test.xlsx", "hello");
+
+            InsertText(docName, "TimeStamp", "A", 1);
+            InsertText(docName, "User", "B", 1);
+            InsertText(docName, "Action", "C", 1);
+
+            InsertText(docName, "5:03:00PM July 27th 2024", "A", 2);
+            InsertText(docName, "Yao", "B", 2);
+            InsertText(docName, "Tried to hack into the system and failed", "C", 2);
+
+
+
+            //function to make new sheet
+
+
+
+
+            //function that takes a sheet, cell, and data to write
+
+
+
+
+
+
+
+
+            //InsertText("test.xlsx", "hello");
+
+
 
 
             //give it a file and an object
@@ -74,10 +104,9 @@ namespace COMP72070_Section3_Group1.Controllers
         }
 
 
-
         // Given a document name and text, 
         // inserts a new work sheet and writes the text to cell "A1" of the new worksheet.
-        static void InsertText(string docName, string text)
+        static void InsertText(string docName, string text, string col, uint row)
         {
             // Open the document for editing.
             using (SpreadsheetDocument spreadSheet = SpreadsheetDocument.Open(docName, true))
@@ -98,18 +127,18 @@ namespace COMP72070_Section3_Group1.Controllers
                 // Insert the text into the SharedStringTablePart.
                 int index = InsertSharedStringItem(text, shareStringPart);
 
-                // Insert a new worksheet.
-                WorksheetPart worksheetPart = InsertWorksheet(workbookPart);
+                //// Insert a new worksheet.
+                //WorksheetPart worksheetPart = InsertWorksheet(workbookPart);
 
                 // Insert cell A1 into the new worksheet.
-                Cell cell = InsertCellInWorksheet("A", 1, worksheetPart);
+                Cell cell = InsertCellInWorksheet(col, row, workbookPart.WorksheetParts.First());
 
                 // Set the value of cell A1.
                 cell.CellValue = new CellValue(index.ToString());
                 cell.DataType = new EnumValue<CellValues>(CellValues.SharedString);
 
                 // Save the new worksheet.
-                worksheetPart.Worksheet.Save();
+                workbookPart.WorksheetParts.First().Worksheet.Save();
             }
         }
 
