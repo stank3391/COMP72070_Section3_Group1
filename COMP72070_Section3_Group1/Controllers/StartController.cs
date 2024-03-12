@@ -15,11 +15,14 @@ namespace COMP72070_Section3_Group1.Controllers
     /// </summary>
     public class StartController : Controller
     {
-        private readonly VisitorManager _visitorManager;
+        private readonly VisitorManager _visitorManager; // visitor manager object SINGLETON
 
-        public StartController(VisitorManager visitorManager)
+        private readonly Client _client; // client object SINGLETON
+
+        public StartController(VisitorManager visitorManager, Client client)
         {
             _visitorManager = visitorManager;
+            _client = client;
         }
 
         /// <summary>
@@ -59,6 +62,22 @@ namespace COMP72070_Section3_Group1.Controllers
             }
 
             return RedirectToAction("Index", "Home"); // redirect to the home page
+        }
+
+        public IActionResult ExampleAccount(string username, string password)
+        {
+            string combinedInfo = $"Username: {username}, Password: {password}";
+
+            // new session code
+            string userId = HttpContext.Session.GetString("UserId");
+            Visitor visitor = _visitorManager.GetVisitor(userId);
+
+            Packet packet = new Packet(visitor.id,Packet.Type.Post, false, Encoding.ASCII.GetBytes(combinedInfo));
+
+            _client.SendPacket(packet);
+
+            // Return to the current view
+            return RedirectToAction("Index", "Home");
         }
     }
 }

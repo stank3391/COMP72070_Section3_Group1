@@ -25,7 +25,7 @@ builder.Services.AddSingleton<Client>(CLIENT);
 builder.Services.AddSession(); // options => { //some stuff }
 
 // enable only on yao computer v
-builder.WebHost.UseUrls("http://192.168.1.10:5128", "https://192.168.1.10:7048"); // used for vm connection 
+// builder.WebHost.UseUrls("http://192.168.1.10:5128", "https://192.168.1.10:7048"); // used for vm connection 
 // enable only on yao computer ^
 
 var app = builder.Build();
