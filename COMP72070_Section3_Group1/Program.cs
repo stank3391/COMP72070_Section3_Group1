@@ -1,4 +1,5 @@
 using COMP72070_Section3_Group1.Controllers;
+using COMP72070_Section3_Group1.Visitors;
 using System.Net.Sockets;
 using System.Text;
 
@@ -11,9 +12,21 @@ Account accountInstance = new Account();
 
 builder.Services.AddSingleton<Account>(accountInstance);
 
-builder.Services.AddSingleton<ClientManager>(new ClientManager());
+// add visitor manager to track visitors
+VisitorManager VISITORMANAGER = new VisitorManager();
+builder.Services.AddSingleton<VisitorManager>(VISITORMANAGER);
 
+// add client for communicating with the server
+Client CLIENT = new Client();
+CLIENT.connect();
+builder.Services.AddSingleton<Client>(CLIENT);
+
+// for identifying sessions and visitors
 builder.Services.AddSession(); // options => { //some stuff }
+
+// enable only on yao computer v
+builder.WebHost.UseUrls("http://192.168.1.10:5128", "https://192.168.1.10:7048"); // used for vm connection 
+// enable only on yao computer ^
 
 var app = builder.Build();
 
@@ -39,8 +52,5 @@ app.UseWebSockets();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Start}/{action=Index}/{id?}");
-
-
-ClientManager clientManager = new ClientManager();
 
 app.Run();

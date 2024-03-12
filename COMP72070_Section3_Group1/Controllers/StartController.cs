@@ -1,4 +1,5 @@
 ﻿using COMP72070_Section3_Group1.Models;
+using COMP72070_Section3_Group1.Visitors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -14,69 +15,50 @@ namespace COMP72070_Section3_Group1.Controllers
     /// </summary>
     public class StartController : Controller
     {
-        private readonly ClientManager clientManager;
+        private readonly VisitorManager _visitorManager;
 
-        public StartController(ClientManager clientManager)
+        public StartController(VisitorManager visitorManager)
         {
-            this.clientManager = clientManager;
+            _visitorManager = visitorManager;
         }
 
         /// <summary>
-        /// First action when entering StartView
+        /// First action
+        /// creates and adds a new visitor to the visitor manager
         /// </summary>
         public IActionResult Index()
         {
-            Console.WriteLine("RUNNNN");
+            // get the user id from the session dic
+            string userId = HttpContext.Session.GetString("UserId");
 
-            
-            if (HttpContext.Session.GetString("Client") == null) // if the client is not alrdy conected
+            if(userId == null)
             {
-                Client client = new Client();
-                client.connect();
+                // generate new UNIQUE user id  
+                userId = Guid.NewGuid().ToString(); 
 
-                HttpContext.Session.SetString("Client", "Connected"); // set the session variable to concneted
-                
-                // add the client to the client manager
-                int key = clientManager.AddClient(client);
+                // add the user id to the session dic
+                HttpContext.Session.SetString("UserId", userId);
 
-                HttpContext.Session.SetInt32("ClientKey", key); // set the session variable to the client id
-                
+                // create a new visitor object
+                Visitor visitor = new Visitor(userId);
+
+                // add the visitor to the visitor manager
+                _visitorManager.AddVisitor(visitor);
+            }
+            else
+            {
+                //check if the visitor is already in the visitor manager
+                if(!_visitorManager.Visitors.ContainsKey(userId))
+                {
+                    // create a new visitor object
+                    Visitor visitor = new Visitor(userId);
+
+                    // add the visitor to the visitor manager
+                    _visitorManager.AddVisitor(visitor);
+                }
             }
 
             return RedirectToAction("Index", "Home"); // redirect to the home page
-        }
-
-        /// <summary>
-        /// Action to send a message to the server
-        /// </summary>
-        [HttpPost]
-        public IActionResult ExampleSendMsg(string inputText)
-        {
-            Packet packet = new Packet(Packet.Type.Post, false, Encoding.ASCII.GetBytes(inputText)); // create a packet
-
-            int clientKey = (int)HttpContext.Session.GetInt32("ClientKey"); // get the client id from the session variable
-
-            Client client = clientManager.GetClient(clientKey); // get the client from the client manager
-
-            client.SendPacket(packet); // send the packet
-
-            return RedirectToAction("AstroFans", "Home");
-        }
-
-        public IActionResult ExampleAccount(string username, string password)
-        {
-            string combinedInfo = $"Username: {username}, Password: {password}";
-
-            Packet packet = new Packet(Packet.Type.Post, false, Encoding.ASCII.GetBytes(combinedInfo));
-
-            int clientKey = (int)HttpContext.Session.GetInt32("ClientKey");
-
-            Client client = clientManager.GetClient(clientKey);
-
-            client.SendPacket(packet);
-
-            // Return to the current view
-            return RedirectToAction("loginwgoogle", "Home");
         }
     }
 }

@@ -1,17 +1,15 @@
 ﻿using System.Text;
 using System.IO;
 
-
-
 public class Packet
 {
     // definitions: 
-    public enum Type { Post, DM, Auth, Acc };
+    public enum Type { Post, DM, Auth, Acc, Ack };
 
     public struct Header
     {
         public int bodyLen { get; set; }
-        public int source { get; set; } // Change this datatype
+        public int source { get; set; } // id of the client
         public Type messageType { get; set; }
         public bool pictureFlag { get; set; }
     } 

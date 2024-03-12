@@ -12,8 +12,6 @@ public class Client
 {
     public TcpClient tcpClient { get; private set; } // The TcpClient object 
 
-    public bool isAuthenticated { get; set; } = false; // Indicates if the client is authenticated
-
     private string serverIp = "127.0.0.1";
     private int serverPort = 27000;
 
@@ -26,6 +24,7 @@ public class Client
     {
         this.tcpClient = tcpClient;
     }
+
     public void connect()
     {
         this.tcpClient.Connect(serverIp, serverPort);
@@ -33,45 +32,11 @@ public class Client
         if (this.tcpClient.Connected)
         {
             Console.WriteLine("Connected to server");
-
-
-            /*///////////////////////////////////////////////////////////////////////////////////////////////////
-            // some sample code to test send and receive packets when the client is connected to the server
-            *//*
-             * SAMPLE CODE: SEND PACKET
-             * 1. create a packet
-             * 2. send the packet
-             *//*
-            Packet packetOut = new Packet(Packet.Type.Post, false, Encoding.ASCII.GetBytes("Herro from client!!"));
-            this.SendPacket(packetOut);
-            Console.WriteLine($"Packet sent:\n{packetOut.ToString()}\n");
-
-
-            *//*
-             * SAMPLE CODE: RECEIVE PACKET
-             * 1. just receive the packet (DO NOT CREATE AN EMPTY PACKET, WILL NOT WORK) TODO: MAYBE FIX
-             * 2. profit 
-             *//*
-            Packet packetIn = this.ReceivePacket();
-
-            
-            Console.WriteLine($"Packet received:\n{packetIn.ToString()}\n");
-            // some sample code to test send and receive packets when the client is connected to the server
-            ///////////////////////////////////////////////////////////////////////////////////////////////////*/
         }
         else
         {
             Console.WriteLine("Failed to connect to server");
         }
-    }
-
-    /// <summary>
-    /// Authenticates the client, (for now it just sets the IsAuthenticated property to true)
-    /// </summary>
-    public bool Authenticate()
-    {
-        this.isAuthenticated = true;
-        return true;
     }
 
     /// <summary>
