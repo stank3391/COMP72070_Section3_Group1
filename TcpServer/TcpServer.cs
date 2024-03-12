@@ -57,14 +57,13 @@ namespace TcpServer
 
             while (!isDisconnect)
             {
-                // receive data from client
+                // receive data 
                 stream.Read(bufferIn, 0, bufferIn.Length);
                 Packet packetIn = Packet.DeserializePacket(bufferIn);
                 Console.WriteLine($"Packet received:\n{packetIn.ToString()}\n");
 
-
-                // send packet to client
-                Packet packetOut = new Packet(Packet.Type.Ack, false, Encoding.ASCII.GetBytes("ACK"));
+                // send packet 
+                Packet packetOut = new Packet("SERVER", Packet.Type.Ack, false, Encoding.ASCII.GetBytes("I got it!!"));
                 byte[] serializedPacket = Packet.SerializePacket(packetOut);
                 stream.Write(serializedPacket, 0, serializedPacket.Length);
                 Console.WriteLine($"Packet sent:\n{packetOut.ToString()}\n");
@@ -74,7 +73,6 @@ namespace TcpServer
                     Console.WriteLine($"Disconnected\n");
                     tcpClient.Close();
                 }
-
             }
 
         }

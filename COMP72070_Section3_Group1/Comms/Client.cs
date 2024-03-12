@@ -52,14 +52,14 @@ public class Client
     }
 
     /// <summary>
-    /// Sends a packet to the client
+    /// Sends a packet
     /// </summary>
     public void SendPacket(Packet packet)
     {
         // serialize the packet
         byte[] serializedPacket = Packet.SerializePacket(packet);
 
-        // send the packet to the client
+        // send the packet
         NetworkStream stream = this.tcpClient.GetStream();
         stream.Write(serializedPacket, 0, serializedPacket.Length);
 
@@ -67,7 +67,7 @@ public class Client
     }
 
     /// <summary>
-    /// Receives a packet from the client
+    /// Receives a packet
     /// </summary>
     public Packet ReceivePacket()
     {
