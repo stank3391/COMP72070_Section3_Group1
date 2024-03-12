@@ -17,7 +17,7 @@ namespace AstroServer
                 // To add a user first create a tbl_Users object
                 tbl_Users newUser = new tbl_Users();
                 // Then fill in its parameters
-                newUser.UserId = 10;
+                newUser.UserId = 11;
                 newUser.Username = "John";
                 // Then add it to the database
                 db.tbl_Users.Add(newUser);
