@@ -4,10 +4,10 @@ namespace COMP72070_Section3_Group1.Models
 {
     public class Post
     {
-        int id { set; get; }
-        string content { set; get; }
-        string author { set; get; }
-        DateTime date { set; get; }
+        public int id { set; get; }
+        public string content { set; get; }
+        public string author { set; get; }
+        public DateTime date { set; get; }
 
         public Post()
         {

@@ -1,7 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Astro";
 }
-
+@model List<COMP72070_Section3_Group1.Models.Post> 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -102,98 +102,29 @@
     </style>
 </head>
 <body>
+    @foreach (var post in Model)
+    {
+        <div class="post-container">
+            <!-- Dynamically set the image source, alt text, and other attributes based on the post's properties -->
+            <img src= "/images/img.png" alt="Image description">
 
-    <div class="post-container">
-        <!-- Space for an image -->
-        <img src="/images/93063_6354_nasa-releases-cosmic-feast-for-the-eyes-snapped-by-webb-telescope_full.webp.png" alt="Image description">
 
-        <!-- Post text -->
-        <p class="middle-paragraph">Hey look at what I found looking at my telescope today.</p>
+            <!-- Display the post content -->
+            <p class="middle-paragraph">@post.content</p>
 
-        <!-- Bottom Section -->
-        <div class="bottom-section">
-            <!-- Username -->
-            <div class="left-element">
-                <!-- TO-DO: link to Profiles -->
-                <a class="username" href="#">&#64BalgrufTheGreat</a>
-            </div>
-            <div class="right-elements">
-                <!-- Star (Like) button -->
-                <a href="#"><img class="star-button" src="/images/star-regular.svg" alt="Image description"></a>
-                <!-- Comment button -->
-                <a href="#"><img class="comment-button" src="/images/comment-regular.svg" alt="Image description"></a>
-            </div>
-        </div>
-    </div>
-
-    <div class="post-container">
-        <!-- Space for an image -->
-        <img src="/images/93063_6354_nasa-releases-cosmic-feast-for-the-eyes-snapped-by-webb-telescope_full.webp.png" alt="Image description">
-
-        <!-- Post text -->
-        <p class="middle-paragraph">Hey look at what I found looking at my telescope today.</p>
-
-        <!-- Bottom Section -->
-        <div class="bottom-section">
-            <!-- Username -->
-            <div class="left-element">
-                <!-- TO-DO: link to Profiles -->
-                <a class="username" href="#">&#64BalgrufTheGreat</a>
-            </div>
-            <div class="right-elements">
-                <!-- Star (Like) button -->
-                <a href="#"><img class="star-button" src="/images/star-regular.svg" alt="Image description"></a>
-                <!-- Comment button -->
-                <a href="#"><img class="comment-button" src="/images/comment-regular.svg" alt="Image description"></a>
+            <div class="bottom-section">
+                <div class="left-element">
+                    <!-- Display the username (author) -->
+                    <a class="username" href="#">@post.author</a>
+                </div>
+                <div class="right-elements">
+                    <!-- Star (Like) and Comment buttons -->
+                    <a href="#"><img class="star-button" src="/images/star-regular.svg" alt="Star"></a>
+                    <a href="#"><img class="comment-button" src="/images/comment-regular.svg" alt="Comment"></a>
+                </div>
             </div>
         </div>
-    </div>
-
-    <div class="post-container">
-        <!-- Space for an image -->
-        <img src="/images/93063_6354_nasa-releases-cosmic-feast-for-the-eyes-snapped-by-webb-telescope_full.webp.png" alt="Image description">
-
-        <!-- Post text -->
-        <p class="middle-paragraph">Hey look at what I found looking at my telescope today.</p>
-
-        <!-- Bottom Section -->
-        <div class="bottom-section">
-            <!-- Username -->
-            <div class="left-element">
-                <!-- TO-DO: link to Profiles -->
-                <a class="username" href="#">&#64BalgrufTheGreat</a>
-            </div>
-            <div class="right-elements">
-                <!-- Star (Like) button -->
-                <a href="#"><img class="star-button" src="/images/star-regular.svg" alt="Image description"></a>
-                <!-- Comment button -->
-                <a href="#"><img class="comment-button" src="/images/comment-regular.svg" alt="Image description"></a>
-            </div>
-        </div>
-    </div>
-
-    <div class="post-container">
-        <!-- Space for an image -->
-        <img src="/images/93063_6354_nasa-releases-cosmic-feast-for-the-eyes-snapped-by-webb-telescope_full.webp.png" alt="Image description">
-
-        <!-- Post text -->
-        <p class="middle-paragraph">Hey look at what I found looking at my telescope today.</p>
-
-        <!-- Bottom Section -->
-        <div class="bottom-section">
-            <!-- Username -->
-            <div class="left-element">
-                <!-- TO-DO: link to Profiles -->
-                <a class="username" href="#">&#64BalgrufTheGreat</a>
-            </div>
-            <div class="right-elements">
-                <!-- Star (Like) button -->
-                <a href="#"><img class="star-button" src="/images/star-regular.svg" alt="Image description"></a>
-                <!-- Comment button -->
-                <a href="#"><img class="comment-button" src="/images/comment-regular.svg" alt="Image description"></a>
-            </div>
-        </div>
-    </div>
+    }  
 
 </body>
 </html>

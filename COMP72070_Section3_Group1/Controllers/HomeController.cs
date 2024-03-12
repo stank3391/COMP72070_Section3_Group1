@@ -29,10 +29,7 @@ namespace COMP72070_Section3_Group1.Controllers
         }
         public IActionResult Index()
         {
-
-
-
-            return View(_account);
+            return View(_postList);
         }
 
         public IActionResult Privacy()
