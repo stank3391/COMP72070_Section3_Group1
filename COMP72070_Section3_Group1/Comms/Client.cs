@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 public class Client
 {
     public TcpClient tcpClient { get; private set; } // The TcpClient object 
+    public NetworkStream stream { get; private set; } // The NetworkStream object
 
     private string serverIp = "127.0.0.1";
     private int serverPort = 27000;
@@ -28,6 +29,7 @@ public class Client
     public void connect()
     {
         this.tcpClient.Connect(serverIp, serverPort);
+        this.stream = this.tcpClient.GetStream();
 
         if (this.tcpClient.Connected)
         {
@@ -60,8 +62,7 @@ public class Client
         byte[] serializedPacket = Packet.SerializePacket(packet);
 
         // send the packet
-        NetworkStream stream = this.tcpClient.GetStream();
-        stream.Write(serializedPacket, 0, serializedPacket.Length);
+        this.stream.Write(serializedPacket, 0, serializedPacket.Length);
 
         Console.WriteLine($"Packet sent:\n{packet.ToString()}\n");
     }
@@ -72,9 +73,8 @@ public class Client
     public Packet ReceivePacket()
     {
         // receive the packet from the client
-        NetworkStream stream = this.tcpClient.GetStream();
         byte[] buffer = new byte[1024];
-        stream.Read(buffer, 0, buffer.Length);
+        this.stream.Read(buffer, 0, buffer.Length);
 
         // deserialize the packet
         Packet packet = Packet.DeserializePacket(buffer);

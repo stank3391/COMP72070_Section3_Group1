@@ -16,18 +16,20 @@ namespace COMP72070_Section3_Group1.Controllers
         private readonly Account _account;
         private readonly VisitorManager _visitorManager;
         private readonly Client _client;
+        private readonly List<Post> _postList;
 
-        public HomeController(ILogger<HomeController> logger, Account account, VisitorManager visitorManager, Client client)
+        public HomeController(ILogger<HomeController> logger, Account account, VisitorManager visitorManager, Client client, List<Post> postList)
         {
             _logger = logger;
             _account = account;
 
             this._visitorManager = visitorManager;
             this._client = client;
+            this._postList = postList;
         }
         public IActionResult Index()
         {
-            return View(_account);
+            return View(_postList);
         }
 
         public IActionResult Privacy()

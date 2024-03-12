@@ -1,4 +1,5 @@
-﻿using COMP72070_Section3_Group1.Models;
+﻿using COMP72070_Section3_Group1.Comms;
+using COMP72070_Section3_Group1.Models;
 using COMP72070_Section3_Group1.Visitors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,10 +20,14 @@ namespace COMP72070_Section3_Group1.Controllers
 
         private readonly Client _client; // client object SINGLETON
 
-        public StartController(VisitorManager visitorManager, Client client)
+        private readonly List<Post> _postList; // list of posts to be displayed
+
+        public StartController(VisitorManager visitorManager, Client client, List<Post> postList)
         {
             this._visitorManager = visitorManager;
             this._client = client;
+            _postList = postList;
+            
         }
 
         /// <summary>
@@ -31,10 +36,11 @@ namespace COMP72070_Section3_Group1.Controllers
         /// </summary>
         public IActionResult Index()
         {
+
             // get the session id from the session dic
             string visitorId = HttpContext.Session.GetString("VisitorId");
 
-            if(visitorId == null)
+            if(visitorId == null) // new visitor, add to the session dic and visitor manager 
             {
                 // generate new UNIQUE visitor id  
                 visitorId = Guid.NewGuid().ToString(); 
@@ -48,7 +54,7 @@ namespace COMP72070_Section3_Group1.Controllers
                 // add the visitor to the visitor manager
                 _visitorManager.AddVisitor(visitor);
             }
-            else
+            else // returning visitor, check if the visitor is already in the visitor manager
             {
                 //check if the visitor is already in the visitor manager
                 if(!_visitorManager.visitors.ContainsKey(visitorId))
@@ -60,7 +66,7 @@ namespace COMP72070_Section3_Group1.Controllers
                     _visitorManager.AddVisitor(visitor);
                 }
             }
-
+            
             return RedirectToAction("Index", "Home"); // redirect to the home page
         }
 
