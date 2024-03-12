@@ -19,7 +19,7 @@ namespace COMP72070_Section3_Group1.Controllers
             return View();
         }
 
-        public void SendMsg(string inputText)
+        public IActionResult SendMsg(string inputText)
         {
             // get the user id from the session dic
             string userId = HttpContext.Session.GetString("UserId");
@@ -32,7 +32,7 @@ namespace COMP72070_Section3_Group1.Controllers
 
             _client.SendPacket(packet);
             
-
+            return RedirectToAction("AstroFans", "Home");
         }
     }
 }
