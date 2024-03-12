@@ -1,5 +1,5 @@
 using COMP72070_Section3_Group1.Controllers;
-using COMP72070_Section3_Group1.Users;
+using COMP72070_Section3_Group1.Visitors;
 using System.Net.Sockets;
 using System.Text;
 
@@ -13,8 +13,8 @@ Account accountInstance = new Account();
 builder.Services.AddSingleton<Account>(accountInstance);
 
 // add visitor manager to track visitors
-UserManager VISITORMANAGER = new UserManager();
-builder.Services.AddSingleton<UserManager>(VISITORMANAGER);
+VisitorManager VISITORMANAGER = new VisitorManager();
+builder.Services.AddSingleton<VisitorManager>(VISITORMANAGER);
 
 // add client for communicating with the server
 Client CLIENT = new Client();

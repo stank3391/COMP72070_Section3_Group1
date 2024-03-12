@@ -1,5 +1,5 @@
 ﻿using COMP72070_Section3_Group1.Models;
-using COMP72070_Section3_Group1.Users;
+using COMP72070_Section3_Group1.Visitors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -15,49 +15,49 @@ namespace COMP72070_Section3_Group1.Controllers
     /// </summary>
     public class StartController : Controller
     {
-        private readonly UserManager _userManager; // user manager object SINGLETON
+        private readonly VisitorManager _visitorManager; // visitor manager object SINGLETON
 
         private readonly Client _client; // client object SINGLETON
 
-        public StartController(UserManager visitorManager, Client client)
+        public StartController(VisitorManager visitorManager, Client client)
         {
-            this._userManager = visitorManager;
+            this._visitorManager = visitorManager;
             this._client = client;
         }
 
         /// <summary>
         /// First action
-        /// creates and adds a new user to the user manager
+        /// creates and adds a new visitor to the visitor manager
         /// </summary>
         public IActionResult Index()
         {
-            // get the user id from the session dic
-            string userId = HttpContext.Session.GetString("UserId");
+            // get the session id from the session dic
+            string visitorId = HttpContext.Session.GetString("VisitorId");
 
-            if(userId == null)
+            if(visitorId == null)
             {
-                // generate new UNIQUE user id  
-                userId = Guid.NewGuid().ToString(); 
+                // generate new UNIQUE visitor id  
+                visitorId = Guid.NewGuid().ToString(); 
 
-                // add the user id to the session dic
-                HttpContext.Session.SetString("UserId", userId);
+                // add the visitor id to the session dic
+                HttpContext.Session.SetString("VisitorId", visitorId);
 
-                // create a new user object
-                User user = new User(userId);
+                // create a new visitor object
+                Visitor visitor = new Visitor(visitorId);
 
-                // add the user to the user manager
-                _userManager.AddUser(user);
+                // add the visitor to the visitor manager
+                _visitorManager.AddVisitor(visitor);
             }
             else
             {
-                //check if the user is already in the user manager
-                if(!_userManager.users.ContainsKey(userId))
+                //check if the visitor is already in the visitor manager
+                if(!_visitorManager.visitors.ContainsKey(visitorId))
                 {
-                    // create a new user object
-                    User visitor = new User(userId);
+                    // create a new visitor object
+                    Visitor visitor = new Visitor(visitorId);
 
-                    // add the user to the user manager
-                    _userManager.AddUser(visitor);
+                    // add the visitor to the visitor manager
+                    _visitorManager.AddVisitor(visitor);
                 }
             }
 
@@ -69,8 +69,8 @@ namespace COMP72070_Section3_Group1.Controllers
             string combinedInfo = $"Username: {username}, Password: {password}";
 
             // new session code
-            string userId = HttpContext.Session.GetString("UserId");
-            User visitor = _userManager.GetVisitor(userId);
+            string visitorId = HttpContext.Session.GetString("VisitorId");
+            Visitor visitor = _visitorManager.GetVisitor(visitorId);
 
             Packet packet = new Packet(visitor.id,Packet.Type.Post, false, Encoding.ASCII.GetBytes(combinedInfo));
 

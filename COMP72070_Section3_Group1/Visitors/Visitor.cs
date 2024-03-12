@@ -1,19 +1,19 @@
 ﻿using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 
-namespace COMP72070_Section3_Group1.Users
+namespace COMP72070_Section3_Group1.Visitors
 {
     /// <summary>
     /// Visitor class to store the visitor's id and authentication status
     /// </summary>
-    public class User
+    public class Visitor
     {
         public string id { get; set; }
 
         public bool isAuthenicated { get; set; }
 
-        public int? accountId { get; set; } // the account the visitor is logged into
+        public int? userId { get; set; } // the account the visitor is logged into (SAME ONE IN DATABASE)
 
-        public User(string id)
+        public Visitor(string id)
         {
             this.id = id;
             this.isAuthenicated = false;
@@ -23,7 +23,7 @@ namespace COMP72070_Section3_Group1.Users
         /// <summary>
         /// Authenticates the visitor returns the result
         /// </summary>
-        public bool Authenticate(string userName, string password)
+        public bool Authenticate(string username, string password)
         {
             if (true)
             {
@@ -32,7 +32,7 @@ namespace COMP72070_Section3_Group1.Users
                 // get the account id from the database
                 // random int for now
                 Random random = new Random();
-                this.accountId = random.Next(1, 100);
+                this.userId = random.Next(1, 100);
 
                 return true; // always return true for now
             }
