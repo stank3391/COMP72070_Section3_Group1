@@ -6,84 +6,73 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-public class TcpServer
+namespace TcpServer
 {
-    private TcpListener Listener; 
-    private int Port = 27000;
-    private IPAddress LocalAddress = IPAddress.Any;
-
-
-    private bool IsStop = false; // flag to stop the server
-    private List<Client> Connections { get; set; } = new List<Client>(); // list of connections for managing clients
-
-    /// <summary>
-    /// Constructor for the TcpServer class
-    /// </summary>
-    public TcpServer()
+    public class TcpServer
     {
-        this.Listener = new TcpListener(this.LocalAddress, this.Port);
-        this.Listener.Start();
-        Console.WriteLine("Server started. Listenting for clients.\n");
-    }
+        private TcpListener listener;
+        private int port = 27000;
+        private IPAddress localAddress = IPAddress.Any;
 
-    /// <summary>
-    /// Listens and connects to clients. 
-    /// Adds the client to the list of connections.
-    /// </summary>
-    public void Start()
-    {
-        while (!this.IsStop)
+        private bool isStop = false; // flag to stop the server
+
+        /// <summary>
+        /// Constructor for the TcpServer class
+        /// </summary>
+        public TcpServer()
         {
-            TcpClient tcpClient = this.Listener.AcceptTcpClientAsync().Result;
-
-            // add client to list of connections
-            Client client = new Client(tcpClient);
-            this.Connections.Add(client);
-            Console.WriteLine($"Connected to: {client.ToString()}");
-
-            Task.Run(() => HandleClient(client)); // becuase async version of AcceptTcpClientAsync() is used 
-
+            this.listener = new TcpListener(this.localAddress, this.port);
         }
-    }
 
-    /// <summary>
-    /// MAIN FUNCTION TO COMMUNICATE WITH CLIENT!
-    /// </summary>
-    private void HandleClient(Client client)
-    {
-
-        byte[] bufferIn = new byte[1024]; // buffer for incoming data
-        byte[] bufferOut = new byte[1024]; // buffer for outgoing data
-        string data = string.Empty; // parsed data from buffer
-        NetworkStream stream = client.tcpClient.GetStream(); // stream for reading and writing data
-
-        bool isDisconnect = false;
-        while (!isDisconnect)
+        /// <summary>
+        /// Listens and connects to clients. 
+        /// </summary>
+        public void Start()
         {
-            // receive data from client
-            stream.Read(bufferIn, 0, bufferIn.Length);
-
-            // deserialize the packet
-            Packet packetIn = Packet.DeserializePacket(bufferIn);
-
-            // print the packet
-            Console.WriteLine($"Packet received:\n{packetIn.ToString()}\n");
-
-            client.Authenticate();
-
-            // send packet to client
-            Packet packetOut = new Packet(Packet.Type.Post, false, Encoding.ASCII.GetBytes("I got it!!!"));
-            byte[] serializedPacket = Packet.SerializePacket(packetOut);
-            stream.Write(serializedPacket, 0, serializedPacket.Length);
-            Console.WriteLine($"Packet sent:\n{packetOut.ToString()}\n");
-
-            //////////////////////////////end///////////////////////////////
-
-            if (!client.tcpClient.Connected)
+            Console.WriteLine("Server started.");
+            while (!this.isStop)
             {
-                Console.WriteLine($"Client disconnected: {client.ToString()}\n");
-                client.tcpClient.Close();
-                this.Connections.Remove(client);
+                Console.WriteLine("Listenting.\n");
+                this.listener.Start();
+
+                TcpClient tcpClient = this.listener.AcceptTcpClient();
+                Console.WriteLine("Connected\n");
+
+                HandleClient(tcpClient);
+            }
+        }
+
+        /// <summary>
+        /// MAIN FUNCTION TO COMMUNICATE WITH CLIENT!
+        /// </summary>
+        private void HandleClient(TcpClient tcpClient)
+        {
+
+            byte[] bufferIn = new byte[1024]; // buffer for incoming data
+            byte[] bufferOut = new byte[1024]; // buffer for outgoing data
+            string data = string.Empty; // parsed data from buffer
+            NetworkStream stream = tcpClient.GetStream(); // stream for reading and writing data
+
+            bool isDisconnect = false;
+
+            while (!isDisconnect)
+            {
+                // receive data 
+                stream.Read(bufferIn, 0, bufferIn.Length);
+                Packet packetIn = Packet.DeserializePacket(bufferIn);
+                Console.WriteLine($"Packet received:\n{packetIn.ToString()}\n");
+
+                // send packet 
+                Packet packetOut = new Packet("SERVER", Packet.Type.Ack, false, Encoding.ASCII.GetBytes("I got it!!"));
+                byte[] serializedPacket = Packet.SerializePacket(packetOut);
+                stream.Write(serializedPacket, 0, serializedPacket.Length);
+                Console.WriteLine($"Packet sent:\n{packetOut.ToString()}\n");
+
+                if (!tcpClient.Connected)
+                {
+                    Console.WriteLine($"Disconnected\n");
+                    tcpClient.Close();
+                }
             }
 
         }
@@ -91,4 +80,5 @@ public class TcpServer
     }
 
 }
+
 

@@ -3,11 +3,14 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
-class Program
+namespace TcpServer
 {
-    public static void Main()
+    class Program
     {
-        TcpServer server = new TcpServer();
-        server.Start();
+        public static void Main()
+        {
+            TcpServer server = new TcpServer();
+            server.Start();
+        }
     }
 }
