@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 // tcp stuff
 using System.Net.Sockets;
 using System.Text;
+using COMP72070_Section3_Group1.Visitors;
 
 
 namespace COMP72070_Section3_Group1.Controllers
@@ -13,11 +14,16 @@ namespace COMP72070_Section3_Group1.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly Account _account;
+        private readonly VisitorManager _visitorManager;
+        private readonly Client _client;
 
-        public HomeController(ILogger<HomeController> logger, Account account)
+        public HomeController(ILogger<HomeController> logger, Account account, VisitorManager visitorManager, Client client)
         {
             _logger = logger;
             _account = account;
+
+            this._visitorManager = visitorManager;
+            this._client = client;
         }
         public IActionResult Index()
         {
