@@ -1,5 +1,5 @@
 ﻿using COMP72070_Section3_Group1.Models;
-using COMP72070_Section3_Group1.Visitors;
+using COMP72070_Section3_Group1.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -15,19 +15,19 @@ namespace COMP72070_Section3_Group1.Controllers
     /// </summary>
     public class StartController : Controller
     {
-        private readonly VisitorManager _visitorManager; // visitor manager object SINGLETON
+        private readonly UserManager _userManager; // user manager object SINGLETON
 
         private readonly Client _client; // client object SINGLETON
 
-        public StartController(VisitorManager visitorManager, Client client)
+        public StartController(UserManager visitorManager, Client client)
         {
-            _visitorManager = visitorManager;
-            _client = client;
+            this._userManager = visitorManager;
+            this._client = client;
         }
 
         /// <summary>
         /// First action
-        /// creates and adds a new visitor to the visitor manager
+        /// creates and adds a new user to the user manager
         /// </summary>
         public IActionResult Index()
         {
@@ -42,22 +42,22 @@ namespace COMP72070_Section3_Group1.Controllers
                 // add the user id to the session dic
                 HttpContext.Session.SetString("UserId", userId);
 
-                // create a new visitor object
-                Visitor visitor = new Visitor(userId);
+                // create a new user object
+                User user = new User(userId);
 
-                // add the visitor to the visitor manager
-                _visitorManager.AddVisitor(visitor);
+                // add the user to the user manager
+                _userManager.AddUser(user);
             }
             else
             {
-                //check if the visitor is already in the visitor manager
-                if(!_visitorManager.Visitors.ContainsKey(userId))
+                //check if the user is already in the user manager
+                if(!_userManager.users.ContainsKey(userId))
                 {
-                    // create a new visitor object
-                    Visitor visitor = new Visitor(userId);
+                    // create a new user object
+                    User visitor = new User(userId);
 
-                    // add the visitor to the visitor manager
-                    _visitorManager.AddVisitor(visitor);
+                    // add the user to the user manager
+                    _userManager.AddUser(visitor);
                 }
             }
 
@@ -70,7 +70,7 @@ namespace COMP72070_Section3_Group1.Controllers
 
             // new session code
             string userId = HttpContext.Session.GetString("UserId");
-            Visitor visitor = _visitorManager.GetVisitor(userId);
+            User visitor = _userManager.GetVisitor(userId);
 
             Packet packet = new Packet(visitor.id,Packet.Type.Post, false, Encoding.ASCII.GetBytes(combinedInfo));
 

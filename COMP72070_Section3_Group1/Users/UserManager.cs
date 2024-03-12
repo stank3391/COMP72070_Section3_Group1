@@ -1,33 +1,33 @@
-﻿namespace COMP72070_Section3_Group1.Visitors
+﻿namespace COMP72070_Section3_Group1.Users
 {
     /// <summary>
     /// Manages the visitors 
     /// </summary>
-    public class VisitorManager
+    public class UserManager
     {
-        public Dictionary<string, Visitor> Visitors { get; set; } // dictionary of visitors mapped to their ids
+        public Dictionary<string, User> users { get; set; } // dictionary of visitors mapped to their ids
 
-        public VisitorManager()
+        public UserManager()
         {
-            this.Visitors = new Dictionary<string, Visitor>();
+            this.users = new Dictionary<string, User>();
             Console.WriteLine("VisitorManager started");
         }
 
         /// <summary>
         /// add a visitoe
         /// <summary/>
-        public void AddVisitor(Visitor visitor)
+        public void AddUser(User visitor)
         {
-            this.Visitors.Add(visitor.id, visitor);
+            this.users.Add(visitor.id, visitor);
             Console.WriteLine($"Visitor added: {visitor.id}");
         }
 
         /// <summary>
         /// remove a visitor by visitor obj
         /// <summary/>
-        public void RemoveVisitor(Visitor visitor)
+        public void RemoveVisitor(User visitor)
         {
-            this.Visitors.Remove(visitor.id);
+            this.users.Remove(visitor.id);
             Console.WriteLine($"Visitor removed: {visitor.id}");
         }
 
@@ -36,16 +36,16 @@
         /// <summary/>
         public void RemoveVisitor(string id)
         {
-            this.Visitors.Remove(id);
+            this.users.Remove(id);
             Console.WriteLine($"Visitor removed: {id}");
         }
         
         /// <summary>
         /// get a visitor by id
         /// </summary>
-        public Visitor GetVisitor(string id)
+        public User GetVisitor(string id)
         {
-            return this.Visitors[id];
+            return this.users[id];
         }
 
 

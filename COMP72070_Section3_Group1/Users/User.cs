@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 
-namespace COMP72070_Section3_Group1.Visitors
+namespace COMP72070_Section3_Group1.Users
 {
     /// <summary>
     /// Visitor class to store the visitor's id and authentication status
     /// </summary>
-    public class Visitor
+    public class User
     {
         public string id { get; set; }
 
@@ -13,7 +13,7 @@ namespace COMP72070_Section3_Group1.Visitors
 
         public int? accountId { get; set; } // the account the visitor is logged into
 
-        public Visitor(string id)
+        public User(string id)
         {
             this.id = id;
             this.isAuthenicated = false;

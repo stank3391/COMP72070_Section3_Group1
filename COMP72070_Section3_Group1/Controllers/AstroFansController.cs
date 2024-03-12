@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using COMP72070_Section3_Group1.Visitors;
+using COMP72070_Section3_Group1.Users;
 
 namespace COMP72070_Section3_Group1.Controllers
 {
     public class AstroFansController : Controller
     {
-        private readonly VisitorManager _visitorManager;
+        private readonly UserManager _visitorManager;
         private readonly Client _client;
 
-        public AstroFansController(VisitorManager visitorManager, Client client)
+        public AstroFansController(UserManager visitorManager, Client client)
         {
-            _visitorManager = visitorManager;
-            _client = client;
+            this._visitorManager = visitorManager;
+            this._client = client;
         }
 
         public IActionResult Index()
@@ -25,7 +25,7 @@ namespace COMP72070_Section3_Group1.Controllers
             string userId = HttpContext.Session.GetString("UserId");
 
             // get the visitor from the visitor manager
-            Visitor visitor = _visitorManager.GetVisitor(userId);
+            User visitor = _visitorManager.GetVisitor(userId);
 
             // send the message to the server
             Packet packet = new Packet(visitor.id, Packet.Type.Test, false , inputText);

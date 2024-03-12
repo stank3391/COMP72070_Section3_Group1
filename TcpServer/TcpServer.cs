@@ -10,18 +10,18 @@ namespace TcpServer
 {
     public class TcpServer
     {
-        private TcpListener Listener;
-        private int Port = 27000;
-        private IPAddress LocalAddress = IPAddress.Any;
+        private TcpListener listener;
+        private int port = 27000;
+        private IPAddress localAddress = IPAddress.Any;
 
-        private bool IsStop = false; // flag to stop the server
+        private bool isStop = false; // flag to stop the server
 
         /// <summary>
         /// Constructor for the TcpServer class
         /// </summary>
         public TcpServer()
         {
-            this.Listener = new TcpListener(this.LocalAddress, this.Port);
+            this.listener = new TcpListener(this.localAddress, this.port);
         }
 
         /// <summary>
@@ -30,12 +30,12 @@ namespace TcpServer
         public void Start()
         {
             Console.WriteLine("Server started.");
-            while (!this.IsStop)
+            while (!this.isStop)
             {
                 Console.WriteLine("Listenting.\n");
-                this.Listener.Start();
+                this.listener.Start();
 
-                TcpClient tcpClient = this.Listener.AcceptTcpClient();
+                TcpClient tcpClient = this.listener.AcceptTcpClient();
                 Console.WriteLine("Connected\n");
 
                 HandleClient(tcpClient);
