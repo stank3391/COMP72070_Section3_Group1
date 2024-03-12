@@ -4,7 +4,17 @@ using System.IO;
 public class Packet
 {
     // definitions: 
-    public enum Type { Post, DM, Auth, Acc, Ack, Test };
+    public enum Type // signifies the type of message
+    { 
+        Post,   // post packet
+        DM,     // direct message packet
+        Auth,   // authentication packet
+        Acc,    // ???
+        Ack,    // acknowledgement packet
+        Test,   // test packet
+        Error,  // error packet
+        Ready   // ready packet - ready to receive data
+    };
 
     public struct Header
     {
@@ -17,19 +27,25 @@ public class Packet
     // properties
     public Header header;
 
-    private byte[] _body = null;
+    private byte[] _body;
 
     public byte[] body
     {
         get
         {
-            return _body;
+            if(_body != null)
+                return _body;
+            else
+                return new byte[0];
         }
 
         set
         {
             _body = value;
-            header.bodyLen = _body.Length;
+            if (_body != null)
+                header.bodyLen = _body.Length;
+            else
+                header.bodyLen = 0;
         }
     }
 
@@ -38,30 +54,17 @@ public class Packet
     /// </summary>
     public Packet()
     {
-        // nothing
     }
 
     /// <summary>
     /// constructs a packet with byte[] as body
     /// </summary>
-    public Packet(string sourceId, Type messageType, bool pictureFlag, byte[] body)
+    public Packet(string sourceId, Type messageType, bool pictureFlag = false, byte[]? body = null)
     {
         this.header.sourceId = sourceId;
         this.header.messageType = messageType;
         this.header.pictureFlag = pictureFlag;
         this.body = body;
-    }
-
-    /// <summary>
-    /// constructs a packet with string as body
-    /// </summary>
-    public Packet(string sourceId, Type messageType, bool pictureFlag, string body)
-    {
-        this.header.sourceId = sourceId;
-        this.header.messageType = messageType;
-        this.header.pictureFlag = pictureFlag;
-        this.body = Encoding.ASCII.GetBytes(body);
-
     }
 
     /// <summary>
@@ -73,13 +76,13 @@ public class Packet
         {
             using (BinaryWriter writer = new BinaryWriter(memoryStream))
             {
-                // Serialize the packet header
+                // ToByte the packet header
                 writer.Write(packet.header.bodyLen);
                 writer.Write(packet.header.sourceId);
                 writer.Write((int)packet.header.messageType);
                 writer.Write(packet.header.pictureFlag);
 
-                // Serialize the packet body
+                // ToByte the packet body
                 writer.Write(packet.body);
 
                 return memoryStream.ToArray();

@@ -1,5 +1,7 @@
 using COMP72070_Section3_Group1.Controllers;
+using COMP72070_Section3_Group1.Models;
 using COMP72070_Section3_Group1.Visitors;
+using COMP72070_Section3_Group1.Comms;
 using System.Net.Sockets;
 using System.Text;
 
@@ -27,6 +29,13 @@ builder.Services.AddSession(); // options => { //some stuff }
 // enable only on yao computer v
 // builder.WebHost.UseUrls("http://192.168.1.10:5128", "https://192.168.1.10:7048"); // used for vm connection 
 // enable only on yao computer ^
+
+// store posts to be displayed
+List<Post> POSTLIST = new List<Post>();// fetch the posts from the server
+Util util = new Util();
+util.FetchPosts(CLIENT, POSTLIST);
+builder.Services.AddSingleton<List<Post>>(POSTLIST);
+
 
 var app = builder.Build();
 
