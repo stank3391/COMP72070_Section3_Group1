@@ -21,7 +21,5 @@ namespace AstroServer
         public string Content { get; set; }
 
         public DateTime? Date { get; set; }
-
-        public virtual tbl_Users tbl_Users { get; set; }
     }
 }

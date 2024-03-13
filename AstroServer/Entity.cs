@@ -49,28 +49,6 @@ namespace AstroServer
             modelBuilder.Entity<tbl_Users>()
                 .Property(e => e.ProfilePic)
                 .IsUnicode(false);
-
-            modelBuilder.Entity<tbl_Users>()
-                .HasMany(e => e.tbl_Message)
-                .WithRequired(e => e.tbl_Users)
-                .HasForeignKey(e => e.ReceiverId)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tbl_Users>()
-                .HasMany(e => e.tbl_Message1)
-                .WithRequired(e => e.tbl_Users1)
-                .HasForeignKey(e => e.SenderId)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tbl_Users>()
-                .HasMany(e => e.tbl_Post)
-                .WithRequired(e => e.tbl_Users)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tbl_Users>()
-                .HasMany(e => e.tbl_Token)
-                .WithRequired(e => e.tbl_Users)
-                .WillCascadeOnDelete(false);
         }
     }
 }
