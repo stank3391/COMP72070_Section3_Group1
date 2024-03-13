@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using COMP72070_Section3_Group1.Models;
+using COMP72070_Section3_Group1.Visitors;
 
 namespace TcpServer
 {
@@ -91,7 +92,7 @@ namespace TcpServer
         {
             Console.WriteLine($"Packet received:\n{packet.ToString()}");
             Packet.Type type = packet.header.messageType;
-
+            
             switch (type)
             {
                 case Packet.Type.Ack:
@@ -103,6 +104,9 @@ namespace TcpServer
                 case Packet.Type.Ready:
                     Console.WriteLine("Ready received");
                     HandleReadyPacket();
+                    break;
+                case Packet.Type.Auth:
+                    Console.WriteLine("Auth received");
                     break;
                 default:
                     Console.WriteLine("Unknown packet type received");
