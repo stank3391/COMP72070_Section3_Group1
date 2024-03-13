@@ -12,6 +12,7 @@ namespace AstroServer
         {
         }
 
+        public virtual DbSet<C__MigrationHistory> C__MigrationHistory { get; set; }
         public virtual DbSet<tbl_Message> tbl_Message { get; set; }
         public virtual DbSet<tbl_Post> tbl_Post { get; set; }
         public virtual DbSet<tbl_Token> tbl_Token { get; set; }
@@ -43,34 +44,16 @@ namespace AstroServer
                 .IsUnicode(false);
 
             modelBuilder.Entity<tbl_Users>()
+                .Property(e => e.Password)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Users>()
                 .Property(e => e.Email)
                 .IsUnicode(false);
 
             modelBuilder.Entity<tbl_Users>()
                 .Property(e => e.ProfilePic)
                 .IsUnicode(false);
-
-            modelBuilder.Entity<tbl_Users>()
-                .HasMany(e => e.tbl_Message)
-                .WithRequired(e => e.tbl_Users)
-                .HasForeignKey(e => e.ReceiverId)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tbl_Users>()
-                .HasMany(e => e.tbl_Message1)
-                .WithRequired(e => e.tbl_Users1)
-                .HasForeignKey(e => e.SenderId)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tbl_Users>()
-                .HasMany(e => e.tbl_Post)
-                .WithRequired(e => e.tbl_Users)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tbl_Users>()
-                .HasMany(e => e.tbl_Token)
-                .WithRequired(e => e.tbl_Users)
-                .WillCascadeOnDelete(false);
         }
     }
 }

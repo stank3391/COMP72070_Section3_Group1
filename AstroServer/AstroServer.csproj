@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B8BABF9A-5B01-4CC1-BAD3-E042EE971DAB}</ProjectGuid>
+    <ProjectGuid>{170D1449-F3F7-4EC0-9CB2-1A9FC6C5A6D6}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>AstroServer</RootNamespace>
     <AssemblyName>AstroServer</AssemblyName>
@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="C__MigrationHistory.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

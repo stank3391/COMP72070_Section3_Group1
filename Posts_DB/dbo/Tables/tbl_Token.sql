@@ -6,7 +6,11 @@
     [RefreshToken]   CHAR (255)     NULL,
     [CreationDate]   DATETIME       NULL,
     [ExpirationDate] DATETIME       NULL,
-    PRIMARY KEY CLUSTERED ([TokenId] ASC),
-    CONSTRAINT [TokenUserId] FOREIGN KEY ([UserId]) REFERENCES [dbo].[tbl_Users] ([UserId])
+    CONSTRAINT [PK_dbo.tbl_Token] PRIMARY KEY CLUSTERED ([TokenId] ASC)
 );
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_UserId]
+    ON [dbo].[tbl_Token]([UserId] ASC);
 

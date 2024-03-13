@@ -4,8 +4,16 @@
     [ReceiverId] INT           NOT NULL,
     [Content]    VARCHAR (255) NULL,
     [Date]       DATETIME      NULL,
-    PRIMARY KEY CLUSTERED ([MessageId] ASC),
-    CONSTRAINT [ReceiverId] FOREIGN KEY ([ReceiverId]) REFERENCES [dbo].[tbl_Users] ([UserId]),
-    CONSTRAINT [SenderId] FOREIGN KEY ([SenderId]) REFERENCES [dbo].[tbl_Users] ([UserId])
+    CONSTRAINT [PK_dbo.tbl_Message] PRIMARY KEY CLUSTERED ([MessageId] ASC)
 );
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_SenderId]
+    ON [dbo].[tbl_Message]([SenderId] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_ReceiverId]
+    ON [dbo].[tbl_Message]([ReceiverId] ASC);
 

@@ -4,8 +4,11 @@
     [Type]    NVARCHAR (255) NULL,
     [Content] CHAR (255)     NULL,
     [Date]    DATETIME       NULL,
-    PRIMARY KEY CLUSTERED ([PostId] ASC),
-    CHECK ([Type]='image' OR [Type]='text'),
-    CONSTRAINT [FK_UserId] FOREIGN KEY ([UserId]) REFERENCES [dbo].[tbl_Users] ([UserId])
+    CONSTRAINT [PK_dbo.tbl_Post] PRIMARY KEY CLUSTERED ([PostId] ASC)
 );
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_UserId]
+    ON [dbo].[tbl_Post]([UserId] ASC);
 

@@ -26,7 +26,5 @@ namespace AstroServer
         public DateTime? CreationDate { get; set; }
 
         public DateTime? ExpirationDate { get; set; }
-
-        public virtual tbl_Users tbl_Users { get; set; }
     }
 }
