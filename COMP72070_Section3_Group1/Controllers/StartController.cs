@@ -67,7 +67,7 @@ namespace COMP72070_Section3_Group1.Controllers
                 }
             }
             
-            return RedirectToAction("Index", "Home"); // redirect to the home page
+            return RedirectToAction("AstroFans", "Home"); // redirect to the home page
         }
 
         public IActionResult ExampleAccount(string username, string password)
@@ -78,7 +78,7 @@ namespace COMP72070_Section3_Group1.Controllers
             string visitorId = HttpContext.Session.GetString("VisitorId");
             Visitor visitor = _visitorManager.GetVisitor(visitorId);
 
-            Packet packet = new Packet(visitor.id,Packet.Type.Post, false, Encoding.ASCII.GetBytes(combinedInfo));
+            Packet packet = new Packet(visitor.id,Packet.Type.Auth, false, Encoding.ASCII.GetBytes(combinedInfo));
 
             _client.SendPacket(packet);
 
