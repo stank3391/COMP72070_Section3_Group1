@@ -25,6 +25,10 @@ namespace AstroServer
         [StringLength(255)]
         public string Username { get; set; }
 
+        [Required]
+        [StringLength(255)]
+        public string Password { get; set; }
+
         [StringLength(255)]
         public string Email { get; set; }
 

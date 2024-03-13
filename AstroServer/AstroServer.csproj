@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7CDC6503-CD10-47BB-B7FA-B03DF8A3D69B}</ProjectGuid>
+    <ProjectGuid>{B8BABF9A-5B01-4CC1-BAD3-E042EE971DAB}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>AstroServer</RootNamespace>
     <AssemblyName>AstroServer</AssemblyName>
