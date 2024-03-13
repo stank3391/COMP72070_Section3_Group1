@@ -10,6 +10,8 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Office2016.Excel;
 using System.Drawing.Drawing2D;
+using Microsoft.AspNetCore.Components.QuickGrid;
+using DocumentFormat.OpenXml.Drawing.Diagrams;
 
 
 namespace COMP72070_Section3_Group1.Controllers
@@ -18,90 +20,183 @@ namespace COMP72070_Section3_Group1.Controllers
     {
         public async Task<IActionResult> Index()
         {
-            String docName = "testexcel.xlsx";
+            String docName = "test4.xlsx";
 
 
-            InsertText(docName, "TimeStamp", "A", 1);
-            InsertText(docName, "User", "B", 1);
-            InsertText(docName, "Action", "C", 1);
+            //InsertText(docName, "TimeStamp", "A", 1);
+            //InsertText(docName, "User", "B", 1);
+            //InsertText(docName, "Action", "C", 1);
 
-            InsertText(docName, "5:03:00PM July 27th 2024", "A", 2);
-            InsertText(docName, "Yao", "B", 2);
-            InsertText(docName, "Tried to hack into the system and failed", "C", 2);
+            //InsertText(docName, "5:03:00PM July 27th 2024", "A", 2);
+            //InsertText(docName, "12:53:30AM April 16th 2021", "A", 3);
+            //InsertText(docName, "Yao", "B", 2);
+            //InsertText(docName, "Tried to hack into the system and failed", "C", 2);
 
+            //InsertText(docName, GetNextEmptyCell(docName, "Sheet1", "A"), "D", 5);
 
-
-            //function to make new sheet
-
-
-
-
-            //function that takes a sheet, cell, and data to write
-
-
+            //Console.WriteLine(GetNextEmptyCell(docName, "Sheet1", "A"));
+            InsertText(docName, "today idk", "A", GetNextEmptyCell(docName, "Sheet1", "A"));
+            InsertText(docName, "yao", "B", GetNextEmptyCell(docName, "Sheet1", "B"));
+            InsertText(docName, "he tried to unionize", "C", GetNextEmptyCell(docName, "Sheet1", "C"));
 
 
 
 
-
-
-            //InsertText("test.xlsx", "hello");
-
-
-
-
-            //give it a file and an object
+            //CreateWorksheetForToday(docName);
 
 
 
 
 
 
-
-
-            //    Console.WriteLine("RUNNN");
-
-            //    using var client = new TcpClient();
-            //    var serverIp = "127.0.0.1";
-            //    var serverPort = 27000;
-            //    try
-            //    {
-
-            //        await client.ConnectAsync(serverIp, serverPort);
-
-            //        if (client.Connected)
-            //        {
-            //            Console.WriteLine("Connected to server");
-            //            var networkStream = client.GetStream();
-
-            //            // send
-            //            var msg = "Hello";
-            //            var data = Encoding.ASCII.GetBytes(msg);
-            //            await networkStream.WriteAsync(data, 0, data.Length);
-            //            Console.WriteLine("sent: " + msg);
-
-            //            // recv
-            //            var buffer = new byte[1024];
-            //            var bytesRead = await networkStream.ReadAsync(buffer, 0, buffer.Length);
-            //            var response = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-
-            //            Console.WriteLine("received: " + response);
-
-            //            return View();
-            //        }
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Console.WriteLine("Failed..." + ex.Message);
-            //    }
-            //    finally
-            //    {
-            //        // client.Close(); 
-            //    }
 
 
             return View();
         }
+
+
+
+      
+
+        //static string CreateWorksheetForToday(string filename)
+        //{
+        //    using (SpreadsheetDocument document = SpreadsheetDocument.Open(filename, false))
+        //    {
+        //        WorkbookPart workbookPart = document.WorkbookPart;
+        //        DateTime now = DateTime.Now;
+        //        string name = now.ToString("dd/MM/yyyy");
+
+        //        //if ()
+        //        //{
+
+        //        //}
+
+
+        //        // Add a new worksheet part to the workbook.
+        //        WorksheetPart newWorksheetPart = workbookPart.AddNewPart<WorksheetPart>();
+        //        newWorksheetPart.Worksheet = new Worksheet(new SheetData());
+        //        newWorksheetPart.Worksheet.Save();
+
+        //        Sheets sheets = workbookPart.Workbook.GetFirstChild<Sheets>() ?? workbookPart.Workbook.AppendChild(new Sheets());
+
+
+        //        // Append the new worksheet and associate it with the workbook.
+        //        Sheet sheet = new Sheet() { Name = name };
+        //        sheets.Append(sheet);
+        //        workbookPart.Workbook.Save();
+        //    }
+        //    return "test";
+        //}
+
+
+
+
+
+        static uint GetNextEmptyCell(string FileName, string sheetName, string col)
+        {
+            bool inLoop = true;
+            uint rowIndex = 1;
+            string cellReference;
+            do
+            {
+                cellReference = col + rowIndex;
+                if (GetCellValue(FileName, sheetName, cellReference) != string.Empty)
+                {
+                    rowIndex++;
+                }
+                else
+                {
+                    inLoop = false;
+                }
+            } 
+            while (inLoop);
+
+            return rowIndex;
+        }
+
+
+
+        // Retrieve the value of a cell, given a file name, sheet name, 
+        // and address name.
+        static string GetCellValue(string fileName, string sheetName, string addressName)
+        {
+            string? value = null;
+            // Open the spreadsheet document for read-only access.
+            using (SpreadsheetDocument document = SpreadsheetDocument.Open(fileName, false))
+            {
+                // Retrieve a reference to the workbook part.
+                WorkbookPart? wbPart = document.WorkbookPart;
+                // Find the sheet with the supplied name, and then use that 
+                // Sheet object to retrieve a reference to the first worksheet.
+                Sheet? theSheet = wbPart?.Workbook.Descendants<Sheet>().Where(s => s.Name == sheetName).FirstOrDefault();
+
+                // Throw an exception if there is no sheet.
+                if (theSheet is null || theSheet.Id is null)
+                {
+                    throw new ArgumentException("sheetName");
+                }
+                // Retrieve a reference to the worksheet part.
+                WorksheetPart wsPart = (WorksheetPart)wbPart!.GetPartById(theSheet.Id!);
+                // Use its Worksheet property to get a reference to the cell 
+                // whose address matches the address you supplied.
+                Cell? theCell = wsPart.Worksheet?.Descendants<Cell>()?.Where(c => c.CellReference == addressName).FirstOrDefault();
+                // If the cell does not exist, return an empty string.
+                if (theCell is null || theCell.InnerText.Length < 0)
+                {
+                    return string.Empty;
+                }
+                value = theCell.InnerText;
+                // If the cell represents an integer number, you are done. 
+                // For dates, this code returns the serialized value that 
+                // represents the date. The code handles strings and 
+                // Booleans individually. For shared strings, the code 
+                // looks up the corresponding value in the shared string 
+                // table. For Booleans, the code converts the value into 
+                // the words TRUE or FALSE.
+                if (theCell.DataType is not null)
+                {
+                    if (theCell.DataType.Value == CellValues.SharedString)
+                    {
+                        // For shared strings, look up the value in the
+                        // shared strings table.
+                        var stringTable = wbPart.GetPartsOfType<SharedStringTablePart>().FirstOrDefault();
+                        // If the shared string table is missing, something 
+                        // is wrong. Return the index that is in
+                        // the cell. Otherwise, look up the correct text in 
+                        // the table.
+                        if (stringTable is not null)
+                        {
+                            value = stringTable.SharedStringTable.ElementAt(int.Parse(value)).InnerText;
+                        }
+                    }
+                    else if (theCell.DataType.Value == CellValues.Boolean)
+                    {
+                        switch (value)
+                        {
+                            case "0":
+                                value = "FALSE";
+                                break;
+                            default:
+                                value = "TRUE";
+                                break;
+                        }
+                    }
+                }
+            }
+
+            return value;
+        }
+
+
+
+
+
+
+
+
+
+
+
 
 
         // Given a document name and text, 
