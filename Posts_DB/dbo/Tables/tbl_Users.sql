@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [dbo].[tbl_Users] (
     [UserId]     INT            IDENTITY (1, 1) NOT NULL,
     [Username]   VARCHAR (255)  NOT NULL,
+    [Password]   VARCHAR (255)  NULL,
     [Email]      VARCHAR (255)  NULL,
     [ProfilePic] VARCHAR (255)  NULL,
     [JoinDate]   DATETIME       NULL,
