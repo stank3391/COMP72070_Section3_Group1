@@ -25,7 +25,7 @@ namespace AstroServer
                 db.SaveChanges();
 
                 // using this you can iterate through every item
-                // in a table.
+                // in a table
                 foreach (var user in db.tbl_Users)
                     Console.WriteLine(user.Username);
             }

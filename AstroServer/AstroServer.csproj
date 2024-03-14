@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="C__MigrationHistory.cs" />
+    <Compile Include="dbHandler.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
