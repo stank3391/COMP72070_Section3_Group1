@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,25 +11,13 @@ namespace AstroServer
     {
         static void Main(string[] args)
         {
-            //example of how to use database
-            // Here is the initialization
-            using (Entity db = new Entity())
-            {
-                // To add a user first create a tbl_Users object
-                tbl_Users newUser = new tbl_Users();
-                // Then fill in its parameters
-                newUser.UserId = 11;
-                newUser.Username = "John";
-                // Then add it to the database
-                db.tbl_Users.Add(newUser);
-                // Lastly, save the database
-                db.SaveChanges();
+            dbHandler handler = new dbHandler();
 
-                // using this you can iterate through every item
-                // in a table
-                foreach (var user in db.tbl_Users)
-                    Console.WriteLine(user.Username);
-            }
+            Console.WriteLine(handler.CreateUser("nic", "password", "email@mail.com",
+                "bdqkjwd2@!DQWDasd", DateTime.Now, "user"));
+
+            Console.WriteLine(handler.getUser(1).ToString());
+            Console.WriteLine(handler.getUser(2).ToString());
 
             // Added so that the program doesn't automatically quit
             Console.WriteLine("press any key to exit");

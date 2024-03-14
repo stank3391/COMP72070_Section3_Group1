@@ -23,23 +23,45 @@ namespace AstroServer
             db = new Entity();
         }
 
+        public tbl_Users getUser(int id)
+        {
+            using (db)
+                foreach(var user in db.tbl_Users)
+                    if(user.UserId == id)
+                        return user;
+            return null;
+        }
+
         public string CreateUser(string username, string password, string email, string profilePic, DateTime joinDate, string role)
         {
-            if (role != "admin" || role != "user")
+            if (role != "admin" && role != "user")
                 return "Invalid role. Only user either 'admin' or 'user'.";
 
-            SqlConnection conn = new SqlConnection(@"Server=.\ProjectModels;Database=Astro_DB;Trusted_connection=True;");
+            //SqlConnection conn = new SqlConnection(@"Server=.\ProjectModels;Database=Astro_DB;Trusted_connection=True;");
+
+            //SqlDataAdapter adapter = new SqlDataAdapter("select * from dbo.tbl_Users", conn);
+            //new SqlCommandBuilder(adapter);
+
+            //DataSet ds = new DataSet();
+            //adapter.Fill(ds, "tbl_Users");
+
+            //DataTable dataTable = ds.Tables[0].GetChanges(DataRowState.Added) ?? new DataTable();
+            //DataRow row = ds.Tables[0].NewRow();
+            //row["id"] = (dataTable.Rows.Count + 1);
+            using (db)
+            {
+                tbl_Users newUser = new tbl_Users();
+                newUser.Username = username;
+                newUser.Password = password;
+                newUser.Email = email;
+                newUser.ProfilePic = profilePic;
+                newUser.JoinDate = joinDate;
+                newUser.Role = role;
+
+                db.tbl_Users.Add(newUser);
+                db.SaveChanges();
+            }
             
-            SqlDataAdapter adapter = new SqlDataAdapter("select * from dbo.tbl_Users", conn);
-            new SqlCommandBuilder(adapter);
-
-            DataSet ds = new DataSet();
-            adapter.Fill(ds, "tbl_Users");
-
-            DataTable dataTable = ds.Tables[0].GetChanges(DataRowState.Added) ?? new DataTable();
-            DataRow row = ds.Tables[0].NewRow();
-            row["id"] = (dataTable.Rows.Count + 1);
-
             // search this
             //db.tbl_Users.Add;
             //db.tbl_Users.Append;
