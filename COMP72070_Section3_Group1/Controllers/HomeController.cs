@@ -32,8 +32,7 @@ namespace COMP72070_Section3_Group1.Controllers
         }
         public IActionResult Index()
         {
-            Util util = new Util();
-            util.FetchPosts(_client, _postList);
+            _client.FetchPosts(_postList);
             return View(_postList);
         }
 

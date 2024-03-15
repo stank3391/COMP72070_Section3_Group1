@@ -8,6 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="images\testimg1.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="images\testimg1.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\COMP72070_Section3_Group1\COMP72070_Section3_Group1.csproj" />
   </ItemGroup>
 

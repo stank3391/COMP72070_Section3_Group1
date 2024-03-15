@@ -30,7 +30,7 @@ namespace COMP72070_Section3_Group1.Controllers
             Visitor visitor = _visitorManager.GetVisitor(visitorId);
 
             // send the message to the server
-            Packet packet = new Packet(visitor.id, Packet.Type.Test, false , Encoding.UTF8.GetBytes(inputText));
+            Packet packet = new Packet(visitor.id, Packet.Type.Test, Encoding.UTF8.GetBytes(inputText));
 
             _client.SendPacket(packet);
             

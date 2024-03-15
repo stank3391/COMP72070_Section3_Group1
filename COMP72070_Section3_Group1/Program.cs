@@ -20,7 +20,7 @@ builder.Services.AddSingleton<VisitorManager>(VISITORMANAGER);
 
 // add client for communicating with the server
 Client CLIENT = new Client();
-CLIENT.connect();
+CLIENT.Connect();
 builder.Services.AddSingleton<Client>(CLIENT);
 
 // for identifying sessions and visitors
@@ -32,8 +32,6 @@ builder.Services.AddSession(); // options => { //some stuff }
 
 // store posts to be displayed
 List<Post> POSTLIST = new List<Post>();// fetch the posts from the server
-Util util = new Util();
-util.FetchPosts(CLIENT, POSTLIST);
 builder.Services.AddSingleton<List<Post>>(POSTLIST);
 
 
