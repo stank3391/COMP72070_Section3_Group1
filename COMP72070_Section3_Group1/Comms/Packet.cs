@@ -3,6 +3,10 @@ using System.IO;
 
 public class Packet
 {
+
+    // constants
+    public const int MAX_PACKET_SIZE = 1024 * 1024; // 1MB
+
     // definitions: 
     public enum Type // signifies the type of message
     { 
@@ -26,7 +30,8 @@ public class Packet
         public Type packetType { get; set; }
         public int packetNumber { get; set; }
         public int totalPackets { get; set; }
-    } 
+    }
+
 
     // properties
     public Header header;
@@ -132,21 +137,21 @@ public class Packet
     }
 
     /// <summary>
-    /// split image packets into multiple packets
+    /// split image data into multiple packets
     /// </summary>
-    public static Packet[] CreateImagePacket(string sourceId, byte[] imageData, int maxSize = 512)
+    public static Packet[] CreateImagePacket(string sourceId, byte[] imageData, int maxImageSize = 4096)
     {
         Console.WriteLine("Packet.CreateImagePacket(): Start");
         // calc num ofpackets needed
-        int totalPackets = (int)Math.Ceiling((double)imageData.Length / maxSize);
+        int totalPackets = (int)Math.Ceiling((double)imageData.Length / maxImageSize);
 
         // create packets
         Packet[] packets = new Packet[totalPackets];
         for (int i = 0; i < totalPackets; i++)
         {
             Console.WriteLine($"Packet.CreateImagePacket(): Creating packet {i + 1} of {totalPackets}");
-            int offset = i * maxSize;
-            int size = Math.Min(maxSize, imageData.Length - offset);
+            int offset = i * maxImageSize;
+            int size = Math.Min(maxImageSize, imageData.Length - offset);
             byte[] body = new byte[size];
             Array.Copy(imageData, offset, body, 0, size); // DEEP COPY!!!!
             packets[i] = new Packet(sourceId, Type.Image, body, i, totalPackets);

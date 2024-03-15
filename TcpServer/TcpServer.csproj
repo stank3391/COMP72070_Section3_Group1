@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="images\testimg1.png" />
+    <None Remove="images\testimg1.jpg" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="images\testimg1.png">
+    <Content Include="images\testimg1.jpg">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>

@@ -63,15 +63,15 @@ namespace COMP72070_Section3_Group1.Comms
         /// </summary>
         public void SendPacket(Packet packet)
         {
-            Console.WriteLine("Client.SendPacket(): Start");
+            //Console.WriteLine("Client.SendPacket(): Start");
             // serialize the packet
             byte[] serializedPacket = Packet.SerializePacket(packet);
 
             // send the packet
             this.stream.Write(serializedPacket, 0, serializedPacket.Length);
 
-            //Console.WriteLine($"Client.SendPacket(): Packet sent:\n{packet.ToString()}");
-            Console.WriteLine("Client.SendPacket(): End");
+            Console.WriteLine($"Client.SendPacket(): Packet sent:\n{packet.ToString()}");
+            //Console.WriteLine("Client.SendPacket(): End");
         }
 
         /// <summary>
@@ -79,19 +79,29 @@ namespace COMP72070_Section3_Group1.Comms
         /// </summary>
         public Packet ReceivePacket()
         {
-            Console.WriteLine("Client.ReceivePacket(): Start");
+            //Console.WriteLine("Client.ReceivePacket(): Start");
 
             // receive the packet from the client
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[Packet.MAX_PACKET_SIZE];
             this.stream.Read(buffer, 0, buffer.Length);
 
             // deserialize the packet
             Packet packet = Packet.DeserializePacket(buffer);
 
             //Console.WriteLine($"Client.SendPacket(): Packet received:\n{packet.ToString()}");
-            Console.WriteLine("Client.ReceivePacket(): End");
+            //Console.WriteLine("Client.ReceivePacket(): End");
 
             return packet;
+        }
+
+        /// <summary>
+        /// sends a simple ack packet to the server
+        /// used to acknowledge the receipt of a packet so no need to wait between sending and receiving
+        /// </summary>
+        public void SendAck()
+        {
+            Packet ackPacket = new Packet("CLIENT", Packet.Type.Ack);
+            SendPacket(ackPacket);
         }
 
         /// <summary>
@@ -99,12 +109,12 @@ namespace COMP72070_Section3_Group1.Comms
         /// </summary>
         public void SendPost(int sourceId, Post post)
         {
-            Console.WriteLine("Client.SendPost(): Start");
+            //Console.WriteLine("Client.SendPost(): Start");
             Packet packet = new Packet(sourceId.ToString(), Packet.Type.Post, post.ToByte());
             SendPacket(packet);
 
-            Console.WriteLine($"Client.SendPost(): Post sent: {post.content}");
-            Console.WriteLine("Client.SendPost(): End");
+            //Console.WriteLine($"Client.SendPost(): Post sent: {post.content}");
+            //Console.WriteLine("Client.SendPost(): End");
         }
 
         /// <summary>
@@ -112,7 +122,7 @@ namespace COMP72070_Section3_Group1.Comms
         /// </summary>
         public Post ReceivePost()
         {
-            Console.WriteLine("Client.ReceivePost(): Start");
+            //Console.WriteLine("Client.ReceivePost(): Start");
             Packet postPacket = ReceivePacket();
 
             if (postPacket.header.packetType != Packet.Type.Post)
@@ -125,7 +135,7 @@ namespace COMP72070_Section3_Group1.Comms
 
             Console.WriteLine($"Post received: {post.content}");
 
-            Console.WriteLine("Client.ReceivePost(): End");
+            //Console.WriteLine("Client.ReceivePost(): End");
             return post;
         }
 
@@ -155,9 +165,67 @@ namespace COMP72070_Section3_Group1.Comms
                 Post post = this.ReceivePost();
 
                 posts.Add(post);
+
+                // send ack packet
+                this.SendAck();
             }
 
             Console.WriteLine("Client.FetchPosts(): End");
+        }
+
+        public void FetchImages()
+        {
+            Console.WriteLine("Client.FetchImages(): Start");
+
+            // send a ready packet to the server
+            Packet readyPacket = new Packet("CLIENT", Packet.Type.ReadyImage);
+            this.SendPacket(readyPacket);
+
+            // receive the ack packet
+            Packet packetIn = this.ReceivePacket();
+
+            // get the number of images from the ack packet
+            string body = Encoding.ASCII.GetString(packetIn.body);
+            int imageCount = int.Parse(body);
+
+            // receive all the images
+            List<Packet> imagePackets = new List<Packet>();
+  
+            Packet ackPacket = new Packet("CLIENT", Packet.Type.Ack);
+            for (int i = 0; i < imageCount; i++)
+            {
+                Console.WriteLine($"Client.FetchImages(): Receiving image {i + 1} of {imageCount}");
+                
+                // receive first packet
+                Packet imagePacket = this.ReceivePacket();
+
+                imagePackets.Add(imagePacket); // add to list
+
+                // send ack packet
+                this.SendPacket(ackPacket);
+
+                while(imagePacket.header.packetNumber + 1 < imagePacket.header.totalPackets)
+                {
+                    // receive next packet
+                    imagePacket = this.ReceivePacket();
+
+                    imagePackets.Add(imagePacket); // add to list
+
+                    // send ack packet
+                    this.SendPacket(ackPacket);
+                }
+
+                byte[] imageData = Packet.ReconstructImage(imagePackets.ToArray());
+
+                string imagePath = Path.Combine("./wwwroot/images/", imagePacket.header.sourceId);
+                File.WriteAllBytes(imagePath, imageData);
+
+                // clear list
+                imagePackets.Clear();
+            }   
+
+
+            Console.WriteLine("Client.FetchImages(): End");
         }
     }
 }

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using COMP72070_Section3_Group1.Models;
 using COMP72070_Section3_Group1.Visitors;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.AspNetCore.Routing.Constraints;
 
 namespace TcpServer
@@ -25,8 +26,6 @@ namespace TcpServer
 
         // database props
         private List<Post> posts = new List<Post>(); // list of posts from the database
-
-
 
         /// <summary>
         /// Constructor for the TcpServer class
@@ -64,7 +63,7 @@ namespace TcpServer
         private void HandleClient()
         {
             Console.WriteLine("TcpServer.HandleClient(): Start");
-            byte[] bufferIn = new byte[1024]; // buffer for incoming data
+            byte[] bufferIn = new byte[Packet.MAX_PACKET_SIZE]; // buffer for incoming data
 
             bool isDisconnect = false;
 
@@ -145,20 +144,58 @@ namespace TcpServer
                 serializedPacket = Packet.SerializePacket(packet);
                 stream.Write(serializedPacket, 0, serializedPacket.Length);
 
-                // wait for 10 ms
-                System.Threading.Thread.Sleep(100); // MUST BE HERE OR ELSE ASP BREAKS (wont recevie all packets)
+                // wait for ack packet
+                this.WaitForAck();
             }
 
             Console.WriteLine("TcpServer.HandleReadyPostPacket(): End");
         }
 
-        public void HandleReadyImagePacket()
+        private void HandleReadyImagePacket()
         {
             Console.WriteLine("TcpServer.HandleReadyImagePacket(): Start");
+            string[] files = Directory.GetFiles("../../../images/");
 
+            int imageCount = files.Length;
+            byte[] body = Encoding.ASCII.GetBytes(imageCount.ToString());
+            Packet packet = new Packet("SERVER", Packet.Type.Ack, body);
+            byte[] serializedPacket = Packet.SerializePacket(packet);
+            stream.Write(serializedPacket, 0, serializedPacket.Length);
 
+            // then we start blasting
+            for (int i = 0; i < imageCount; i++)
+            {
+                Console.WriteLine($"TcpServer.HandleReadyImagePacket(): Sending image {i + 1} of {imageCount}");
+                byte[] imageData = File.ReadAllBytes(files[i]);
+                string fileName = Path.GetFileName(files[i]);
+                Console.WriteLine($"TcpServer.HandleReadyImagePacket(): Sending image {fileName}");
+                Packet[] packets = Packet.CreateImagePacket(fileName, imageData);
+                foreach (Packet p in packets)
+                {
+                    serializedPacket = Packet.SerializePacket(p);
+                    stream.Write(serializedPacket, 0, serializedPacket.Length);
 
+                    // wait for ack packet
+                    this.WaitForAck();
+                }
+            }
             Console.WriteLine("TcpServer.HandleReadyImagePacket(): End");
+        }
+
+
+        /// <summary>
+        /// Waits for an ack packet from the client
+        /// so that we can send the next packet
+        /// </summary>
+        private void WaitForAck()
+        {
+            byte[] bufferIn = new byte[Packet.MAX_PACKET_SIZE];
+            this.stream.Read(bufferIn, 0, bufferIn.Length);
+            Packet ackPacket = Packet.DeserializePacket(bufferIn);
+            if (ackPacket.header.packetType != Packet.Type.Ack)
+            {
+                Console.WriteLine("TcpServer.WaitForAck(): Error receiving ack packet");
+            }
         }
 
 
@@ -171,15 +208,23 @@ namespace TcpServer
             // update the posts from the database
 
             // just return some dummy posts for now
-            posts.Add(new Post(1, "HEELOO!!! I am a post1", "user1", DateTime.Now,""));
+            posts.Add(new Post(1, "HEELOO!!! I am a post1", "user1", DateTime.Now,"testimg1.jpg"));
 
-            posts.Add(new Post(2, "HEELOO!!! I am a post2", "user2", DateTime.Now,""));
+            posts.Add(new Post(2, "HEELOO!!! I am a post2", "user2", DateTime.Now, "testimg2.jpg"));
 
-            posts.Add(new Post(3, "HEELOO!!! I am a post3", "user3", DateTime.Now, ""));
+            posts.Add(new Post(3, "HEELOO!!! I am a post3", "user3", DateTime.Now, "testimg3.jpg"));
 
-            posts.Add(new Post(4, "HEELOO!!! I am a post4", "user4", DateTime.Now, ""));
+            posts.Add(new Post(4, "HEELOO!!! I am a post4", "user4", DateTime.Now, "testimg4.jpg"));
 
-            posts.Add(new Post(5, "HEELOO!!! I am a post5", "user5", DateTime.Now, ""));
+            posts.Add(new Post(5, "HEELOO!!! I am a post5", "user5", DateTime.Now, "testimg5.jpg"));
+
+            posts.Add(new Post(6, "HEELOO!!! I am a post6", "user6", DateTime.Now, "testimg6.jpg"));
+
+            posts.Add(new Post(7, "HEELOO!!! I am a post7", "user7", DateTime.Now, "testimg7.jpg"));
+
+            posts.Add(new Post(8, "HEELOO!!! I am a post8", "user8", DateTime.Now, "testimg8.jpg"));
+
+            posts.Add(new Post(9, "HEELOO!!! I am a post9", "user9", DateTime.Now, "testimg9.jpg"));
 
             Console.WriteLine("Posts list updated from 'Database'.");
 

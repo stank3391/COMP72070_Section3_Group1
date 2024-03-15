@@ -21,6 +21,7 @@ builder.Services.AddSingleton<VisitorManager>(VISITORMANAGER);
 // add client for communicating with the server
 Client CLIENT = new Client();
 CLIENT.Connect();
+CLIENT.FetchImages();
 builder.Services.AddSingleton<Client>(CLIENT);
 
 // for identifying sessions and visitors
