@@ -198,36 +198,32 @@ namespace TcpServer
             }
         }
 
+        /// <summary>
+        /// save all posts to palceholder database
+        /// </summary>
+        public void PlaceholderSavePosts()
+        {
+            string path = "../../../placeholder_db/posts.json";
+
+            string json = Newtonsoft.Json.JsonConvert.SerializeObject(posts);
+
+            File.WriteAllText(path, json);
+
+            Console.WriteLine("Posts list saved to placeholder database.");
+        }
 
         /// <summary>
-        /// Fetches all the posts from the database and stores them in 'posts' property
-        /// will replace with database connection later
+        /// loads all posts from placeholder database
         /// </summary>
-        public void UpdatePosts()
+        public void PlaceholderLoadPosts()
         {
-            // update the posts from the database
+            string path = "../../../placeholder_db/posts.json";
 
-            // just return some dummy posts for now
-            posts.Add(new Post(1, "HEELOO!!! This should display placeholder image", "user1", DateTime.Now, "testimg1.jpg"));
+            string json = File.ReadAllText(path);
 
-            posts.Add(new Post(2, "HEELOO!!! I am a post2", "user2", DateTime.Now, "testimg2.jpg"));
+            posts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Post>>(json);
 
-            posts.Add(new Post(3, "HEELOO!!! I am a post3", "user3", DateTime.Now, "testimg3.jpg"));
-
-            posts.Add(new Post(4, "HEELOO!!! I am a post4", "user4", DateTime.Now, "testimg4.jpg"));
-
-            posts.Add(new Post(5, "HEELOO!!! I am a post5", "user5", DateTime.Now, "testimg5.jpg"));
-
-            posts.Add(new Post(6, "HEELOO!!! I am a post6", "user6", DateTime.Now, "testimg6.jpg"));
-
-            posts.Add(new Post(7, "HEELOO!!! I am a post7", "user7", DateTime.Now, "testimg7.jpg"));
-
-            posts.Add(new Post(8, "HEELOO!!! I am a post8", "user8", DateTime.Now, "testimg8.jpg"));
-
-            posts.Add(new Post(9, "HEELOO!!! I am a post9", "user9", DateTime.Now, "testimg9.jpg"));
-
-            Console.WriteLine("Posts list updated from 'Database'.");
-
+            Console.WriteLine("Posts list loaded from placeholder database.");
         }
     }
 }

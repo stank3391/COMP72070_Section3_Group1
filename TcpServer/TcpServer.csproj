@@ -11,4 +11,8 @@
     <ProjectReference Include="..\COMP72070_Section3_Group1\COMP72070_Section3_Group1.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="placeholder_db\" />
+  </ItemGroup>
+
 </Project>

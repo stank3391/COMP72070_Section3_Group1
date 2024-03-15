@@ -10,7 +10,7 @@ namespace TcpServer
         public static void Main()
         {
             TcpServer server = new TcpServer();
-            server.UpdatePosts();
+            server.PlaceholderSavePosts();
             server.Start();
         }
     }
