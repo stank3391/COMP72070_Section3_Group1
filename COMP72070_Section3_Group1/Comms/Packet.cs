@@ -5,7 +5,7 @@ public class Packet
 {
 
     // constants
-    public const int MAX_PACKET_SIZE = 1024 * 1024; // 1MB
+    public const int MAX_PACKET_SIZE = 512 * 512; // 1MB
 
     // definitions: 
     public enum Type // signifies the type of message
@@ -123,6 +123,11 @@ public class Packet
         }
         return packet;
     }
+
+    /// <summary>
+    /// returns a string representation of the packet
+    /// IMPORTANT: ONLY USE IF BODY IS ASCII!!!! OR ELSE EVERYTHING BECOMES CYRILLIC
+    /// </summary>
     public override string ToString()
     {
         string str = "Packet:\n";
@@ -139,7 +144,7 @@ public class Packet
     /// <summary>
     /// split image data into multiple packets
     /// </summary>
-    public static Packet[] CreateImagePacket(string sourceId, byte[] imageData, int maxImageSize = 4096)
+    public static Packet[] CreateImagePacket(string sourceId, byte[] imageData, int maxImageSize = 1024)
     {
         Console.WriteLine("Packet.CreateImagePacket(): Start");
         // calc num ofpackets needed
