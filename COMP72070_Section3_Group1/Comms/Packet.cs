@@ -134,7 +134,7 @@ public class Packet
     /// <summary>
     /// split image packets into multiple packets
     /// </summary>
-    public static Packet[] CreateImagePacket(string sourceId, byte[] imageData, int maxSize = 1024)
+    public static Packet[] CreateImagePacket(string sourceId, byte[] imageData, int maxSize = 512)
     {
         Console.WriteLine("Packet.CreateImagePacket(): Start");
         // calc num ofpackets needed

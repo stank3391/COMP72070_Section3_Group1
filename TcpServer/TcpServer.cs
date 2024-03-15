@@ -42,19 +42,20 @@ namespace TcpServer
         /// </summary>
         public void Start()
         {
-            Console.WriteLine("Server started.");
+            Console.WriteLine("TcpServer.Start(): Start");
             while (!this.isStop)
             {
-                Console.WriteLine("Listenting.");
+                Console.WriteLine("TcpServer.Start(): Listenting");
                 this.listener.Start();
 
                 this.tcpClient = this.listener.AcceptTcpClient();
-                Console.WriteLine("Connected.");
+                Console.WriteLine("TcpServer.Start(): Connected");
 
                 this.stream = this.tcpClient.GetStream();
 
                 HandleClient();
             }
+            Console.WriteLine("TcpServer.Start(): End");
         }
 
         /// <summary>
@@ -62,10 +63,8 @@ namespace TcpServer
         /// </summary>
         private void HandleClient()
         {
-
+            Console.WriteLine("TcpServer.HandleClient(): Start");
             byte[] bufferIn = new byte[1024]; // buffer for incoming data
-            byte[] bufferOut = new byte[1024]; // buffer for outgoing data
-            string data = string.Empty; // parsed data from buffer
 
             bool isDisconnect = false;
 
@@ -78,11 +77,12 @@ namespace TcpServer
 
                 if (!tcpClient.Connected)
                 {
-                    Console.WriteLine($"Disconnected.");
+                    Console.WriteLine($"TcpServer.HandleClient(): Disconnected");
                     tcpClient.Close();
+                    isDisconnect = true;
                 }
             }
-
+            Console.WriteLine("TcpServer.HandleClient(): End");
         }
 
         /// <summary>
@@ -91,32 +91,35 @@ namespace TcpServer
         /// </summary>
         private void HandlePacket(Packet packet)
         {
-            Console.WriteLine($"Packet received:\n{packet.ToString()}");
+            Console.WriteLine("TcpServer.HandlePacket(): Start");
+
             Packet.Type type = packet.header.packetType;
             
             switch (type)
             {
                 case Packet.Type.Ack:
-                    Console.WriteLine("Ack received");
+                    Console.WriteLine("TcpServer.HandlePacket(): Ack received");
                     break;
                 case Packet.Type.Error:
-                    Console.WriteLine("Error received");
+                    Console.WriteLine("TcpServer.HandlePacket(): Error received");
                     break;
                 case Packet.Type.ReadyPost:
-                    Console.WriteLine("ReadyPost received");
+                    Console.WriteLine("TcpServer.HandlePacket(): ReadyPost received");
                     HandleReadyPostPacket();
                     break;
                 case Packet.Type.ReadyImage:
-                    Console.WriteLine("ReadyImage received");
-                    HandleReadyPicturePacket();
+                    Console.WriteLine("TcpServer.HandlePacket(): ReadyImage received");
+                    HandleReadyImagePacket();
                     break;
                 case Packet.Type.Auth:
-                    Console.WriteLine("Auth received");
+                    Console.WriteLine("TcpServer.HandlePacket(): Auth received");
                     break;
                 default:
-                    Console.WriteLine("Unknown packet type received");
+                    Console.WriteLine("TcpServer.HandlePacket(): Unknown packet type received");
                     break;
             }
+
+            Console.WriteLine("TcpServer.HandlePacket(): End");
         }
 
         /// <summary>
@@ -125,6 +128,7 @@ namespace TcpServer
         /// </summary>
         private void HandleReadyPostPacket()
         {
+            Console.WriteLine("TcpServer.HandleReadyPostPacket(): Start");
             // send ack packet with the total number of posts as the body
             int postCount = posts.Count;
             byte[] body = Encoding.ASCII.GetBytes(postCount.ToString());
@@ -135,7 +139,7 @@ namespace TcpServer
             // then we start blasting
             for (int i = 0; i < postCount; i++)
             {
-                Console.WriteLine($"Sending post {i + 1} of {postCount}");
+                Console.WriteLine($"TcpServer.HandleReadyPostPacket(): Sending post {i + 1} of {postCount}");
                 body = posts[i].ToByte();
                 packet = new Packet("SERVER", Packet.Type.Post, body);
                 serializedPacket = Packet.SerializePacket(packet);
@@ -145,44 +149,22 @@ namespace TcpServer
                 System.Threading.Thread.Sleep(100); // MUST BE HERE OR ELSE ASP BREAKS (wont recevie all packets)
             }
 
-            Console.WriteLine("All posts sent.");
+            Console.WriteLine("TcpServer.HandleReadyPostPacket(): End");
         }
 
-        /// <summary>
-        /// Handles the ready picture packet
-        /// send all pictures to the client
-        /// </summary>
-        private void HandleReadyPicturePacket()
+        public void HandleReadyImagePacket()
         {
-            // count the number of pictures in /imgs
-            string[] files = Directory.GetFiles("../../../images/");
-            int pictureCount = files.Length;
+            Console.WriteLine("TcpServer.HandleReadyImagePacket(): Start");
 
-            // send ack packet with the total number of pictures as the body
-            byte[] body = Encoding.ASCII.GetBytes(pictureCount.ToString());
-            Packet packet = new Packet("SERVER", Packet.Type.Ack, body);
-            byte[] serializedPacket = Packet.SerializePacket(packet);
-            stream.Write(serializedPacket, 0, serializedPacket.Length);
 
-            // then we start blasting
-            for (int i = 0; i < pictureCount; i++)
-            {
-                Console.WriteLine($"Sending picture {i + 1} of {pictureCount}");
-                body = File.ReadAllBytes(files[i]);
-                string pictureName = Path.GetFileName(files[i]);
-                Console.WriteLine($"Sending picture {pictureName}");
-                packet = new Packet(pictureName, Packet.Type.Image, body);
-                serializedPacket = Packet.SerializePacket(packet);
-                stream.Write(serializedPacket, 0, serializedPacket.Length);
 
-                // wait for 10 ms
-                System.Threading.Thread.Sleep(500); // MUST BE HERE OR ELSE ASP BREAKS (wont recevie all packets)
-            }
-            Console.WriteLine("All pictures sent.");
+            Console.WriteLine("TcpServer.HandleReadyImagePacket(): End");
         }
+
 
         /// <summary>
         /// Fetches all the posts from the database and stores them in 'posts' property
+        /// will replace with database connection later
         /// </summary>
         public void UpdatePosts()
         {

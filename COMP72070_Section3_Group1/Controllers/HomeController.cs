@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using COMP72070_Section3_Group1.Models;
 using Microsoft.AspNetCore.Mvc;
-using COMP72070_Section3_Group1.Comms;
 
 // tcp stuff
 using System.Net.Sockets;
@@ -9,6 +8,7 @@ using System.Text;
 using COMP72070_Section3_Group1.Visitors;
 using Microsoft.Build.ObjectModelRemoting;
 using NuGet.LibraryModel;
+using COMP72070_Section3_Group1.Comms;
 
 
 namespace COMP72070_Section3_Group1.Controllers
