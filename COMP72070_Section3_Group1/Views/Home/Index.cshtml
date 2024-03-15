@@ -106,7 +106,8 @@
     {
         <div class="post-container">
             <!-- Dynamically set the image source, alt text, and other attributes based on the post's properties -->
-            <img src= "/images/@post.imageName" alt="Image description">
+            <img src="/images/@post.imageName" alt="Image description" onerror="this.onerror=null; this.src='/images/placeholder.jpg';">
+            >
 
             <!-- Display the post content -->
             <p class="middle-paragraph">@post.content</p>

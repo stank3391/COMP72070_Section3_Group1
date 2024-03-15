@@ -208,7 +208,7 @@ namespace TcpServer
             // update the posts from the database
 
             // just return some dummy posts for now
-            posts.Add(new Post(1, "HEELOO!!! I am a post1", "user1", DateTime.Now, "testimg1.jpg"));
+            posts.Add(new Post(1, "HEELOO!!! This should display placeholder image", "user1", DateTime.Now, "testimg1.jpg"));
 
             posts.Add(new Post(2, "HEELOO!!! I am a post2", "user2", DateTime.Now, "testimg2.jpg"));
 
