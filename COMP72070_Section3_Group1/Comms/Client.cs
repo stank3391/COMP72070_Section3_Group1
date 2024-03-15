@@ -64,15 +64,17 @@ namespace COMP72070_Section3_Group1.Comms
         /// </summary>
         public void SendPacket(Packet packet)
         {
+            
             //Console.WriteLine("Client.SendPacket(): Start");
             // serialize the packet
             byte[] serializedPacket = Packet.SerializePacket(packet);
 
             // send the packet
-            this.stream.Write(serializedPacket, 0, serializedPacket.Length);
+            stream.Write(serializedPacket, 0, serializedPacket.Length);
 
             Console.WriteLine($"Client.SendPacket(): Packet sent: Type {packet.header.packetType}");
             //Console.WriteLine("Client.SendPacket(): End");
+            // close the stream
         }
 
         /// <summary>
@@ -81,10 +83,9 @@ namespace COMP72070_Section3_Group1.Comms
         public Packet ReceivePacket()
         {
             //Console.WriteLine("Client.ReceivePacket(): Start");
-
             // receive the packet from the client
             byte[] buffer = new byte[Packet.MAX_PACKET_SIZE];
-            this.stream.Read(buffer, 0, buffer.Length);
+            stream.Read(buffer, 0, buffer.Length);
 
             // deserialize the packet
             Packet packet = Packet.DeserializePacket(buffer);
@@ -108,10 +109,10 @@ namespace COMP72070_Section3_Group1.Comms
         /// <summary>
         /// send a post to the server
         /// </summary>
-        public void SendPost(int sourceId, Post post)
+        public void SendPost(string sourceId, Post post)
         {
             //Console.WriteLine("Client.SendPost(): Start");
-            Packet packet = new Packet(sourceId.ToString(), Packet.Type.Post, post.ToByte());
+            Packet packet = new Packet(sourceId, Packet.Type.Post, post.ToByte());
             SendPacket(packet);
 
             //Console.WriteLine($"Client.SendPost(): Post sent: {post.content}");
@@ -192,7 +193,6 @@ namespace COMP72070_Section3_Group1.Comms
             // receive all the images
             List<Packet> imagePackets = new List<Packet>();
 
-            Packet ackPacket = new Packet("CLIENT", Packet.Type.Ack);
             for (int i = 0; i < imageCount; i++)
             {
                 Console.WriteLine($"Client.FetchImages(): Receiving image {i + 1} of {imageCount}");
@@ -203,7 +203,7 @@ namespace COMP72070_Section3_Group1.Comms
                 imagePackets.Add(imagePacket); // add to list
 
                 // send ack packet
-                this.SendPacket(ackPacket);
+                this.SendAck();
 
                 while (imagePacket.header.packetNumber + 1 < imagePacket.header.totalPackets)
                 {
@@ -213,7 +213,7 @@ namespace COMP72070_Section3_Group1.Comms
                     imagePackets.Add(imagePacket); // add to list
 
                     // send ack packet
-                    this.SendPacket(ackPacket);
+                    this.SendAck();
                 }
 
                 byte[] imageData = Packet.ReconstructImage(imagePackets.ToArray());
@@ -227,6 +227,34 @@ namespace COMP72070_Section3_Group1.Comms
 
 
             Console.WriteLine("Client.FetchImages(): End");
+        }
+
+        public void SendImage(string imagePath)
+        {
+            // convert image in to bytes
+            byte[] imageData = File.ReadAllBytes(imagePath);
+
+            // create packets
+            Packet[] imagePackets = Packet.CreateImagePackets(Path.GetFileName(imagePath), imageData);
+
+            // send packets
+            foreach (Packet packet in imagePackets)
+            {
+                this.SendPacket(packet);
+                this.WaitForAck();
+            }
+            
+            Console.WriteLine($"Client.SendImage(): Image sent: {imagePath}");
+        }
+
+        public void WaitForAck()
+        {
+            Packet ackPacket = this.ReceivePacket();
+
+            if(ackPacket.header.packetType != Packet.Type.Ack)
+            {
+                Console.WriteLine($"Client.WaitForAck(): ERROR: Expecting ACK packet, but '{ackPacket.header.packetType}' received");
+            }
         }
     }
 }

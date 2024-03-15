@@ -1,61 +1,10 @@
-﻿@* @{
-    ViewData["Title"] = "AstroPost";
-    // string OpenPopup()
-    // {
-    //     return "<h1> This Is Modeless Popup Window</h1>";
-    // }
-}
-
-<!DOCTYPE html>
-
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <title>AstroPost</title>
-</head>
-<body>
-    <h1 style="color: white">AstroPost</h1>
-    <h1 style="color: white">Hello Web Pages</h1>
-    <p style="color: white">The time is @DateTime.Now</p>
-
-    @* <input type="button" id="btnpopu" value="Open Modeless popup" onclick="ShowPopup();" />
-    <script type="text/javascript">
-        ShowPopup = function () {
-
-        }
-    </script> 
-    <button onclick="myFunction()">Click Me</button>
-
-
-    <div id="myDIV">
-        This is my DIV element.
-    </div>
-    <script>
-        function myFunction() {
-            var x = document.getElementById("myDIV");
-            if (x.style.display === "none") {
-                x.style.display = "block";
-            } else {
-                x.style.display = "none";
-            }
-        }
-    </script>
-
-
-</body>
-</html> *@
-
-
-
-
-@{
+﻿@{
     ViewData["Title"] = "post";
 }
 
-
 <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function () {
-        const messageEle = document.getElementById('message');
+        const messageEle = document.getElementById('content');
         const counterEle = document.getElementById('counter');
         const maxLength = messageEle.getAttribute('maxlength');
 
@@ -78,25 +27,27 @@
         let good = true;
         if (good == true) {
             //check if empty
-            const messageEle = document.getElementById('message')
+            const messageEle = document.getElementById('content')
             const myFileEle = document.getElementById('myFile')
             const counterEle = document.getElementById('counter')
             //console.log(messageEle.value);
             console.log(myFileEle.value);
             if ((messageEle.value == 0) && (myFileEle.value == 0)) {
                 alert("Cannot send empty field. Please insert text or an image.");
-            } else {
+            } 
+            /*else {
                 messageEle.value = "";
                 myFileEle.value = "";
                 counterEle.innerHTML = '0/256';
                 //alert("Message Sent!");
-            }
+            }*/
 
 
 
 
 
         //     //yao send code here!
+        // no :)
 
         }
 
@@ -148,22 +99,18 @@
     </style>
 </head>
 <body>
-
-
     <div class="post-container">
         <h1>Post</h1>
         <hr></hr>
-        <textarea id="message" rows="12" cols="60" maxlength="256" name="content" placeholder="Write Here..."></textarea>
-        <br></br>
-        <form action="/action_page.php">
-            <input type="file" id="myFile" name="filename">
+        <form asp-controller="Home" asp-action="SubmitPost" method="post" enctype="multipart/form-data">
+            <textarea id="content" rows="12" cols="60" maxlength="256" name="content" placeholder="Write Here..."></textarea>
+            <br></br>
+            <input type="file" id="file" name="file">
+            <button class="post-button" onclick="submission()">Post</button>
+            <div id="counter">0</div>
         </form>
-        <button class="post-button" onclick="submission()">Post</button>
-        <div id="counter">0</div>
+        
     </div>
-
-
-
 </body>
 </html>
 

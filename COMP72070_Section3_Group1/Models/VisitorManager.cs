@@ -1,4 +1,4 @@
-﻿namespace COMP72070_Section3_Group1.Visitors
+﻿namespace COMP72070_Section3_Group1.Models
 {
     /// <summary>
     /// Manages the visitors 
@@ -9,7 +9,7 @@
 
         public VisitorManager()
         {
-            this.visitors = new Dictionary<string, Visitor>();
+            visitors = new Dictionary<string, Visitor>();
             Console.WriteLine("VisitorManager started");
         }
 
@@ -18,7 +18,7 @@
         /// <summary/>
         public void AddVisitor(Visitor visitor)
         {
-            this.visitors.Add(visitor.id, visitor);
+            visitors.Add(visitor.id, visitor);
             Console.WriteLine($"Visitor added: {visitor.id}");
         }
 
@@ -27,7 +27,7 @@
         /// <summary/>
         public void RemoveVisitor(Visitor visitor)
         {
-            this.visitors.Remove(visitor.id);
+            visitors.Remove(visitor.id);
             Console.WriteLine($"Visitor removed: {visitor.id}");
         }
 
@@ -36,7 +36,7 @@
         /// <summary/>
         public void RemoveVisitor(string id)
         {
-            this.visitors.Remove(id);
+            visitors.Remove(id);
             Console.WriteLine($"Visitor removed: {id}");
         }
 
@@ -45,7 +45,7 @@
         /// </summary>
         public Visitor GetVisitor(string id)
         {
-            return this.visitors[id];
+            return visitors[id];
         }
 
 

@@ -47,6 +47,15 @@ namespace COMP72070_Section3_Group1.Models
             imageName = fields[4];
         }
 
+        public Post (Visitor visitor, string content, string imageName = "")
+        {
+            this.id = Guid.NewGuid().GetHashCode();
+            this.content = content;
+            this.author = visitor.username;
+            this.date = DateTime.Now;
+            this.imageName = imageName;
+        }
+
         /// <summary>
         /// Serializes a post into a byte array
         /// </summary>

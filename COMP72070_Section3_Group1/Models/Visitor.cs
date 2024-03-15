@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 
-namespace COMP72070_Section3_Group1.Visitors
+namespace COMP72070_Section3_Group1.Models
 {
     /// <summary>
     /// Visitor class to store the visitor's id and authentication status
@@ -9,14 +9,15 @@ namespace COMP72070_Section3_Group1.Visitors
     {
         public string id { get; set; }
 
-        public bool isAuthenicated { get; set; }
+        public bool isAuthenicated { get; set; } = true; // placeholder until authentication is implemented
 
-        public int? userId { get; set; } // the account the visitor is logged into (SAME ONE IN DATABASE)
+        public int? userId { get; set; } = 69420; // the account the visitor is logged into (SAME ONE IN DATABASE)
+
+        public string? username { get; set; } = "default_username"; // placeholder until authentication is implemented
 
         public Visitor(string id)
         {
             this.id = id;
-            this.isAuthenicated = false;
             Console.WriteLine($"Visitor created: {id}");
         }
 
@@ -27,12 +28,12 @@ namespace COMP72070_Section3_Group1.Visitors
         {
             if (true)
             {
-                this.isAuthenicated = true;
+                isAuthenicated = true;
 
                 // get the account id from the database
                 // random int for now
                 Random random = new Random();
-                this.userId = random.Next(1, 100);
+                userId = random.Next(1, 100);
 
                 return true; // always return true for now
             }

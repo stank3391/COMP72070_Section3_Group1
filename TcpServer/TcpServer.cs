@@ -7,7 +7,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using COMP72070_Section3_Group1.Models;
-using COMP72070_Section3_Group1.Visitors;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.AspNetCore.Routing.Constraints;
 
@@ -110,6 +109,14 @@ namespace TcpServer
                     Console.WriteLine("TcpServer.HandlePacket(): ReadyImage received");
                     HandleReadyImagePacket();
                     break;
+                case Packet.Type.Post:
+                    Console.WriteLine("TcpServer.HandlePacket(): Post received");
+                    HandlePostPacket(packet);
+                    break;
+                case Packet.Type.Image:
+                    Console.WriteLine("TcpServer.HandlePacket(): Image received");
+                    HandleImagePacket(packet);
+                    break;
                 case Packet.Type.Auth:
                     Console.WriteLine("TcpServer.HandlePacket(): Auth received");
                     break;
@@ -169,7 +176,7 @@ namespace TcpServer
                 byte[] imageData = File.ReadAllBytes(files[i]);
                 string fileName = Path.GetFileName(files[i]);
                 Console.WriteLine($"TcpServer.HandleReadyImagePacket(): Sending image {fileName}");
-                Packet[] packets = Packet.CreateImagePacket(fileName, imageData);
+                Packet[] packets = Packet.CreateImagePackets(fileName, imageData);
                 foreach (Packet p in packets)
                 {
                     serializedPacket = Packet.SerializePacket(p);
@@ -182,6 +189,52 @@ namespace TcpServer
             Console.WriteLine("TcpServer.HandleReadyImagePacket(): End");
         }
 
+
+        private void HandlePostPacket(Packet packet)
+        {
+            Console.WriteLine("TcpServer.HandlePostPacket(): Start");
+
+            // deserialize the packet body into a post
+            Post post = new Post(packet.body);
+
+            // add to top of list
+            posts.Insert(0, post);
+            
+            // save the posts to the database
+            this.PlaceholderSavePosts();
+
+            Console.WriteLine("TcpServer.HandlePostPacket(): End");
+        }
+
+        private void HandleImagePacket(Packet packet)
+        {
+            Console.WriteLine("TcpServer.HandleImagePacket(): Start");
+
+            List<Packet> imagePackets = new List<Packet>();
+            imagePackets.Add(packet);
+
+            // send ack packet
+            this.SendAck();
+
+            while(packet.header.packetNumber + 1 < packet.header.totalPackets) 
+            {
+                // receive next packet
+                byte[] bufferIn = new byte[Packet.MAX_PACKET_SIZE];
+                this.stream.Read(bufferIn, 0, bufferIn.Length);
+
+                packet = Packet.DeserializePacket(bufferIn);
+                imagePackets.Add(packet);
+
+                // send ack packet
+                this.SendAck();
+            }
+
+            byte[] imageData = Packet.ReconstructImage(imagePackets.ToArray());
+            string imagePath = Path.Combine("../../../images/", packet.header.sourceId);
+            File.WriteAllBytes(imagePath, imageData);
+            
+            Console.WriteLine("TcpServer.HandleImagePacket(): End");
+        }
 
         /// <summary>
         /// Waits for an ack packet from the client
@@ -196,6 +249,46 @@ namespace TcpServer
             {
                 Console.WriteLine("TcpServer.WaitForAck(): Error receiving ack packet");
             }
+        }
+
+        private void SendAck()
+        {
+            Packet ackPacket = new Packet("SERVER", Packet.Type.Ack);
+            byte[] serializedPacket = Packet.SerializePacket(ackPacket);
+            stream.Write(serializedPacket, 0, serializedPacket.Length);
+        }
+
+
+        /// <summary>
+        /// Fetches all the posts from the database and stores them in 'posts' property
+        /// will replace with database connection later
+        /// NOT USED ANYMORE
+        /// </summary>
+        public void UpdatePosts()
+        {
+            // update the posts from the database
+
+            // just return some dummy posts for now
+            posts.Add(new Post(1, "HEELOO!!! This should display placeholder image", "user1", DateTime.Now, "testimg1.jpg"));
+
+            posts.Add(new Post(2, "HEELOO!!! I am a post2", "user2", DateTime.Now, "testimg2.jpg"));
+
+            posts.Add(new Post(3, "HEELOO!!! I am a post3", "user3", DateTime.Now, "testimg3.jpg"));
+
+            posts.Add(new Post(4, "HEELOO!!! I am a post4", "user4", DateTime.Now, "testimg4.jpg"));
+
+            posts.Add(new Post(5, "HEELOO!!! I am a post5", "user5", DateTime.Now, "testimg5.jpg"));
+
+            posts.Add(new Post(6, "HEELOO!!! I am a post6", "user6", DateTime.Now, "testimg6.jpg"));
+
+            posts.Add(new Post(7, "HEELOO!!! I am a post7", "user7", DateTime.Now, "testimg7.jpg"));
+
+            posts.Add(new Post(8, "HEELOO!!! I am a post8", "user8", DateTime.Now, "testimg8.jpg"));
+
+            posts.Add(new Post(9, "HEELOO!!! I am a post9", "user9", DateTime.Now, "testimg9.jpg"));
+
+            Console.WriteLine("Posts list updated from 'Database'.");
+
         }
 
         /// <summary>

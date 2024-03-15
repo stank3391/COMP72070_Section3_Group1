@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using COMP72070_Section3_Group1.Visitors;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using System.Text;
 using COMP72070_Section3_Group1.Comms;
+using COMP72070_Section3_Group1.Models;
 
 namespace COMP72070_Section3_Group1.Controllers
 {

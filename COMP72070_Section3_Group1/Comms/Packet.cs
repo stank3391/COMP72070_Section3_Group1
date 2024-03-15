@@ -143,10 +143,11 @@ public class Packet
 
     /// <summary>
     /// split image data into multiple packets
+    /// SOURCEID IS NOW image file name
     /// </summary>
-    public static Packet[] CreateImagePacket(string sourceId, byte[] imageData, int maxImageSize = 1024)
+    public static Packet[] CreateImagePackets(string sourceId, byte[] imageData, int maxImageSize = 4096)
     {
-        Console.WriteLine("Packet.CreateImagePacket(): Start");
+        Console.WriteLine("Packet.CreateImagePackets(): Start");
         // calc num ofpackets needed
         int totalPackets = (int)Math.Ceiling((double)imageData.Length / maxImageSize);
 
@@ -154,14 +155,14 @@ public class Packet
         Packet[] packets = new Packet[totalPackets];
         for (int i = 0; i < totalPackets; i++)
         {
-            Console.WriteLine($"Packet.CreateImagePacket(): Creating packet {i + 1} of {totalPackets}");
+            Console.WriteLine($"Packet.CreateImagePackets(): Creating packet {i + 1} of {totalPackets}");
             int offset = i * maxImageSize;
             int size = Math.Min(maxImageSize, imageData.Length - offset);
             byte[] body = new byte[size];
             Array.Copy(imageData, offset, body, 0, size); // DEEP COPY!!!!
             packets[i] = new Packet(sourceId, Type.Image, body, i, totalPackets);
         }
-        Console.WriteLine("Packet.CreateImagePacket(): End");
+        Console.WriteLine("Packet.CreateImagePackets(): End");
         return packets;
     }
 
