@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using COMP72070_Section3_Group1.Models;
+using NuGet.Packaging;
 
 namespace COMP72070_Section3_Group1.Comms
 {
@@ -70,7 +71,7 @@ namespace COMP72070_Section3_Group1.Comms
             // send the packet
             this.stream.Write(serializedPacket, 0, serializedPacket.Length);
 
-            Console.WriteLine($"Client.SendPacket(): Packet sent:\n{packet.ToString()}");
+            Console.WriteLine($"Client.SendPacket(): Packet sent: Type {packet.header.packetType}");
             //Console.WriteLine("Client.SendPacket(): End");
         }
 
@@ -88,7 +89,7 @@ namespace COMP72070_Section3_Group1.Comms
             // deserialize the packet
             Packet packet = Packet.DeserializePacket(buffer);
 
-            Console.WriteLine($"Client.SendPacket(): Packet received:\n{packet.ToString()}");
+            Console.WriteLine($"Client.SendPacket(): Packet received: Type {packet.header.packetType}");
             //Console.WriteLine("Client.ReceivePacket(): End");
 
             return packet;
