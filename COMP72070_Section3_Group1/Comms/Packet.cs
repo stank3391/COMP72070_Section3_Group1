@@ -9,7 +9,7 @@ public class Packet
 
     // definitions: 
     public enum Type // signifies the type of message
-    { 
+    {
         Post,   // post packet
         DM,     // direct message packet
         Auth,   // authentication packet
@@ -42,7 +42,7 @@ public class Packet
     {
         get
         {
-            if(_body != null)
+            if (_body != null)
                 return _body;
             else
                 return new byte[0];
@@ -61,12 +61,12 @@ public class Packet
     /// <summary>
     /// default constructor
     /// </summary>
-    public Packet(){}
+    public Packet() { }
 
     /// <summary>
     /// constructs a packet with byte[] as body
     /// </summary>
-    public Packet(string sourceId, Type messageType, byte[]? body = null,  int PacketNumber = 0, int TotalPackets = 1)
+    public Packet(string sourceId, Type messageType, byte[]? body = null, int PacketNumber = 0, int TotalPackets = 1)
     {
         this.header.sourceId = sourceId;
         this.header.packetType = messageType;

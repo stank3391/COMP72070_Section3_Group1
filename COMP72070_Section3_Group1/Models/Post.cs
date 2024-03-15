@@ -8,12 +8,12 @@ namespace COMP72070_Section3_Group1.Models
     public class Post
     {
         public int id { set; get; } // id of the post (in the database)
-        public string content { set; get; } 
+        public string content { set; get; }
         public string author { set; get; }
         public DateTime date { set; get; }
         public string imageName { set; get; } // name of the image file in ./wwwroot/images
 
-        public Post(){}
+        public Post() { }
 
         /// <summary>
         /// Constructor for the Post class
@@ -61,6 +61,6 @@ namespace COMP72070_Section3_Group1.Models
             return bodyBytes;
         }
 
-        
+
     }
 }

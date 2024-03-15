@@ -88,7 +88,7 @@ namespace COMP72070_Section3_Group1.Comms
             // deserialize the packet
             Packet packet = Packet.DeserializePacket(buffer);
 
-            //Console.WriteLine($"Client.SendPacket(): Packet received:\n{packet.ToString()}");
+            Console.WriteLine($"Client.SendPacket(): Packet received:\n{packet.ToString()}");
             //Console.WriteLine("Client.ReceivePacket(): End");
 
             return packet;
@@ -190,12 +190,12 @@ namespace COMP72070_Section3_Group1.Comms
 
             // receive all the images
             List<Packet> imagePackets = new List<Packet>();
-  
+
             Packet ackPacket = new Packet("CLIENT", Packet.Type.Ack);
             for (int i = 0; i < imageCount; i++)
             {
                 Console.WriteLine($"Client.FetchImages(): Receiving image {i + 1} of {imageCount}");
-                
+
                 // receive first packet
                 Packet imagePacket = this.ReceivePacket();
 
@@ -204,7 +204,7 @@ namespace COMP72070_Section3_Group1.Comms
                 // send ack packet
                 this.SendPacket(ackPacket);
 
-                while(imagePacket.header.packetNumber + 1 < imagePacket.header.totalPackets)
+                while (imagePacket.header.packetNumber + 1 < imagePacket.header.totalPackets)
                 {
                     // receive next packet
                     imagePacket = this.ReceivePacket();
@@ -222,7 +222,7 @@ namespace COMP72070_Section3_Group1.Comms
 
                 // clear list
                 imagePackets.Clear();
-            }   
+            }
 
 
             Console.WriteLine("Client.FetchImages(): End");

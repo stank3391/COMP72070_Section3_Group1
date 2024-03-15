@@ -60,12 +60,12 @@ namespace COMP72070_Section3_Group1.Controllers
             return View(_account);
         }
 
-		public IActionResult loginwgoogle()
-		{
-			return View(_account);
-		}
+        public IActionResult loginwgoogle()
+        {
+            return View(_account);
+        }
 
-		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

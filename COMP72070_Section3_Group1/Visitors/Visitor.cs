@@ -37,7 +37,7 @@ namespace COMP72070_Section3_Group1.Visitors
                 return true; // always return true for now
             }
 
-            
-        }   
+
+        }
     }
 }

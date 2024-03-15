@@ -39,7 +39,7 @@
             this.visitors.Remove(id);
             Console.WriteLine($"Visitor removed: {id}");
         }
-        
+
         /// <summary>
         /// get a visitor by id
         /// </summary>
@@ -49,6 +49,6 @@
         }
 
 
-        
+
     }
 }

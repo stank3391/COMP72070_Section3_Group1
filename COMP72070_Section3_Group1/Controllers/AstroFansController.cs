@@ -34,7 +34,7 @@ namespace COMP72070_Section3_Group1.Controllers
             Packet packet = new Packet(visitor.id, Packet.Type.Test, Encoding.UTF8.GetBytes(inputText));
 
             _client.SendPacket(packet);
-            
+
             return RedirectToAction("AstroFans", "Home");
         }
     }

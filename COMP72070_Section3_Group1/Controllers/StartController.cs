@@ -27,7 +27,7 @@ namespace COMP72070_Section3_Group1.Controllers
             this._visitorManager = visitorManager;
             this._client = client;
             _postList = postList;
-            
+
         }
 
         /// <summary>
@@ -40,10 +40,10 @@ namespace COMP72070_Section3_Group1.Controllers
             // get the session id from the session dic
             string visitorId = HttpContext.Session.GetString("VisitorId");
 
-            if(visitorId == null) // new visitor, add to the session dic and visitor manager 
+            if (visitorId == null) // new visitor, add to the session dic and visitor manager 
             {
                 // generate new UNIQUE visitor id  
-                visitorId = Guid.NewGuid().ToString(); 
+                visitorId = Guid.NewGuid().ToString();
 
                 // add the visitor id to the session dic
                 HttpContext.Session.SetString("VisitorId", visitorId);
@@ -57,7 +57,7 @@ namespace COMP72070_Section3_Group1.Controllers
             else // returning visitor, check if the visitor is already in the visitor manager
             {
                 //check if the visitor is already in the visitor manager
-                if(!_visitorManager.visitors.ContainsKey(visitorId))
+                if (!_visitorManager.visitors.ContainsKey(visitorId))
                 {
                     // create a new visitor object
                     Visitor visitor = new Visitor(visitorId);
@@ -66,7 +66,7 @@ namespace COMP72070_Section3_Group1.Controllers
                     _visitorManager.AddVisitor(visitor);
                 }
             }
-            
+
             return RedirectToAction("Index", "Home"); // redirect to the home page
         }
 
@@ -78,7 +78,7 @@ namespace COMP72070_Section3_Group1.Controllers
             string visitorId = HttpContext.Session.GetString("VisitorId");
             Visitor visitor = _visitorManager.GetVisitor(visitorId);
 
-            Packet packet = new Packet(visitor.id,Packet.Type.Auth, Encoding.ASCII.GetBytes(combinedInfo));
+            Packet packet = new Packet(visitor.id, Packet.Type.Auth, Encoding.ASCII.GetBytes(combinedInfo));
 
             _client.SendPacket(packet);
 
