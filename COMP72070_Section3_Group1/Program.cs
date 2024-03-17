@@ -17,22 +17,25 @@ builder.Services.AddSingleton<Account>(accountInstance);
 VisitorManager VISITORMANAGER = new VisitorManager();
 builder.Services.AddSingleton<VisitorManager>(VISITORMANAGER);
 
+// store posts to be displayed
+List<Post> POSTLIST = new List<Post>();// fetch the posts from the server
+builder.Services.AddSingleton<List<Post>>(POSTLIST);
+
 // add client for communicating with the server
 Client CLIENT = new Client();
-CLIENT.Connect();
-CLIENT.FetchImages();
+CLIENT.Connect(); // connect to the server
+CLIENT.FetchImages(); // fetch the ALL images from the server
+CLIENT.FetchPosts(POSTLIST); // fetch the ALL posts from the server
 builder.Services.AddSingleton<Client>(CLIENT);
 
 // for identifying sessions and visitors
 builder.Services.AddSession(); // options => { //some stuff }
 
 // enable only on yao computer v
-// builder.WebHost.UseUrls("http://192.168.1.10:5128", "https://192.168.1.10:7048"); // used for vm connection 
+//builder.WebHost.UseUrls("http://192.168.1.10:5128", "https://192.168.1.10:7048"); // used for vm connection 
 // enable only on yao computer ^
 
-// store posts to be displayed
-List<Post> POSTLIST = new List<Post>();// fetch the posts from the server
-builder.Services.AddSingleton<List<Post>>(POSTLIST);
+
 
 
 var app = builder.Build();

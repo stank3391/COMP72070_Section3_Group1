@@ -33,7 +33,6 @@ namespace COMP72070_Section3_Group1.Controllers
         }
         public IActionResult Index()
         {
-            _client.FetchPosts(_postList);
             return View(_postList);
         }
 
@@ -91,6 +90,14 @@ namespace COMP72070_Section3_Group1.Controllers
             if (file != null && file.Length > 0)
             {
                 Console.WriteLine($"HomeController.SubmitPost(): File received {file.FileName}");
+
+                // check if file extension is valid
+                if (Path.GetExtension(file.FileName) != ".jpg" && Path.GetExtension(file.FileName) != ".png")
+                {
+                    Console.WriteLine($"HomeController.SubmitPost(): Invalid file extension {file.FileName}");
+                    // invalid file extension show error message?
+                    return RedirectToAction("Index", "Home");
+                }
 
                 // generate unique file name
                 fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
