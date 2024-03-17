@@ -6,81 +6,255 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using COMP72070_Section3_Group1.Models;
+using NuGet.Packaging;
 
-// Represents a client that connects to the server
-public class Client
+namespace COMP72070_Section3_Group1.Comms
 {
-    public TcpClient tcpClient { get; private set; } // The TcpClient object 
-
-    private string serverIp = "127.0.0.1";
-    private int serverPort = 27000;
-
-    public Client()
+    // Represents a client that connects to the server
+    public class Client
     {
-        this.tcpClient = new TcpClient();
-    }
+        public TcpClient tcpClient { get; private set; } // The TcpClient object 
+        public NetworkStream stream { get; private set; } // The NetworkStream object
 
-    public Client(TcpClient tcpClient)
-    {
-        this.tcpClient = tcpClient;
-    }
+        private string serverIp = "127.0.0.1";
+        private int serverPort = 27000;
 
-    public void connect()
-    {
-        this.tcpClient.Connect(serverIp, serverPort);
-
-        if (this.tcpClient.Connected)
+        public Client()
         {
-            Console.WriteLine("Connected to server");
+            this.tcpClient = new TcpClient();
         }
-        else
+
+        public Client(TcpClient tcpClient)
         {
-            Console.WriteLine("Failed to connect to server");
+            this.tcpClient = tcpClient;
         }
-    }
 
-    /// <summary>
-    /// Returns a string of the client information
-    /// </summary>
-    public override string ToString()
-    {
-        // return the client's IP address, port, authenication status
+        public void Connect()
+        {
+            Console.WriteLine("Client.Connect(): Start");
+            this.tcpClient.Connect(serverIp, serverPort);
+            this.stream = this.tcpClient.GetStream();
 
-        string str = $"IP Address: {this.tcpClient.Client.RemoteEndPoint.ToString()} \n";
+            if (this.tcpClient.Connected)
+            {
+                Console.WriteLine("Client.Connect(): Connected to server");
+            }
+            else
+            {
+                Console.WriteLine("Client.Connect(): ERROR: Failed to Connect to server");
+            }
+            Console.WriteLine("Client.Connect(): End");
+        }
 
-        return str;
-    }
+        /// <summary>
+        /// Returns a string of the client information
+        /// </summary>
+        public override string ToString()
+        {
+            // return the client's IP address, port, authenication status
 
-    /// <summary>
-    /// Sends a packet
-    /// </summary>
-    public void SendPacket(Packet packet)
-    {
-        // serialize the packet
-        byte[] serializedPacket = Packet.SerializePacket(packet);
+            string str = $"IP Address: {this.tcpClient.Client.RemoteEndPoint.ToString()} \n";
 
-        // send the packet
-        NetworkStream stream = this.tcpClient.GetStream();
-        stream.Write(serializedPacket, 0, serializedPacket.Length);
+            return str;
+        }
 
-        Console.WriteLine($"Packet sent:\n{packet.ToString()}\n");
-    }
+        /// <summary>
+        /// Sends a packet
+        /// </summary>
+        public void SendPacket(Packet packet)
+        {
+            
+            //Console.WriteLine("Client.SendPacket(): Start");
+            // serialize the packet
+            byte[] serializedPacket = Packet.SerializePacket(packet);
 
-    /// <summary>
-    /// Receives a packet
-    /// </summary>
-    public Packet ReceivePacket()
-    {
-        // receive the packet from the client
-        NetworkStream stream = this.tcpClient.GetStream();
-        byte[] buffer = new byte[1024];
-        stream.Read(buffer, 0, buffer.Length);
+            // send the packet
+            stream.Write(serializedPacket, 0, serializedPacket.Length);
 
-        // deserialize the packet
-        Packet packet = Packet.DeserializePacket(buffer);
+            Console.WriteLine($"Client.SendPacket(): Packet sent: Type {packet.header.packetType}");
+            //Console.WriteLine("Client.SendPacket(): End");
+            // close the stream
+        }
 
-        Console.WriteLine($"Packet received:\n{packet.ToString()}\n");
+        /// <summary>
+        /// Receives a packet
+        /// </summary>
+        public Packet ReceivePacket()
+        {
+            //Console.WriteLine("Client.ReceivePacket(): Start");
+            // receive the packet from the client
+            byte[] buffer = new byte[Packet.MAX_PACKET_SIZE];
+            stream.Read(buffer, 0, buffer.Length);
 
-        return packet;
+            // deserialize the packet
+            Packet packet = Packet.DeserializePacket(buffer);
+
+            Console.WriteLine($"Client.SendPacket(): Packet received: Type {packet.header.packetType}");
+            //Console.WriteLine("Client.ReceivePacket(): End");
+
+            return packet;
+        }
+
+        /// <summary>
+        /// sends a simple ack packet to the server
+        /// used to acknowledge the receipt of a packet so no need to wait between sending and receiving
+        /// </summary>
+        public void SendAck()
+        {
+            Packet ackPacket = new Packet("CLIENT", Packet.Type.Ack);
+            SendPacket(ackPacket);
+        }
+
+        /// <summary>
+        /// send a post to the server
+        /// </summary>
+        public void SendPost(string sourceId, Post post)
+        {
+            //Console.WriteLine("Client.SendPost(): Start");
+            Packet packet = new Packet(sourceId, Packet.Type.Post, post.ToByte());
+            SendPacket(packet);
+
+            //Console.WriteLine($"Client.SendPost(): Post sent: {post.content}");
+            //Console.WriteLine("Client.SendPost(): End");
+        }
+
+        /// <summary>
+        /// receive a post from the server and return it
+        /// </summary>
+        public Post ReceivePost()
+        {
+            //Console.WriteLine("Client.ReceivePost(): Start");
+            Packet postPacket = ReceivePacket();
+
+            if (postPacket.header.packetType != Packet.Type.Post)
+            {
+                Console.WriteLine($"Client.ReceivePost(): ERROR: Expecting POST packet, but '{postPacket.header.packetType}' received");
+                return null;
+            }
+
+            Post post = new Post(postPacket.body);
+
+            Console.WriteLine($"Post received: {post.content}");
+
+            //Console.WriteLine("Client.ReceivePost(): End");
+            return post;
+        }
+
+        /// <summary>
+        /// Send a ready packet to the server and get all posts to store in list
+        /// param: posts - the singleton list of posts to store the posts received from the server
+        /// </summary>
+        public void FetchPosts(List<Post> posts)
+        {
+            Console.WriteLine("Client.FetchPosts(): Start");
+            // send a ready packet to the server
+            Packet readyPacket = new Packet("CLIENT", Packet.Type.ReadyPost);
+            this.SendPacket(readyPacket);
+
+            // receive the ack packet
+            Packet ackPacket = this.ReceivePacket();
+
+            // get the number of posts from the ack packet
+            string body = Encoding.ASCII.GetString(ackPacket.body);
+            int postCount = int.Parse(body);
+
+            // receive all the posts
+            for (int i = 0; i < postCount; i++)
+            {
+                Console.WriteLine($"Client.FetchPosts(): Receiving post {i + 1} of {postCount}");
+
+                Post post = this.ReceivePost();
+
+                posts.Add(post);
+
+                // send ack packet
+                this.SendAck();
+            }
+
+            Console.WriteLine("Client.FetchPosts(): End");
+        }
+
+        public void FetchImages()
+        {
+            Console.WriteLine("Client.FetchImages(): Start");
+
+            // send a ready packet to the server
+            Packet readyPacket = new Packet("CLIENT", Packet.Type.ReadyImage);
+            this.SendPacket(readyPacket);
+
+            // receive the ack packet
+            Packet packetIn = this.ReceivePacket();
+
+            // get the number of images from the ack packet
+            string body = Encoding.ASCII.GetString(packetIn.body);
+            int imageCount = int.Parse(body);
+
+            // receive all the images
+            List<Packet> imagePackets = new List<Packet>();
+
+            for (int i = 0; i < imageCount; i++)
+            {
+                Console.WriteLine($"Client.FetchImages(): Receiving image {i + 1} of {imageCount}");
+
+                // receive first packet
+                Packet imagePacket = this.ReceivePacket();
+
+                imagePackets.Add(imagePacket); // add to list
+
+                // send ack packet
+                this.SendAck();
+
+                while (imagePacket.header.packetNumber + 1 < imagePacket.header.totalPackets)
+                {
+                    // receive next packet
+                    imagePacket = this.ReceivePacket();
+
+                    imagePackets.Add(imagePacket); // add to list
+
+                    // send ack packet
+                    this.SendAck();
+                }
+
+                byte[] imageData = Packet.ReconstructImage(imagePackets.ToArray());
+
+                string imagePath = Path.Combine("./wwwroot/images/", imagePacket.header.sourceId);
+                File.WriteAllBytes(imagePath, imageData);
+
+                // clear list
+                imagePackets.Clear();
+            }
+
+
+            Console.WriteLine("Client.FetchImages(): End");
+        }
+
+        public void SendImage(string imagePath)
+        {
+            // convert image in to bytes
+            byte[] imageData = File.ReadAllBytes(imagePath);
+
+            // create packets
+            Packet[] imagePackets = Packet.CreateImagePackets(Path.GetFileName(imagePath), imageData);
+
+            // send packets
+            foreach (Packet packet in imagePackets)
+            {
+                this.SendPacket(packet);
+                this.WaitForAck();
+            }
+            
+            Console.WriteLine($"Client.SendImage(): Image sent: {imagePath}");
+        }
+
+        public void WaitForAck()
+        {
+            Packet ackPacket = this.ReceivePacket();
+
+            if(ackPacket.header.packetType != Packet.Type.Ack)
+            {
+                Console.WriteLine($"Client.WaitForAck(): ERROR: Expecting ACK packet, but '{ackPacket.header.packetType}' received");
+            }
+        }
     }
 }

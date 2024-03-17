@@ -1,5 +1,5 @@
-﻿using COMP72070_Section3_Group1.Models;
-using COMP72070_Section3_Group1.Visitors;
+﻿using COMP72070_Section3_Group1.Comms;
+using COMP72070_Section3_Group1.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -19,10 +19,14 @@ namespace COMP72070_Section3_Group1.Controllers
 
         private readonly Client _client; // client object SINGLETON
 
-        public StartController(VisitorManager visitorManager, Client client)
+        private readonly List<Post> _postList; // list of posts to be displayed
+
+        public StartController(VisitorManager visitorManager, Client client, List<Post> postList)
         {
             this._visitorManager = visitorManager;
             this._client = client;
+            _postList = postList;
+
         }
 
         /// <summary>
@@ -31,13 +35,14 @@ namespace COMP72070_Section3_Group1.Controllers
         /// </summary>
         public IActionResult Index()
         {
+
             // get the session id from the session dic
             string visitorId = HttpContext.Session.GetString("VisitorId");
 
-            if(visitorId == null)
+            if (visitorId == null) // new visitor, add to the session dic and visitor manager 
             {
                 // generate new UNIQUE visitor id  
-                visitorId = Guid.NewGuid().ToString(); 
+                visitorId = Guid.NewGuid().ToString();
 
                 // add the visitor id to the session dic
                 HttpContext.Session.SetString("VisitorId", visitorId);
@@ -48,10 +53,10 @@ namespace COMP72070_Section3_Group1.Controllers
                 // add the visitor to the visitor manager
                 _visitorManager.AddVisitor(visitor);
             }
-            else
+            else // returning visitor, check if the visitor is already in the visitor manager
             {
                 //check if the visitor is already in the visitor manager
-                if(!_visitorManager.visitors.ContainsKey(visitorId))
+                if (!_visitorManager.visitors.ContainsKey(visitorId))
                 {
                     // create a new visitor object
                     Visitor visitor = new Visitor(visitorId);
@@ -72,7 +77,7 @@ namespace COMP72070_Section3_Group1.Controllers
             string visitorId = HttpContext.Session.GetString("VisitorId");
             Visitor visitor = _visitorManager.GetVisitor(visitorId);
 
-            Packet packet = new Packet(visitor.id,Packet.Type.Post, false, Encoding.ASCII.GetBytes(combinedInfo));
+            Packet packet = new Packet(visitor.id, Packet.Type.Auth, Encoding.ASCII.GetBytes(combinedInfo));
 
             _client.SendPacket(packet);
 

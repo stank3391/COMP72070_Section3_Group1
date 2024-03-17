@@ -3,65 +3,76 @@ using System.IO;
 
 public class Packet
 {
+
+    // constants
+    public const int MAX_PACKET_SIZE = 512 * 512; // 1MB
+
     // definitions: 
-    public enum Type { Post, DM, Auth, Acc, Ack, Test };
+    public enum Type // signifies the type of message
+    {
+        Post,   // post packet
+        DM,     // direct message packet
+        Auth,   // authentication packet
+        Acc,    // ???
+        Ack,    // acknowledgement packet
+        Test,   // test packet
+        Error,  // error packet
+        ReadyPost,   // ready packet - ready to receive posts
+        ReadyImage, // ready packet - ready to receive images
+        ReadyDM, // ready packet - ready to receive direct messages
+        Image, // image packet
+    };
 
     public struct Header
     {
         public int bodyLen { get; set; }
         public string sourceId { get; set; } // id of the visitor
-        public Type messageType { get; set; }
-        public bool pictureFlag { get; set; }
-    } 
+        public Type packetType { get; set; }
+        public int packetNumber { get; set; }
+        public int totalPackets { get; set; }
+    }
+
 
     // properties
     public Header header;
 
-    private byte[] _body = null;
+    private byte[] _body;
 
     public byte[] body
     {
         get
         {
-            return _body;
+            if (_body != null)
+                return _body;
+            else
+                return new byte[0];
         }
 
         set
         {
             _body = value;
-            header.bodyLen = _body.Length;
+            if (_body != null)
+                header.bodyLen = _body.Length;
+            else
+                header.bodyLen = 0;
         }
     }
 
     /// <summary>
     /// default constructor
     /// </summary>
-    public Packet()
-    {
-        // nothing
-    }
+    public Packet() { }
 
     /// <summary>
     /// constructs a packet with byte[] as body
     /// </summary>
-    public Packet(string sourceId, Type messageType, bool pictureFlag, byte[] body)
+    public Packet(string sourceId, Type messageType, byte[]? body = null, int PacketNumber = 0, int TotalPackets = 1)
     {
         this.header.sourceId = sourceId;
-        this.header.messageType = messageType;
-        this.header.pictureFlag = pictureFlag;
+        this.header.packetType = messageType;
+        this.header.packetNumber = PacketNumber;
+        this.header.totalPackets = TotalPackets;
         this.body = body;
-    }
-
-    /// <summary>
-    /// constructs a packet with string as body
-    /// </summary>
-    public Packet(string sourceId, Type messageType, bool pictureFlag, string body)
-    {
-        this.header.sourceId = sourceId;
-        this.header.messageType = messageType;
-        this.header.pictureFlag = pictureFlag;
-        this.body = Encoding.ASCII.GetBytes(body);
-
     }
 
     /// <summary>
@@ -73,13 +84,14 @@ public class Packet
         {
             using (BinaryWriter writer = new BinaryWriter(memoryStream))
             {
-                // Serialize the packet header
+                // ToByte the packet header
                 writer.Write(packet.header.bodyLen);
                 writer.Write(packet.header.sourceId);
-                writer.Write((int)packet.header.messageType);
-                writer.Write(packet.header.pictureFlag);
+                writer.Write((int)packet.header.packetType);
+                writer.Write(packet.header.packetNumber);
+                writer.Write(packet.header.totalPackets);
 
-                // Serialize the packet body
+                // ToByte the packet body
                 writer.Write(packet.body);
 
                 return memoryStream.ToArray();
@@ -101,8 +113,9 @@ public class Packet
                 // Deserialize the packet header
                 packet.header.bodyLen = reader.ReadInt32();
                 packet.header.sourceId = reader.ReadString();
-                packet.header.messageType = (Type)reader.ReadInt32();
-                packet.header.pictureFlag = reader.ReadBoolean();
+                packet.header.packetType = (Type)reader.ReadInt32();
+                packet.header.packetNumber = reader.ReadInt32();
+                packet.header.totalPackets = reader.ReadInt32();
 
                 // Deserialize the packet body
                 packet.body = reader.ReadBytes(packet.header.bodyLen);
@@ -111,16 +124,78 @@ public class Packet
         return packet;
     }
 
+    /// <summary>
+    /// returns a string representation of the packet
+    /// IMPORTANT: ONLY USE IF BODY IS ASCII!!!! OR ELSE EVERYTHING BECOMES CYRILLIC
+    /// </summary>
     public override string ToString()
     {
         string str = "Packet:\n";
         str += "Message Length: " + header.bodyLen + "\n";
         str += "Source: " + header.sourceId + "\n";
-        str += "Message Type: " + header.messageType + "\n";
-        str += "Picture Flag: " + header.pictureFlag + "\n";
+        str += "Message Type: " + header.packetType + "\n";
+        str += "Packet Number: " + header.packetNumber + "\n";
+        str += "Total Packets: " + header.totalPackets + "\n";
         string bodyStr = Encoding.ASCII.GetString(body);
-        str += "Body: " + bodyStr + "\n";
+        str += "Body: " + bodyStr;
         return str;
+    }
+
+    /// <summary>
+    /// split image data into multiple packets
+    /// SOURCEID IS NOW image file name
+    /// </summary>
+    public static Packet[] CreateImagePackets(string sourceId, byte[] imageData, int maxImageSize = 4096)
+    {
+        Console.WriteLine("Packet.CreateImagePackets(): Start");
+        // calc num ofpackets needed
+        int totalPackets = (int)Math.Ceiling((double)imageData.Length / maxImageSize);
+
+        // create packets
+        Packet[] packets = new Packet[totalPackets];
+        for (int i = 0; i < totalPackets; i++)
+        {
+            Console.WriteLine($"Packet.CreateImagePackets(): Creating packet {i + 1} of {totalPackets}");
+            int offset = i * maxImageSize;
+            int size = Math.Min(maxImageSize, imageData.Length - offset);
+            byte[] body = new byte[size];
+            Array.Copy(imageData, offset, body, 0, size); // DEEP COPY!!!!
+            packets[i] = new Packet(sourceId, Type.Image, body, i, totalPackets);
+        }
+        Console.WriteLine("Packet.CreateImagePackets(): End");
+        return packets;
+    }
+
+    /// <summary>
+    /// reconstruct image from packets
+    /// </summary>
+    public static byte[] ReconstructImage(Packet[] packets)
+    {
+        Console.WriteLine("Packet.ReconstructImage(): Start");
+
+        if (packets.Length == 0)
+        {
+            Console.WriteLine("Packet.ReconstructImage(): No packets to reconstruct");
+        }
+        // calc total size of image
+        int totalSize = 0;
+        foreach (Packet packet in packets)
+        {
+            totalSize += packet.body.Length;
+        }
+
+        byte[] imageData = new byte[totalSize];
+
+        // copy data from packets to imageData
+        int offset = 0;
+        foreach (Packet packet in packets)
+        {
+            Console.WriteLine($"Packet.ReconstructImage(): Reconstructing {packet.header.packetNumber + 1} of {packet.header.totalPackets}");
+            Array.Copy(packet.body, 0, imageData, offset, packet.body.Length);
+            offset += packet.body.Length;
+        }
+        Console.WriteLine("Packet.ReconstructImage(): End");
+        return imageData;
     }
 }
 

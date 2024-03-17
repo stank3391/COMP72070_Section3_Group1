@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using COMP72070_Section3_Group1.Visitors;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+using System.Text;
+using COMP72070_Section3_Group1.Comms;
+using COMP72070_Section3_Group1.Models;
 
 namespace COMP72070_Section3_Group1.Controllers
 {
@@ -28,10 +31,10 @@ namespace COMP72070_Section3_Group1.Controllers
             Visitor visitor = _visitorManager.GetVisitor(visitorId);
 
             // send the message to the server
-            Packet packet = new Packet(visitor.id, Packet.Type.Test, false , inputText);
+            Packet packet = new Packet(visitor.id, Packet.Type.Test, Encoding.UTF8.GetBytes(inputText));
 
             _client.SendPacket(packet);
-            
+
             return RedirectToAction("AstroFans", "Home");
         }
     }
