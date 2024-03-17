@@ -10,7 +10,8 @@ namespace ServerTest
         {
 
             char[] words = { 'H', 'E', 'L', 'L', 'O', };
-            Packet p = new Packet(Packet.Type.Post, false, Encoding.ASCII.GetBytes(words));
+            //Packet p = new Packet(Packet.Type.Post, false, Encoding.ASCII.GetBytes(words));
+            Packet p = new Packet("69", Packet.Type.Post, Encoding.ASCII.GetBytes(words));
             byte[] expected;
 
             //Client c = new Client();
