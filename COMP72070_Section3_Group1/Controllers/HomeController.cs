@@ -75,6 +75,15 @@ namespace COMP72070_Section3_Group1.Controllers
         {
             string VisitorId = HttpContext.Session.GetString("VisitorId");
 
+            if (VisitorId == null) // if no visitor id, create a new one
+            {
+                VisitorId = Guid.NewGuid().ToString();
+                HttpContext.Session.SetString("VisitorId", VisitorId);
+                Visitor tempVisitor = new Visitor(VisitorId);
+                _visitorManager.AddVisitor(tempVisitor);
+
+            }
+
             Visitor visitor = _visitorManager.GetVisitor(VisitorId);
 
             // check if content 

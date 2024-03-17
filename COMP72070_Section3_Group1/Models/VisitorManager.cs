@@ -5,12 +5,14 @@
     /// </summary>
     public class VisitorManager
     {
+        private int visitorCount; // count of visitors
         public Dictionary<string, Visitor> visitors { get; set; } // dictionary of visitors mapped to their ids
 
         public VisitorManager()
         {
             visitors = new Dictionary<string, Visitor>();
             Console.WriteLine("VisitorManager started");
+            visitorCount = 0;
         }
 
         /// <summary>
@@ -19,7 +21,8 @@
         public void AddVisitor(Visitor visitor)
         {
             visitors.Add(visitor.id, visitor);
-            Console.WriteLine($"Visitor added: {visitor.id}");
+            Console.WriteLine($"Visitor added: {visitor.id} ({visitorCount})");
+            visitorCount++;
         }
 
         /// <summary>
