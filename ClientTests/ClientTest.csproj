@@ -16,4 +16,9 @@
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\COMP72070_Section3_Group1\COMP72070_Section3_Group1.csproj" />
+    <ProjectReference Include="..\TcpServer\TcpServer.csproj" />
+  </ItemGroup>
+
 </Project>

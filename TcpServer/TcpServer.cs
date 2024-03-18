@@ -87,7 +87,7 @@ namespace TcpServer
         /// Handles the packet received from the client
         /// determines the type of packet and do action
         /// </summary>
-        private void HandlePacket(Packet packet)
+        public void HandlePacket(Packet packet)
         {
             Console.WriteLine("TcpServer.HandlePacket(): Start");
 
@@ -136,7 +136,11 @@ namespace TcpServer
         {
             Console.WriteLine("TcpServer.HandleReadyPostPacket(): Start");
             // send ack packet with the total number of posts as the body
-            int postCount = posts.Count;
+            int postCount = 0;
+            if (posts != null)
+            {
+                postCount = posts.Count;
+            }
             byte[] body = Encoding.ASCII.GetBytes(postCount.ToString());
             Packet packet = new Packet("SERVER", Packet.Type.Ack, body);
             byte[] serializedPacket = Packet.SerializePacket(packet);
@@ -296,7 +300,7 @@ namespace TcpServer
         /// </summary>
         public void PlaceholderSavePosts()
         {
-            string path = "../../../placeholder_db/posts.json";
+            string path = "../../../../TcpServer/placeholder_db/posts.json";
 
             string json = Newtonsoft.Json.JsonConvert.SerializeObject(posts);
 
@@ -310,13 +314,21 @@ namespace TcpServer
         /// </summary>
         public void PlaceholderLoadPosts()
         {
-            string path = "../../../placeholder_db/posts.json";
+            string path = "../../../../TcpServer/placeholder_db/posts.json";
 
             string json = File.ReadAllText(path);
 
             posts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Post>>(json);
 
             Console.WriteLine("Posts list loaded from placeholder database.");
+        }
+
+
+        public void HandleAuthPacket(Packet packet)
+        {
+            //packet.Deserialize
+            string path = "../../../placeholder_db/accounts.json";
+            string json = Newtonsoft.Json.JsonConvert.SerializeObject(posts);
         }
     }
 }
