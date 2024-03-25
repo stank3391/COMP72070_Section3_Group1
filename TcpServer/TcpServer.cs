@@ -9,6 +9,11 @@ using System.Threading.Tasks;
 using COMP72070_Section3_Group1.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.AspNetCore.Routing.Constraints;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Wordprocessing;
+
 
 namespace TcpServer
 {
@@ -87,41 +92,76 @@ namespace TcpServer
         /// Handles the packet received from the client
         /// determines the type of packet and do action
         /// </summary>
-        private void HandlePacket(Packet packet)
+        public void HandlePacket(Packet packet)
         {
             Console.WriteLine("TcpServer.HandlePacket(): Start");
 
             Packet.Type type = packet.header.packetType;
 
+
+            //            switch (type)
+            //            {
+            //                case Packet.Type.Ack:
+            //                    Console.WriteLine("Ack received");
+            //                    CreateLog("test.xlsx", "yao", "Acknowledgement Signal Recieved");
+            //                    break;
+            //                case Packet.Type.Error:
+            //                    Console.WriteLine("Error received");
+            //                    CreateLog("test.xlsx", "yao", "Error Signal Recieved");
+            //                    break;
+            //                case Packet.Type.Ready:
+            //                    Console.WriteLine("Ready received");
+            //                    CreateLog("test.xlsx", "yao", "Ready Signal Recieved");
+            //                    HandleReadyPacket();
+            //                    break;
+            //                case Packet.Type.Auth:
+            //                    Console.WriteLine("Auth received");
+            //                    CreateLog("test.xlsx", "yao", "Authorization Signal Recieved");
+            //                    break;
+            //                default:
+            //                    Console.WriteLine("Unknown packet type received");
+            //                    CreateLog("test.xlsx", "yao", "Unknown Signal Recieved");
+            //                    break;
+            //            }
+            //        }
             switch (type)
             {
                 case Packet.Type.Ack:
                     Console.WriteLine("TcpServer.HandlePacket(): Ack received");
+                    CreateLog("test.xlsx", "yao", "Acknowledgement Signal Recieved");
+
                     break;
                 case Packet.Type.Error:
                     Console.WriteLine("TcpServer.HandlePacket(): Error received");
+                    CreateLog("test.xlsx", "yao", "Error Signal Recieved");
                     break;
                 case Packet.Type.ReadyPost:
                     Console.WriteLine("TcpServer.HandlePacket(): ReadyPost received");
+                    CreateLog("test.xlsx", "yao", "ReadyPost Signal Recieved");
                     HandleReadyPostPacket();
                     break;
                 case Packet.Type.ReadyImage:
                     Console.WriteLine("TcpServer.HandlePacket(): ReadyImage received");
+                    CreateLog("test.xlsx", "yao", "ReadyImage Signal Recieved");
                     HandleReadyImagePacket();
                     break;
                 case Packet.Type.Post:
                     Console.WriteLine("TcpServer.HandlePacket(): Post received");
+                    CreateLog("test.xlsx", "yao", "Post Signal Recieved");
                     HandlePostPacket(packet);
                     break;
                 case Packet.Type.Image:
                     Console.WriteLine("TcpServer.HandlePacket(): Image received");
+                    CreateLog("test.xlsx", "yao", "Image Signal Recieved");
                     HandleImagePacket(packet);
                     break;
                 case Packet.Type.Auth:
                     Console.WriteLine("TcpServer.HandlePacket(): Auth received");
+                    CreateLog("test.xlsx", "yao", "Auth Signal Recieved");
                     break;
                 default:
                     Console.WriteLine("TcpServer.HandlePacket(): Unknown packet type received");
+                    CreateLog("test.xlsx", "yao", "Unknown Signal Recieved");
                     break;
             }
 
@@ -136,7 +176,11 @@ namespace TcpServer
         {
             Console.WriteLine("TcpServer.HandleReadyPostPacket(): Start");
             // send ack packet with the total number of posts as the body
-            int postCount = posts.Count;
+            int postCount = 0;
+            if (posts != null)
+            {
+                postCount = posts.Count;
+            }
             byte[] body = Encoding.ASCII.GetBytes(postCount.ToString());
             Packet packet = new Packet("SERVER", Packet.Type.Ack, body);
             byte[] serializedPacket = Packet.SerializePacket(packet);
@@ -296,7 +340,7 @@ namespace TcpServer
         /// </summary>
         public void PlaceholderSavePosts()
         {
-            string path = "../../../placeholder_db/posts.json";
+            string path = "../../../../TcpServer/placeholder_db/posts.json";
 
             string json = Newtonsoft.Json.JsonConvert.SerializeObject(posts);
 
@@ -310,7 +354,7 @@ namespace TcpServer
         /// </summary>
         public void PlaceholderLoadPosts()
         {
-            string path = "../../../placeholder_db/posts.json";
+            string path = "../../../../TcpServer/placeholder_db/posts.json";
 
             string json = File.ReadAllText(path);
 
@@ -318,7 +362,175 @@ namespace TcpServer
 
             Console.WriteLine("Posts list loaded from placeholder database.");
         }
+
+
+        public void HandleAuthPacket(Packet packet)
+        {
+            //packet.Deserialize
+            string path = "../../../placeholder_db/accounts.json";
+            string json = Newtonsoft.Json.JsonConvert.SerializeObject(posts);
+        }
+
+
+
+
+        static void CreateLog(string filename, string username, string action)
+        {
+            DateTime now = DateTime.Now;
+            //string name = now.ToString("dd/MM/yyyy");
+            string time = now.ToString("yyyy MMMM dd h:mm:ss tt");
+            InsertText(filename, time, "A", GetNextEmptyCell(filename, "Sheet1", "A"));
+            InsertText(filename, username, "B", GetNextEmptyCell(filename, "Sheet1", "B"));
+            InsertText(filename, action, "C", GetNextEmptyCell(filename, "Sheet1", "C"));
+        }
+
+        static void InsertText(string docName, string text, string col, uint row)
+        {
+            using (SpreadsheetDocument spreadSheet = SpreadsheetDocument.Open(docName, true))
+            {
+                WorkbookPart workbookPart = spreadSheet.WorkbookPart ?? spreadSheet.AddWorkbookPart();
+                SharedStringTablePart shareStringPart;
+                if (workbookPart.GetPartsOfType<SharedStringTablePart>().Count() > 0)
+                {
+                    shareStringPart = workbookPart.GetPartsOfType<SharedStringTablePart>().First();
+                }
+                else
+                {
+                    shareStringPart = workbookPart.AddNewPart<SharedStringTablePart>();
+                }
+                int index = InsertSharedStringItem(text, shareStringPart);
+                Cell cell = InsertCellInWorksheet(col, row, workbookPart.WorksheetParts.First());
+                cell.CellValue = new CellValue(index.ToString());
+                cell.DataType = new EnumValue<CellValues>(CellValues.SharedString);
+                workbookPart.WorksheetParts.First().Worksheet.Save();
+            }
+        }
+
+        static int InsertSharedStringItem(string text, SharedStringTablePart shareStringPart)
+        {
+            if (shareStringPart.SharedStringTable is null)
+            {
+                shareStringPart.SharedStringTable = new SharedStringTable();
+            }
+            int i = 0;
+            foreach (SharedStringItem item in shareStringPart.SharedStringTable.Elements<SharedStringItem>())
+            {
+                if (item.InnerText == text)
+                {
+                    return i;
+                }
+
+                i++;
+            }
+            shareStringPart.SharedStringTable.AppendChild(new SharedStringItem(new DocumentFormat.OpenXml.Spreadsheet.Text(text)));
+            shareStringPart.SharedStringTable.Save();
+            return i;
+        }
+
+        static Cell InsertCellInWorksheet(string columnName, uint rowIndex, WorksheetPart worksheetPart)
+        {
+            Worksheet worksheet = worksheetPart.Worksheet;
+            var sheetData = worksheet.GetFirstChild<SheetData>();
+            string cellReference = columnName + rowIndex;
+            Row row;
+            if (sheetData?.Elements<Row>().Where(r => !(r.RowIndex is null || r.RowIndex != rowIndex)).Count() != 0)
+            {
+                row = sheetData.Elements<Row>().Where(r => !(r.RowIndex is null || r.RowIndex != rowIndex)).First();
+            }
+            else
+            {
+                row = new Row() { RowIndex = rowIndex };
+                sheetData.Append(row);
+            }
+            if (row.Elements<Cell>().Where(c => !(c.CellReference is null || c.CellReference.Value != columnName + rowIndex)).Count() > 0)
+            {
+                return row.Elements<Cell>().Where(c => !(c.CellReference is null || c.CellReference.Value != cellReference)).First();
+            }
+            else
+            {
+                Cell refCell = null;
+                foreach (Cell cell in row.Elements<Cell>())
+                {
+                    if (string.Compare(cell.CellReference?.Value, cellReference, true) > 0)
+                    {
+                        refCell = cell;
+                        break;
+                    }
+                }
+                Cell newCell = new Cell() { CellReference = cellReference };
+                row.InsertBefore(newCell, refCell);
+                worksheet.Save();
+                return newCell;
+            }
+        }
+
+
+        static uint GetNextEmptyCell(string FileName, string sheetName, string col)
+        {
+            bool inLoop = true;
+            uint rowIndex = 1;
+            string cellReference;
+            do
+            {
+                cellReference = col + rowIndex;
+                if (GetCellValue(FileName, sheetName, cellReference) != string.Empty)
+                {
+                    rowIndex++;
+                }
+                else
+                {
+                    inLoop = false;
+                }
+            }
+            while (inLoop);
+            return rowIndex;
+        }
+
+
+        static string GetCellValue(string fileName, string sheetName, string addressName)
+        {
+            string value = null;
+            using (SpreadsheetDocument document = SpreadsheetDocument.Open(fileName, false))
+            {
+                WorkbookPart wbPart = document.WorkbookPart;
+                Sheet theSheet = wbPart?.Workbook.Descendants<Sheet>().Where(s => s.Name == sheetName).FirstOrDefault();
+                if (theSheet is null || theSheet.Id is null)
+                {
+                    throw new ArgumentException("sheetName");
+                }
+                WorksheetPart wsPart = (WorksheetPart)wbPart.GetPartById(theSheet.Id);
+                Cell theCell = wsPart.Worksheet?.Descendants<Cell>()?.Where(c => c.CellReference == addressName).FirstOrDefault();
+                if (theCell is null || theCell.InnerText.Length < 0)
+                {
+                    return string.Empty;
+                }
+                value = theCell.InnerText;
+                if (theCell.DataType is null)
+                {
+                    return value;
+                }
+                if (theCell.DataType.Value == CellValues.SharedString)
+                {
+                    var stringTable = wbPart.GetPartsOfType<SharedStringTablePart>().FirstOrDefault();
+                    if (!(stringTable is null))
+                    {
+                        value = stringTable.SharedStringTable.ElementAt(int.Parse(value)).InnerText;
+                    }
+                }
+                else if (theCell.DataType.Value == CellValues.Boolean)
+                {
+                    switch (value)
+                    {
+                        case "0":
+                            value = "FALSE";
+                            break;
+                        default:
+                            value = "TRUE";
+                            break;
+                    }
+                }
+                return value;
+            }
+        }
     }
 }
-
-
