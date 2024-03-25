@@ -5,10 +5,10 @@ using System.Linq;
 
 namespace AstroServer
 {
-    public partial class Entity : DbContext
+    public partial class AstroEntity : DbContext
     {
-        public Entity()
-            : base("name=Entity")
+        public AstroEntity()
+            : base("name=AstroEntity")
         {
         }
 

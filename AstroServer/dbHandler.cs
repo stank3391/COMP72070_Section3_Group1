@@ -11,8 +11,8 @@ namespace AstroServer
 {
     internal class dbHandler
     {
-        private Entity db;
-        public Entity Database
+        private AstroEntity db;
+        public AstroEntity Database
         { 
             get { return db; }
             set { db = value; }
@@ -20,7 +20,7 @@ namespace AstroServer
 
         public dbHandler()
         {
-            db = new Entity();
+            db = new AstroEntity();
         }
 
         public tbl_Users getUser(int id)
