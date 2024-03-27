@@ -73,6 +73,8 @@ namespace COMP72070_Section3_Group1.Controllers
 
         public IActionResult SubmitPost(string content, IFormFile file)
         {
+            //Account test = new Account();
+            //PostController test = new PostController();
             string VisitorId = HttpContext.Session.GetString("VisitorId");
 
             if (VisitorId == null) // if no visitor id, create a new one
@@ -91,7 +93,8 @@ namespace COMP72070_Section3_Group1.Controllers
             {
                 Console.WriteLine($"HomeController.SubmitPost(): No content in post");
                 // no content show error message?
-                return RedirectToAction("Index", "Home");
+                _account.errorMessage = "No Content in Post";
+                return RedirectToAction("AstroPost", "Home");
             }
 
             // check if the file is empty
@@ -105,7 +108,8 @@ namespace COMP72070_Section3_Group1.Controllers
                 {
                     Console.WriteLine($"HomeController.SubmitPost(): Invalid file extension {file.FileName}");
                     // invalid file extension show error message?
-                    return RedirectToAction("Index", "Home");
+                    _account.errorMessage = "Invalid File Format";
+                    return RedirectToAction("AstroPost", "Home");
                 }
 
                 // generate unique file name
@@ -133,10 +137,11 @@ namespace COMP72070_Section3_Group1.Controllers
 
             // add post to top of list
             _postList.Insert(0, post);
+            _account.errorMessage = "";
 
-            return RedirectToAction("Index", "Home");
+            //return View;
+            return RedirectToAction("AstroPost", "Home");
 
         }
-
     }
 }

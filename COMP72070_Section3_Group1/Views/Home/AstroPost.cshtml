@@ -19,9 +19,6 @@
 </script>
 
 <script type="text/javascript">
-    function PopUp() {
-        alert("I am an alert box!");
-    }
     function submission(){
 
         let good = true;
@@ -30,30 +27,23 @@
             const messageEle = document.getElementById('content')
             const myFileEle = document.getElementById('myFile')
             const counterEle = document.getElementById('counter')
-            //console.log(messageEle.value);
+            console.log(messageEle.value);
             console.log(myFileEle.value);
             if ((messageEle.value == 0) && (myFileEle.value == 0)) {
                 alert("Cannot send empty field. Please insert text or an image.");
             } 
-            /*else {
-                messageEle.value = "";
-                myFileEle.value = "";
-                counterEle.innerHTML = '0/256';
-                //alert("Message Sent!");
-            }*/
-
-
-
-
-
-        //     //yao send code here!
-        // no :)
-
         }
-
     }
 </script>
 
+
+
+<script>
+    function Showalert() {
+        txtValueA.Text = "one of the basic";
+        //alert('Call JavaScript function from codebehind');
+    }
+</script>
 
 
 
@@ -102,14 +92,16 @@
     <div class="post-container">
         <h1>Post</h1>
         <hr></hr>
+        <h2>@Model.errorMessage</h2>
+        <asp:Literal runat="server" id="txtValueA" EnableViewState="false" />
         <form asp-controller="Home" asp-action="SubmitPost" method="post" enctype="multipart/form-data">
             <textarea id="content" rows="12" cols="60" maxlength="256" name="content" placeholder="Write Here..."></textarea>
             <br></br>
             <input type="file" id="file" name="file">
-            <button class="post-button" onclick="submission()">Post</button>
+            <button class="post-button" onclick="Showalert()">Post</button>
             <div id="counter">0</div>
         </form>
-        
+
     </div>
 </body>
 </html>
