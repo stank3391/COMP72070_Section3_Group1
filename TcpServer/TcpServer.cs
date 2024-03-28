@@ -212,6 +212,9 @@ namespace TcpServer
             File.WriteAllText(path, jsonString);
 
             Console.WriteLine("Data has been written to path");
+
+            //TO DO
+            //SEND PACKET BACK TO CLIENT CONFIRMING ACCOUNT CREATING
         }
         /// <summary>
         /// Handles the ready post packet
@@ -413,7 +416,9 @@ namespace TcpServer
         {
             //packet.Deserialize
             string path = "../../../placeholder_db/accounts.json";
-            string json = Newtonsoft.Json.JsonConvert.SerializeObject(posts);
+            //TO DO
+            //VERIFY ACCOUNT INFORMATION SENT BY CLIENT AGAINST DB JSON PATH
+            //SEND PACKET BACK TO CLIENT CONFIRMING ACCOUNT VERIFICATION
         }
 
 
