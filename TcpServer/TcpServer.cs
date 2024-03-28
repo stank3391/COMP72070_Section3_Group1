@@ -13,7 +13,8 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
-
+using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace TcpServer
 {
@@ -161,7 +162,7 @@ namespace TcpServer
                     break;
                 case Packet.Type.Acc:
                     Console.WriteLine("TcpServer.HandlePacket(): Auth received");
-                    HandleAccPacket();
+                    HandleAccPacket(packet);
                     CreateLog("test.xlsx", "yao", "Auth Signal Recieved");
                     break;
                 default:
@@ -172,9 +173,45 @@ namespace TcpServer
 
             Console.WriteLine("TcpServer.HandlePacket(): End");
         }
-        private void HandleAccPacket()
+        static (string username, string password) ParseInputString(string input)
         {
-            Console.WriteLine("Writing Account to Database");
+            // Define a regular expression pattern to match "Username: <username>, Password: <password>"
+            string pattern = @"Username:\s*(?<username>\w+),\s*Password:\s*(?<password>\w+)";
+
+            // Match the input string against the pattern
+            Match match = Regex.Match(input, pattern);
+
+            if (match.Success)
+            {
+                // Extract username and password from the named groups in the match
+                string username = match.Groups["username"].Value;
+                string password = match.Groups["password"].Value;
+
+                return (username, password);
+            }
+            else
+            {
+                // Handle invalid input format
+                throw new ArgumentException("Invalid input format");
+            }
+        }
+        private void HandleAccPacket(Packet packet)
+        {
+            string path = "../../../placeholder_db/accounts.json";
+            string bodystring = packet.ToString();
+            Console.WriteLine(bodystring);
+
+            // Parse the input string to extract username and password
+            // Parse the input string to extract username and password
+            var userData = ParseInputString(bodystring);
+
+            // Manually format the JSON string
+            string jsonString = $"{{\"username\": \"{userData.username}\", \"password\": \"{userData.password}\"}}";
+
+            // Write the JSON string to a file
+            File.WriteAllText(path, jsonString);
+
+            Console.WriteLine("Data has been written to path");
         }
         /// <summary>
         /// Handles the ready post packet
