@@ -159,6 +159,11 @@ namespace TcpServer
                     Console.WriteLine("TcpServer.HandlePacket(): Auth received");
                     CreateLog("test.xlsx", "yao", "Auth Signal Recieved");
                     break;
+                case Packet.Type.Acc:
+                    Console.WriteLine("TcpServer.HandlePacket(): Auth received");
+                    HandleAccPacket();
+                    CreateLog("test.xlsx", "yao", "Auth Signal Recieved");
+                    break;
                 default:
                     Console.WriteLine("TcpServer.HandlePacket(): Unknown packet type received");
                     CreateLog("test.xlsx", "yao", "Unknown Signal Recieved");
@@ -167,7 +172,10 @@ namespace TcpServer
 
             Console.WriteLine("TcpServer.HandlePacket(): End");
         }
-
+        private void HandleAccPacket()
+        {
+            Console.WriteLine("Writing Account to Database");
+        }
         /// <summary>
         /// Handles the ready post packet
         /// send all posts to the client
