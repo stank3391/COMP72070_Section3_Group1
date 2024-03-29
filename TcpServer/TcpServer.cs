@@ -7,9 +7,16 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using COMP72070_Section3_Group1.Models;
-using COMP72070_Section3_Group1.Visitors;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.AspNetCore.Routing.Constraints;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Wordprocessing;
+using System.Text.Json;
+using System.Text.RegularExpressions;
+using DocumentFormat.OpenXml.Presentation;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace TcpServer
 {
@@ -25,7 +32,10 @@ namespace TcpServer
         private bool isStop = false; // flag to stop the server
 
         // database props
+        private string postsPath = "../../../placeholder_db/posts.json";
+        private string accountsPath = "../../../placeholder_db/accounts.json";
         private List<Post> posts = new List<Post>(); // list of posts from the database
+        private List<Account> accounts = new List<Account>(); // list of accounts from the database
 
         /// <summary>
         /// Constructor for the TcpServer class
@@ -33,6 +43,54 @@ namespace TcpServer
         public TcpServer()
         {
             this.listener = new TcpListener(this.localAddress, this.port);
+        }
+
+        /// <summary>
+        /// save all posts to palceholder database
+        /// </summary>
+        public void PlaceholderSavePosts()
+        {
+            string json = Newtonsoft.Json.JsonConvert.SerializeObject(posts);
+
+            File.WriteAllText(postsPath, json);
+
+            Console.WriteLine("Posts list saved to placeholder database.");
+        }
+
+        /// <summary>
+        /// loads all posts from placeholder database to posts list
+        /// </summary>
+        public void PlaceholderLoadPosts()
+        {
+            string json = File.ReadAllText(postsPath);
+
+            posts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Post>>(json);
+
+            Console.WriteLine("Posts list loaded from placeholder database.");
+        }
+
+        /// <summary>
+        /// save all accounts to palceholder database
+        /// </summary>
+        public void PlaceholderSaveAccounts()
+        {
+            string json = Newtonsoft.Json.JsonConvert.SerializeObject(accounts);
+
+            File.WriteAllText(accountsPath, json);
+
+            Console.WriteLine("Accounts list saved to placeholder database.");
+        }
+
+        /// <summary>
+        /// loads all accounts from placeholder database to accounts list
+        /// </summary>
+        public void PlaceholderLoadAccounts()
+        {
+            string json = File.ReadAllText(accountsPath);
+
+            accounts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Account>>(json);
+
+            Console.WriteLine("Accounts list loaded from placeholder database.");
         }
 
         /// <summary>
@@ -88,7 +146,7 @@ namespace TcpServer
         /// Handles the packet received from the client
         /// determines the type of packet and do action
         /// </summary>
-        private void HandlePacket(Packet packet)
+        public void HandlePacket(Packet packet)
         {
             Console.WriteLine("TcpServer.HandlePacket(): Start");
 
@@ -98,27 +156,88 @@ namespace TcpServer
             {
                 case Packet.Type.Ack:
                     Console.WriteLine("TcpServer.HandlePacket(): Ack received");
+                    Log.CreateLog(Log.fileName, packet.header.sourceId, "Acknowledgement Signal Recieved");
+
                     break;
                 case Packet.Type.Error:
                     Console.WriteLine("TcpServer.HandlePacket(): Error received");
+                    Log.CreateLog(Log.fileName, packet.header.sourceId, "Error Signal Recieved");
                     break;
                 case Packet.Type.ReadyPost:
                     Console.WriteLine("TcpServer.HandlePacket(): ReadyPost received");
+                    Log.CreateLog(Log.fileName, packet.header.sourceId, "ReadyPost Signal Recieved");
                     HandleReadyPostPacket();
                     break;
                 case Packet.Type.ReadyImage:
                     Console.WriteLine("TcpServer.HandlePacket(): ReadyImage received");
+                    Log.CreateLog(Log.fileName, packet.header.sourceId, "ReadyImage Signal Recieved");
                     HandleReadyImagePacket();
+                    break;
+                case Packet.Type.Post:
+                    Console.WriteLine("TcpServer.HandlePacket(): Post received");
+                    Log.CreateLog(Log.fileName, packet.header.sourceId, "Post Signal Recieved");
+                    HandlePostPacket(packet);
+                    break;
+                case Packet.Type.Image:
+                    Console.WriteLine("TcpServer.HandlePacket(): Image received");
+                    Log.CreateLog(Log.fileName, packet.header.sourceId, "Image Signal Recieved");
+                    HandleImagePacket(packet);
                     break;
                 case Packet.Type.Auth:
                     Console.WriteLine("TcpServer.HandlePacket(): Auth received");
+                    HandleAuthPacket(packet);
+                    Log.CreateLog(Log.fileName, packet.header.sourceId, "Auth Signal Recieved");
+                    break;
+                case Packet.Type.Acc:
+                    Console.WriteLine("TcpServer.HandlePacket(): Acc received");
+                    HandleAccPacket(packet);
+                    Log.CreateLog(Log.fileName, packet.header.sourceId, "Acc Signal Recieved");
                     break;
                 default:
                     Console.WriteLine("TcpServer.HandlePacket(): Unknown packet type received");
+                    Log.CreateLog(Log.fileName, packet.header.sourceId, "Unknown Signal Recieved");
                     break;
             }
 
             Console.WriteLine("TcpServer.HandlePacket(): End");
+        }
+
+        /// <summary>
+        /// Handles the account creation packet
+        /// </summary>
+        private void HandleAccPacket(Packet packet)
+        {
+            string bodystring = packet.ToString();
+            Console.WriteLine(bodystring);
+
+            // Parse the input string to extract username and password
+            var userData = ParseLoginInputString(bodystring);
+
+            // Check if the username already exists in the database
+            if (accounts.Any(account => account.username == userData.username))
+            {
+                Console.WriteLine($"Account creation failed: Username already exists{userData.username}");
+
+                // Send acc fail packet
+                Packet response = new Packet("TCP_SERVER", Packet.Type.AccFail);
+                byte[] serializedPacket = Packet.SerializePacket(response);
+                stream.Write(serializedPacket, 0, serializedPacket.Length);
+            }
+            else
+            {
+                // Add the new account to the list
+                accounts.Add(new Account(userData.username, userData.password));
+
+                // Save the updated list to the database
+                PlaceholderSaveAccounts();
+
+                // Send acc success packet
+                Packet response = new Packet("TCP_SERVER", Packet.Type.AccSuccess);
+                byte[] serializedPacket = Packet.SerializePacket(response);
+                stream.Write(serializedPacket, 0, serializedPacket.Length);
+
+                Console.WriteLine($"Account created successfully: {userData.username}");
+            }
         }
 
         /// <summary>
@@ -129,9 +248,13 @@ namespace TcpServer
         {
             Console.WriteLine("TcpServer.HandleReadyPostPacket(): Start");
             // send ack packet with the total number of posts as the body
-            int postCount = posts.Count;
+            int postCount = 0;
+            if (posts != null)
+            {
+                postCount = posts.Count;
+            }
             byte[] body = Encoding.ASCII.GetBytes(postCount.ToString());
-            Packet packet = new Packet("SERVER", Packet.Type.Ack, body);
+            Packet packet = new Packet("TCP_SERVER", Packet.Type.Ack, body);
             byte[] serializedPacket = Packet.SerializePacket(packet);
             stream.Write(serializedPacket, 0, serializedPacket.Length);
 
@@ -140,7 +263,7 @@ namespace TcpServer
             {
                 Console.WriteLine($"TcpServer.HandleReadyPostPacket(): Sending post {i + 1} of {postCount}");
                 body = posts[i].ToByte();
-                packet = new Packet("SERVER", Packet.Type.Post, body);
+                packet = new Packet("TCP_SERVER", Packet.Type.Post, body);
                 serializedPacket = Packet.SerializePacket(packet);
                 stream.Write(serializedPacket, 0, serializedPacket.Length);
 
@@ -158,7 +281,7 @@ namespace TcpServer
 
             int imageCount = files.Length;
             byte[] body = Encoding.ASCII.GetBytes(imageCount.ToString());
-            Packet packet = new Packet("SERVER", Packet.Type.Ack, body);
+            Packet packet = new Packet("TCP_SERVER", Packet.Type.Ack, body);
             byte[] serializedPacket = Packet.SerializePacket(packet);
             stream.Write(serializedPacket, 0, serializedPacket.Length);
 
@@ -169,7 +292,7 @@ namespace TcpServer
                 byte[] imageData = File.ReadAllBytes(files[i]);
                 string fileName = Path.GetFileName(files[i]);
                 Console.WriteLine($"TcpServer.HandleReadyImagePacket(): Sending image {fileName}");
-                Packet[] packets = Packet.CreateImagePacket(fileName, imageData);
+                Packet[] packets = Packet.CreateImagePackets(fileName, imageData);
                 foreach (Packet p in packets)
                 {
                     serializedPacket = Packet.SerializePacket(p);
@@ -182,6 +305,61 @@ namespace TcpServer
             Console.WriteLine("TcpServer.HandleReadyImagePacket(): End");
         }
 
+        /// <summary>
+        /// Handles the post packet
+        /// inserts the post to the top of the list
+        /// and saves the updated posts list to the database
+        /// </summary>
+        private void HandlePostPacket(Packet packet)
+        {
+            Console.WriteLine("TcpServer.HandlePostPacket(): Start");
+
+            // deserialize the packet body into a post
+            Post post = new Post(packet.body);
+
+            // add to top of list
+            posts.Insert(0, post);
+            
+            // save the posts to the database
+            this.PlaceholderSavePosts();
+
+            Console.WriteLine("TcpServer.HandlePostPacket(): End");
+        }
+
+        /// <summary>
+        /// Handles the image packet
+        /// receives image packets and reconstructs the image
+        /// saves it to the images folder
+        /// </summary>
+        private void HandleImagePacket(Packet packet)
+        {
+            Console.WriteLine("TcpServer.HandleImagePacket(): Start");
+
+            List<Packet> imagePackets = new List<Packet>();
+            imagePackets.Add(packet);
+
+            // send ack packet
+            this.SendAck();
+
+            while(packet.header.packetNumber + 1 < packet.header.totalPackets) 
+            {
+                // receive next packet
+                byte[] bufferIn = new byte[Packet.MAX_PACKET_SIZE];
+                this.stream.Read(bufferIn, 0, bufferIn.Length);
+
+                packet = Packet.DeserializePacket(bufferIn);
+                imagePackets.Add(packet);
+
+                // send ack packet
+                this.SendAck();
+            }
+
+            byte[] imageData = Packet.ReconstructImage(imagePackets.ToArray());
+            string imagePath = Path.Combine("../../../images/", packet.header.sourceId);
+            File.WriteAllBytes(imagePath, imageData);
+            
+            Console.WriteLine("TcpServer.HandleImagePacket(): End");
+        }
 
         /// <summary>
         /// Waits for an ack packet from the client
@@ -198,38 +376,81 @@ namespace TcpServer
             }
         }
 
+        /// <summary>
+        /// Sends an ack packet to the client so client can send the next packet
+        /// </summary>
+        private void SendAck()
+        {
+            Packet ackPacket = new Packet("TCP_SERVER", Packet.Type.Ack);
+            byte[] serializedPacket = Packet.SerializePacket(ackPacket);
+            stream.Write(serializedPacket, 0, serializedPacket.Length);
+        }
 
         /// <summary>
-        /// Fetches all the posts from the database and stores them in 'posts' property
-        /// will replace with database connection later
+        /// Verifies the login credentials against the database
         /// </summary>
-        public void UpdatePosts()
+        private bool VerifyLogin(string username, string password)
         {
-            // update the posts from the database
+            // Check if the username and password match any account in the database
+            return accounts.Any(account => account.username == username && account.password == password);
+        }
 
-            // just return some dummy posts for now
-            posts.Add(new Post(1, "HEELOO!!! This should display placeholder image", "user1", DateTime.Now, "testimg1.jpg"));
+        public void HandleAuthPacket(Packet packet)
+        {
+            //packet.Deserialize
+            string bodystring = packet.ToString();
+            Console.WriteLine(bodystring);
 
-            posts.Add(new Post(2, "HEELOO!!! I am a post2", "user2", DateTime.Now, "testimg2.jpg"));
+            // Parse the input string to extract username and password
+            var userData = ParseLoginInputString(bodystring);
 
-            posts.Add(new Post(3, "HEELOO!!! I am a post3", "user3", DateTime.Now, "testimg3.jpg"));
+            if (VerifyLogin(userData.username, userData.password))
+            {
+                Console.WriteLine("LoginAction successful!");
 
-            posts.Add(new Post(4, "HEELOO!!! I am a post4", "user4", DateTime.Now, "testimg4.jpg"));
+                // send auth success packet
+                Packet response = new Packet("TCP_SERVER", Packet.Type.AuthSuccess);
+                byte[] serializedPacket = Packet.SerializePacket(response);
+                stream.Write(serializedPacket, 0, serializedPacket.Length);
+            }
+            else
+            {
+                Console.WriteLine("Invalid username or password.");
 
-            posts.Add(new Post(5, "HEELOO!!! I am a post5", "user5", DateTime.Now, "testimg5.jpg"));
+                // send auth fail packet
+                Packet reponse = new Packet("TCP_SERVER", Packet.Type.AuthFail);
+                byte[] serializedPacket = Packet.SerializePacket(reponse);
+                stream.Write(serializedPacket, 0, serializedPacket.Length);
+            }
+        }
 
-            posts.Add(new Post(6, "HEELOO!!! I am a post6", "user6", DateTime.Now, "testimg6.jpg"));
+        /// <summary>
+        /// Parses the input string to extract username and password
+        /// </summary>
+        static (string username, string password) ParseLoginInputString(string input)
+        {
+            // Define a regular expression pattern to match "Username: <username>, Password: <password>"
+            string pattern = @"Username:\s*(?<username>\w+),\s*Password:\s*(?<password>\w+)";
 
-            posts.Add(new Post(7, "HEELOO!!! I am a post7", "user7", DateTime.Now, "testimg7.jpg"));
+            // remove whitespace from the input string
+            input = input.Replace(" ", "");
 
-            posts.Add(new Post(8, "HEELOO!!! I am a post8", "user8", DateTime.Now, "testimg8.jpg"));
+            // Match the input string against the pattern
+            Match match = Regex.Match(input, pattern);
 
-            posts.Add(new Post(9, "HEELOO!!! I am a post9", "user9", DateTime.Now, "testimg9.jpg"));
+            if (match.Success)
+            {
+                // Extract username and password from the named groups in the match
+                string username = match.Groups["username"].Value;
+                string password = match.Groups["password"].Value;
 
-            Console.WriteLine("Posts list updated from 'Database'.");
-
+                return (username, password);
+            }
+            else
+            {
+                // Handle invalid input format
+                throw new ArgumentException("Invalid input format");
+            }
         }
     }
 }
-
-

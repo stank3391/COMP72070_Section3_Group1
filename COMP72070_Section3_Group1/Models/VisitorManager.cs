@@ -1,16 +1,18 @@
-﻿namespace COMP72070_Section3_Group1.Visitors
+﻿namespace COMP72070_Section3_Group1.Models
 {
     /// <summary>
     /// Manages the visitors 
     /// </summary>
     public class VisitorManager
     {
+        private int visitorCount; // count of visitors for testing
         public Dictionary<string, Visitor> visitors { get; set; } // dictionary of visitors mapped to their ids
 
         public VisitorManager()
         {
-            this.visitors = new Dictionary<string, Visitor>();
+            visitors = new Dictionary<string, Visitor>();
             Console.WriteLine("VisitorManager started");
+            visitorCount = 0;
         }
 
         /// <summary>
@@ -18,8 +20,9 @@
         /// <summary/>
         public void AddVisitor(Visitor visitor)
         {
-            this.visitors.Add(visitor.id, visitor);
-            Console.WriteLine($"Visitor added: {visitor.id}");
+            visitors.Add(visitor.id, visitor);
+            Console.WriteLine($"Visitor added: {visitor.id} ({visitorCount})");
+            visitorCount++;
         }
 
         /// <summary>
@@ -27,7 +30,7 @@
         /// <summary/>
         public void RemoveVisitor(Visitor visitor)
         {
-            this.visitors.Remove(visitor.id);
+            visitors.Remove(visitor.id);
             Console.WriteLine($"Visitor removed: {visitor.id}");
         }
 
@@ -36,7 +39,7 @@
         /// <summary/>
         public void RemoveVisitor(string id)
         {
-            this.visitors.Remove(id);
+            visitors.Remove(id);
             Console.WriteLine($"Visitor removed: {id}");
         }
 
@@ -45,9 +48,16 @@
         /// </summary>
         public Visitor GetVisitor(string id)
         {
-            return this.visitors[id];
+            return visitors[id];
         }
 
+        /// <summary>
+        /// update a visitor
+        /// </summary>
+        public void UpdateVisitor(Visitor visitor)
+        {
+            visitors[visitor.id] = visitor;
+        }
 
 
     }
