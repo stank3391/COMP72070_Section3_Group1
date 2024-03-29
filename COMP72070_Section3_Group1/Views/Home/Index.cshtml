@@ -1,7 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Astro";
 }
-@model List<COMP72070_Section3_Group1.Models.Post> 
+@model List<COMP72070_Section3_Group1.Models.Post>
 
 
 <div>
@@ -9,8 +9,11 @@
     {
         <div class="post-container">
             <!-- Dynamically set the image source, alt text, and other attributes based on the post's properties -->
-            <img src="/images/@post.imageName" alt="Image description" onerror="this.onerror=null; this.src='/images/placeholder.jpg';">
-            >
+            @if (!string.IsNullOrEmpty(post.imageName))
+            {
+                <img src="/images/@post.imageName" alt="Image description"
+                    onerror="this.onerror=null; this.src='/images/placeholder.jpg';">
+            }
 
             <!-- Display the post content -->
             <p class="middle-paragraph">@post.content</p>
@@ -18,16 +21,18 @@
             <div class="bottom-section">
                 <div class="left-element">
                     <!-- Display the username (author) -->
-                    <a class="username" href="#">@post.author</a>
+                    <a class="username" href="#">Author: @post.author</a>
                 </div>
                 <div class="right-elements">
                     <!-- Star (Like) and Comment buttons -->
-                    <a href="#"><img class="star-button" src="/images/star-regular.svg" alt="Star"></a>
+                    <a href="#" class="star-btn-wrapper" style="position: relative;">
+                        <img class="star-button" src="/images/star-regular.svg" alt="Star">
+                    </a>
                     <a href="#"><img class="comment-button" src="/images/comment-regular.svg" alt="Comment"></a>
                 </div>
             </div>
         </div>
-    }  
+    }
 </div>
 
 <style>
@@ -47,13 +52,13 @@
         max-height: 70%;
     }
 
-        .post-container img {
-            max-width: 100%;
-            max-height: 100%;
-            height: auto;
-            margin-bottom: 10px;
-            border-radius: 5%;
-        }
+    .post-container img {
+        max-width: 100%;
+        max-height: 100%;
+        height: auto;
+        margin-bottom: 10px;
+        border-radius: 5%;
+    }
 
     h1 {
         color: #333;
@@ -84,23 +89,24 @@
         transition: color 0.3s ease;
     }
 
-        .username:hover {
-            color: gray;
-            text-decoration: underline;
-        }
+    .username:hover {
+        color: gray;
+        text-decoration: underline;
+    }
 
     .right-elements {
         display: flex;
         align-items: center;
     }
 
-        .right-elements img {
-            width: 100px;
-            height: 100px;
-            margin-left: 20px;
-        }
+    .right-elements img {
+        width: 100px;
+        height: 100px;
+        margin-left: 20px;
+    }
 
-    .star-button, .comment-button {
+    .star-button,
+    .comment-button {
         display: inline-block;
         padding: 10px 20px;
         font-size: 16px;
@@ -119,25 +125,69 @@
         margin-left: 20px;
     }
 
-        .star-button:hover {
-            background-color: yellow;
-        }
+    .star-button:hover {
+        background-color: yellow;
+    }
 
     .comment-button {
         background-color: aliceblue;
         margin-left: 20px;
     }
 
-        .comment-button:hover {
-            background-color: #347ae3;
+    .comment-button:hover {
+        background-color: #347ae3;
+    }
+
+    @@keyframes floatAndFade {
+        0% {
+            transform: translateY(0);
+            opacity: 1;
         }
+
+        100% {
+            transform: translateY(-100px);
+            opacity: 0;
+        }
+    }
+
+    .floating-star {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(1);
+        width: 25%;
+        height: 25%;
+        background-image: url('/images/star-regular.svg');
+        background-size: contain;
+        background-repeat: no-repeat;
+        animation: floatAndFade 1s ease-out forwards;
+    }
+
+}
 </style>
 
-<script type="text/javascript">
+<script>
     document.addEventListener("DOMContentLoaded", function (event) {
         var message = '@TempData["Message"]';
         if (message) {
             alert(message);
         }
     });
+</script>
+
+<script>
+ document.addEventListener("DOMContentLoaded", function () {
+    // Star button effect
+    document.querySelectorAll('.star-btn-wrapper').forEach(button => {
+        button.addEventListener('click', function (e) {
+            e.preventDefault();
+            var floatingStar = document.createElement('div');
+            floatingStar.classList.add('floating-star');
+            this.appendChild(floatingStar);
+            setTimeout(() => {
+                floatingStar.remove();
+            }, 1000); 
+        });
+    });
+});
 </script>

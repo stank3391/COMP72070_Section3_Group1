@@ -17,6 +17,7 @@ builder.Services.AddSingleton<VisitorManager>(VISITORMANAGER);
 List<Post> POSTLIST = new List<Post>();// fetch the posts from the server
 builder.Services.AddSingleton<List<Post>>(POSTLIST);
 
+
 // add client for communicating with the server
 Client CLIENT = new Client();
 CLIENT.Connect(); // connect to the server
