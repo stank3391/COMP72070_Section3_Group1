@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerTest", "ServerTest\Se
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SystemTest", "SystemTest\SystemTest.csproj", "{8D1A439A-143C-4E96-B869-4FAD69293AD1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisitorTest", "VisitorTest\VisitorTest.csproj", "{336AF751-E509-4ED2-96E6-775C817C510A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModelsTest", "VisitorTest\ModelsTest.csproj", "{336AF751-E509-4ED2-96E6-775C817C510A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
