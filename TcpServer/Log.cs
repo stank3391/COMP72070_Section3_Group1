@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 
 public class Log
 {
+    public static string fileName = "Log.xlsx";
+
     public static void CreateLog(string filename, string username, string action)
     {
         DateTime now = DateTime.Now;

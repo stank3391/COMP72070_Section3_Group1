@@ -103,46 +103,46 @@ namespace TcpServer
             {
                 case Packet.Type.Ack:
                     Console.WriteLine("TcpServer.HandlePacket(): Ack received");
-                    Log.CreateLog("test.xlsx", "yao", "Acknowledgement Signal Recieved");
+                    Log.CreateLog(Log.fileName, "yao", "Acknowledgement Signal Recieved");
 
                     break;
                 case Packet.Type.Error:
                     Console.WriteLine("TcpServer.HandlePacket(): Error received");
-                    Log.CreateLog("test.xlsx", "yao", "Error Signal Recieved");
+                    Log.CreateLog(Log.fileName, "yao", "Error Signal Recieved");
                     break;
                 case Packet.Type.ReadyPost:
                     Console.WriteLine("TcpServer.HandlePacket(): ReadyPost received");
-                    Log.CreateLog("test.xlsx", "yao", "ReadyPost Signal Recieved");
+                    Log.CreateLog(Log.fileName, "yao", "ReadyPost Signal Recieved");
                     HandleReadyPostPacket();
                     break;
                 case Packet.Type.ReadyImage:
                     Console.WriteLine("TcpServer.HandlePacket(): ReadyImage received");
-                    Log.CreateLog("test.xlsx", "yao", "ReadyImage Signal Recieved");
+                    Log.CreateLog(Log.fileName, "yao", "ReadyImage Signal Recieved");
                     HandleReadyImagePacket();
                     break;
                 case Packet.Type.Post:
                     Console.WriteLine("TcpServer.HandlePacket(): Post received");
-                    Log.CreateLog("test.xlsx", "yao", "Post Signal Recieved");
+                    Log.CreateLog(Log.fileName, "yao", "Post Signal Recieved");
                     HandlePostPacket(packet);
                     break;
                 case Packet.Type.Image:
                     Console.WriteLine("TcpServer.HandlePacket(): Image received");
-                    Log.CreateLog("test.xlsx", "yao", "Image Signal Recieved");
+                    Log.CreateLog(Log.fileName, "yao", "Image Signal Recieved");
                     HandleImagePacket(packet);
                     break;
                 case Packet.Type.Auth:
                     Console.WriteLine("TcpServer.HandlePacket(): Auth received");
                     HandleAuthPacket(packet);
-                    Log.CreateLog("test.xlsx", "yao", "Auth Signal Recieved");
+                    Log.CreateLog(Log.fileName, "yao", "Auth Signal Recieved");
                     break;
                 case Packet.Type.Acc:
                     Console.WriteLine("TcpServer.HandlePacket(): Auth received");
                     HandleAccPacket(packet);
-                    Log.CreateLog("test.xlsx", "yao", "Auth Signal Recieved");
+                    Log.CreateLog(Log.fileName, "yao", "Auth Signal Recieved");
                     break;
                 default:
                     Console.WriteLine("TcpServer.HandlePacket(): Unknown packet type received");
-                    Log.CreateLog("test.xlsx", "yao", "Unknown Signal Recieved");
+                    Log.CreateLog(Log.fileName, "yao", "Unknown Signal Recieved");
                     break;
             }
 
