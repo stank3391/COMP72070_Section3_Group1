@@ -5,7 +5,7 @@
     /// </summary>
     public class VisitorManager
     {
-        private int visitorCount; // count of visitors
+        private int visitorCount; // count of visitors for testing
         public Dictionary<string, Visitor> visitors { get; set; } // dictionary of visitors mapped to their ids
 
         public VisitorManager()
@@ -51,6 +51,13 @@
             return visitors[id];
         }
 
+        /// <summary>
+        /// update a visitor
+        /// </summary>
+        public void UpdateVisitor(Visitor visitor)
+        {
+            visitors[visitor.id] = visitor;
+        }
 
 
     }

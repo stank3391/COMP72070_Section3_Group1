@@ -12,6 +12,7 @@ namespace TcpServer
             TcpServer server = new TcpServer();
             //server.UpdatePosts();
             server.PlaceholderLoadPosts();
+            server.PlaceholderLoadAccounts();
             server.Start();
         }
     }

@@ -7,7 +7,7 @@ namespace COMP72070_Section3_Group1.Views.Home
     {
         public void OnGet()
         {
-            
+
         }
     }
 }

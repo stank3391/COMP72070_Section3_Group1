@@ -9,10 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-Account accountInstance = new Account();
-
-builder.Services.AddSingleton<Account>(accountInstance);
-
 // add visitor manager to track visitors
 VisitorManager VISITORMANAGER = new VisitorManager();
 builder.Services.AddSingleton<VisitorManager>(VISITORMANAGER);

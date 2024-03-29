@@ -1,17 +1,20 @@
 ﻿@{
-    ViewData["Title"] = "Create Account";
+    ViewData["Title"] = "LoginAction";
 }
 
+
 <div>
-    <form asp-controller="Home" asp-action="CreateAccountAction" method="post">
-        <h2>Create Account</h2>
+    <form asp-controller="Home" asp-action="LoginAction" method="post">
+        <h2>Login</h2>
         <label for="usernameText">Username:</label>
         <input type="text" id="usernameText" name="username" required />
 
         <label for="passwordText">Password:</label>
         <input type="password" id="passwordText" name="password" required />
 
-        <button type="submit">Create Account</button>
+        <button type="submit">Login</button>
+
+        <button onclick="window.location.href='@Url.Action("CreateAccount", "Home")'">Create Account</button>
     </form>
 </div>
 
@@ -57,11 +60,10 @@
         color: white;
         cursor: pointer;
         transition: background-color 0.3s ease;
+        margin: 10px;
     }
 
         button:hover {
             background-color: #4fa3d1;
         }
 </style>
-
-

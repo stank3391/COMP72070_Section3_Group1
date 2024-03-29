@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 public class Log
 {
-    public static string fileName = "Log.xlsx";
+    public static string fileName = "logs.xlsx";
 
     public static void CreateLog(string filename, string username, string action)
     {

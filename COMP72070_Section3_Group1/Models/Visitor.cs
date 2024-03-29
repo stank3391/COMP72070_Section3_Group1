@@ -7,13 +7,11 @@ namespace COMP72070_Section3_Group1.Models
     /// </summary>
     public class Visitor
     {
-        public string id { get; set; }
+        public string id { get; set; } // used to identify the visitor/session
 
-        public bool isAuthenicated { get; set; } = true; // placeholder until authentication is implemented
+        public bool isAuthenicated { get; set; } = false; // placeholder until authentication is implemented
 
-        public int? userId { get; set; } = 69420; // the account the visitor is logged into (SAME ONE IN DATABASE)
-
-        public string? username { get; set; } = "default_username"; // placeholder until authentication is implemented
+        public string? username { get; set; } = ""; // placeholder until authentication is implemented
 
         public Visitor(string id)
         {
@@ -22,23 +20,13 @@ namespace COMP72070_Section3_Group1.Models
         }
 
         /// <summary>
-        /// Authenticates the visitor returns the result
+        /// Authenticates the visitor
+        /// returns true
+        /// FOR TESTING PURPOSES
         /// </summary>
-        public bool Authenticate(string username, string password)
+        public void Authenticate(string username, string password)
         {
-            if (true)
-            {
-                isAuthenicated = true;
-
-                // get the account id from the database
-                // random int for now
-                Random random = new Random();
-                userId = random.Next(1, 100);
-
-                return true; // always return true for now
-            }
-
-
+            isAuthenicated = true;
         }
     }
 }

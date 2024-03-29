@@ -15,6 +15,8 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using DocumentFormat.OpenXml.Presentation;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace TcpServer
 {
@@ -30,7 +32,10 @@ namespace TcpServer
         private bool isStop = false; // flag to stop the server
 
         // database props
+        private string postsPath = "../../../placeholder_db/posts.json";
+        private string accountsPath = "../../../placeholder_db/accounts.json";
         private List<Post> posts = new List<Post>(); // list of posts from the database
+        private List<Account> accounts = new List<Account>(); // list of accounts from the database
 
         /// <summary>
         /// Constructor for the TcpServer class
@@ -38,6 +43,54 @@ namespace TcpServer
         public TcpServer()
         {
             this.listener = new TcpListener(this.localAddress, this.port);
+        }
+
+        /// <summary>
+        /// save all posts to palceholder database
+        /// </summary>
+        public void PlaceholderSavePosts()
+        {
+            string json = Newtonsoft.Json.JsonConvert.SerializeObject(posts);
+
+            File.WriteAllText(postsPath, json);
+
+            Console.WriteLine("Posts list saved to placeholder database.");
+        }
+
+        /// <summary>
+        /// loads all posts from placeholder database to posts list
+        /// </summary>
+        public void PlaceholderLoadPosts()
+        {
+            string json = File.ReadAllText(postsPath);
+
+            posts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Post>>(json);
+
+            Console.WriteLine("Posts list loaded from placeholder database.");
+        }
+
+        /// <summary>
+        /// save all accounts to palceholder database
+        /// </summary>
+        public void PlaceholderSaveAccounts()
+        {
+            string json = Newtonsoft.Json.JsonConvert.SerializeObject(accounts);
+
+            File.WriteAllText(accountsPath, json);
+
+            Console.WriteLine("Accounts list saved to placeholder database.");
+        }
+
+        /// <summary>
+        /// loads all accounts from placeholder database to accounts list
+        /// </summary>
+        public void PlaceholderLoadAccounts()
+        {
+            string json = File.ReadAllText(accountsPath);
+
+            accounts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Account>>(json);
+
+            Console.WriteLine("Accounts list loaded from placeholder database.");
         }
 
         /// <summary>
@@ -136,9 +189,9 @@ namespace TcpServer
                     Log.CreateLog(Log.fileName, "yao", "Auth Signal Recieved");
                     break;
                 case Packet.Type.Acc:
-                    Console.WriteLine("TcpServer.HandlePacket(): Auth received");
+                    Console.WriteLine("TcpServer.HandlePacket(): Acc received");
                     HandleAccPacket(packet);
-                    Log.CreateLog(Log.fileName, "yao", "Auth Signal Recieved");
+                    Log.CreateLog(Log.fileName, "yao", "Acc Signal Recieved");
                     break;
                 default:
                     Console.WriteLine("TcpServer.HandlePacket(): Unknown packet type received");
@@ -148,49 +201,45 @@ namespace TcpServer
 
             Console.WriteLine("TcpServer.HandlePacket(): End");
         }
-        static (string username, string password) ParseInputString(string input)
-        {
-            // Define a regular expression pattern to match "Username: <username>, Password: <password>"
-            string pattern = @"Username:\s*(?<username>\w+),\s*Password:\s*(?<password>\w+)";
 
-            // Match the input string against the pattern
-            Match match = Regex.Match(input, pattern);
-
-            if (match.Success)
-            {
-                // Extract username and password from the named groups in the match
-                string username = match.Groups["username"].Value;
-                string password = match.Groups["password"].Value;
-
-                return (username, password);
-            }
-            else
-            {
-                // Handle invalid input format
-                throw new ArgumentException("Invalid input format");
-            }
-        }
+        /// <summary>
+        /// Handles the account creation packet
+        /// </summary>
         private void HandleAccPacket(Packet packet)
         {
-            string path = "../../../placeholder_db/accounts.json";
             string bodystring = packet.ToString();
             Console.WriteLine(bodystring);
 
             // Parse the input string to extract username and password
-            // Parse the input string to extract username and password
-            var userData = ParseInputString(bodystring);
+            var userData = ParseLoginInputString(bodystring);
 
-            // Manually format the JSON string
-            string jsonString = $"{{\"username\": \"{userData.username}\", \"password\": \"{userData.password}\"}}";
+            // Check if the username already exists in the database
+            if (accounts.Any(account => account.username == userData.username))
+            {
+                Console.WriteLine($"Account creation failed: Username already exists{userData.username}");
 
-            // Write the JSON string to a file
-            File.WriteAllText(path, jsonString);
+                // Send acc fail packet
+                Packet response = new Packet("SERVER", Packet.Type.AccFail);
+                byte[] serializedPacket = Packet.SerializePacket(response);
+                stream.Write(serializedPacket, 0, serializedPacket.Length);
+            }
+            else
+            {
+                // Add the new account to the list
+                accounts.Add(new Account(userData.username, userData.password));
 
-            Console.WriteLine("Data has been written to path");
-            SendAck();
-            //TO DO
-            //SEND PACKET BACK TO CLIENT CONFIRMING ACCOUNT CREATING
+                // Save the updated list to the database
+                PlaceholderSaveAccounts();
+
+                // Send acc success packet
+                Packet response = new Packet("SERVER", Packet.Type.AccSuccess);
+                byte[] serializedPacket = Packet.SerializePacket(response);
+                stream.Write(serializedPacket, 0, serializedPacket.Length);
+
+                Console.WriteLine($"Account created successfully: {userData.username}");
+            }
         }
+
         /// <summary>
         /// Handles the ready post packet
         /// send all posts to the client
@@ -256,7 +305,11 @@ namespace TcpServer
             Console.WriteLine("TcpServer.HandleReadyImagePacket(): End");
         }
 
-
+        /// <summary>
+        /// Handles the post packet
+        /// inserts the post to the top of the list
+        /// and saves the updated posts list to the database
+        /// </summary>
         private void HandlePostPacket(Packet packet)
         {
             Console.WriteLine("TcpServer.HandlePostPacket(): Start");
@@ -273,6 +326,11 @@ namespace TcpServer
             Console.WriteLine("TcpServer.HandlePostPacket(): End");
         }
 
+        /// <summary>
+        /// Handles the image packet
+        /// receives image packets and reconstructs the image
+        /// saves it to the images folder
+        /// </summary>
         private void HandleImagePacket(Packet packet)
         {
             Console.WriteLine("TcpServer.HandleImagePacket(): Start");
@@ -318,6 +376,9 @@ namespace TcpServer
             }
         }
 
+        /// <summary>
+        /// Sends an ack packet to the client so client can send the next packet
+        /// </summary>
         private void SendAck()
         {
             Packet ackPacket = new Packet("SERVER", Packet.Type.Ack);
@@ -325,94 +386,13 @@ namespace TcpServer
             stream.Write(serializedPacket, 0, serializedPacket.Length);
         }
 
-
         /// <summary>
-        /// Fetches all the posts from the database and stores them in 'posts' property
-        /// will replace with database connection later
-        /// NOT USED ANYMORE
+        /// Verifies the login credentials against the database
         /// </summary>
-        public void UpdatePosts()
-        {
-            // update the posts from the database
-
-            // just return some dummy posts for now
-            posts.Add(new Post(1, "HEELOO!!! This should display placeholder image", "user1", DateTime.Now, "testimg1.jpg"));
-
-            posts.Add(new Post(2, "HEELOO!!! I am a post2", "user2", DateTime.Now, "testimg2.jpg"));
-
-            posts.Add(new Post(3, "HEELOO!!! I am a post3", "user3", DateTime.Now, "testimg3.jpg"));
-
-            posts.Add(new Post(4, "HEELOO!!! I am a post4", "user4", DateTime.Now, "testimg4.jpg"));
-
-            posts.Add(new Post(5, "HEELOO!!! I am a post5", "user5", DateTime.Now, "testimg5.jpg"));
-
-            posts.Add(new Post(6, "HEELOO!!! I am a post6", "user6", DateTime.Now, "testimg6.jpg"));
-
-            posts.Add(new Post(7, "HEELOO!!! I am a post7", "user7", DateTime.Now, "testimg7.jpg"));
-
-            posts.Add(new Post(8, "HEELOO!!! I am a post8", "user8", DateTime.Now, "testimg8.jpg"));
-
-            posts.Add(new Post(9, "HEELOO!!! I am a post9", "user9", DateTime.Now, "testimg9.jpg"));
-
-            Console.WriteLine("Posts list updated from 'Database'.");
-
-        }
-
-        /// <summary>
-        /// save all posts to palceholder database
-        /// </summary>
-        public void PlaceholderSavePosts()
-        {
-            string path = "../../../../TcpServer/placeholder_db/posts.json";
-
-            string json = Newtonsoft.Json.JsonConvert.SerializeObject(posts);
-
-            File.WriteAllText(path, json);
-
-            Console.WriteLine("Posts list saved to placeholder database.");
-        }
-
-        /// <summary>
-        /// loads all posts from placeholder database
-        /// </summary>
-        public void PlaceholderLoadPosts()
-        {
-            string path = "../../../../TcpServer/placeholder_db/posts.json";
-
-            string json = File.ReadAllText(path);
-
-            posts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Post>>(json);
-
-            Console.WriteLine("Posts list loaded from placeholder database.");
-        }
         private bool VerifyLogin(string username, string password)
         {
-            string path = "../../../placeholder_db/accounts.json";
-
-            try
-            {
-                // Read JSON data from the database file
-                string jsonData = File.ReadAllText(path);
-
-                // Deserialize JSON data to a dictionary of username and password
-                var data = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonData);
-
-                // Check if the provided username exists in the data and the password matches
-                if (data["username"] == username && data["password"] == password)
-                {
-                    return true; // Login successful
-                }
-            }
-            catch (FileNotFoundException)
-            {
-                Console.WriteLine("Database file not found.");
-            }
-            catch (JsonException)
-            {
-                Console.WriteLine("Error reading database.");
-            }
-
-            return false; // Login failed
+            // Check if the username and password match any account in the database
+            return accounts.Any(account => account.username == username && account.password == password);
         }
 
         public void HandleAuthPacket(Packet packet)
@@ -422,18 +402,54 @@ namespace TcpServer
             Console.WriteLine(bodystring);
 
             // Parse the input string to extract username and password
-            // Parse the input string to extract username and password
-            var userData = ParseInputString(bodystring);
+            var userData = ParseLoginInputString(bodystring);
 
             if (VerifyLogin(userData.username, userData.password))
             {
-                Console.WriteLine("Login successful!");
-                // Add further actions here for a successful login
+                Console.WriteLine("LoginAction successful!");
+
+                // send auth success packet
+                Packet response = new Packet("SERVER", Packet.Type.AuthSuccess);
+                byte[] serializedPacket = Packet.SerializePacket(response);
+                stream.Write(serializedPacket, 0, serializedPacket.Length);
             }
             else
             {
                 Console.WriteLine("Invalid username or password.");
-                // Add further actions here for an unsuccessful login
+
+                // send auth fail packet
+                Packet reponse = new Packet("SERVER", Packet.Type.AuthFail);
+                byte[] serializedPacket = Packet.SerializePacket(reponse);
+                stream.Write(serializedPacket, 0, serializedPacket.Length);
+            }
+        }
+
+        /// <summary>
+        /// Parses the input string to extract username and password
+        /// </summary>
+        static (string username, string password) ParseLoginInputString(string input)
+        {
+            // Define a regular expression pattern to match "Username: <username>, Password: <password>"
+            string pattern = @"Username:\s*(?<username>\w+),\s*Password:\s*(?<password>\w+)";
+
+            // remove whitespace from the input string
+            input = input.Replace(" ", "");
+
+            // Match the input string against the pattern
+            Match match = Regex.Match(input, pattern);
+
+            if (match.Success)
+            {
+                // Extract username and password from the named groups in the match
+                string username = match.Groups["username"].Value;
+                string password = match.Groups["password"].Value;
+
+                return (username, password);
+            }
+            else
+            {
+                // Handle invalid input format
+                throw new ArgumentException("Invalid input format");
             }
         }
     }
