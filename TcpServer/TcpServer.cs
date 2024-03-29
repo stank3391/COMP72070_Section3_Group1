@@ -158,6 +158,7 @@ namespace TcpServer
                     break;
                 case Packet.Type.Auth:
                     Console.WriteLine("TcpServer.HandlePacket(): Auth received");
+                    HandleAuthPacket(packet);
                     CreateLog("test.xlsx", "yao", "Auth Signal Recieved");
                     break;
                 case Packet.Type.Acc:
@@ -212,7 +213,7 @@ namespace TcpServer
             File.WriteAllText(path, jsonString);
 
             Console.WriteLine("Data has been written to path");
-
+            SendAck();
             //TO DO
             //SEND PACKET BACK TO CLIENT CONFIRMING ACCOUNT CREATING
         }
@@ -410,15 +411,56 @@ namespace TcpServer
 
             Console.WriteLine("Posts list loaded from placeholder database.");
         }
+        private bool VerifyLogin(string username, string password)
+        {
+            string path = "../../../placeholder_db/accounts.json";
 
+            try
+            {
+                // Read JSON data from the database file
+                string jsonData = File.ReadAllText(path);
+
+                // Deserialize JSON data to a dictionary of username and password
+                var data = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonData);
+
+                // Check if the provided username exists in the data and the password matches
+                if (data["username"] == username && data["password"] == password)
+                {
+                    return true; // Login successful
+                }
+            }
+            catch (FileNotFoundException)
+            {
+                Console.WriteLine("Database file not found.");
+            }
+            catch (JsonException)
+            {
+                Console.WriteLine("Error reading database.");
+            }
+
+            return false; // Login failed
+        }
 
         public void HandleAuthPacket(Packet packet)
         {
             //packet.Deserialize
-            string path = "../../../placeholder_db/accounts.json";
-            //TO DO
-            //VERIFY ACCOUNT INFORMATION SENT BY CLIENT AGAINST DB JSON PATH
-            //SEND PACKET BACK TO CLIENT CONFIRMING ACCOUNT VERIFICATION
+            string bodystring = packet.ToString();
+            Console.WriteLine(bodystring);
+
+            // Parse the input string to extract username and password
+            // Parse the input string to extract username and password
+            var userData = ParseInputString(bodystring);
+
+            if (VerifyLogin(userData.username, userData.password))
+            {
+                Console.WriteLine("Login successful!");
+                // Add further actions here for a successful login
+            }
+            else
+            {
+                Console.WriteLine("Invalid username or password.");
+                // Add further actions here for an unsuccessful login
+            }
         }
 
 
