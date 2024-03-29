@@ -1,6 +1,6 @@
 using COMP72070_Section3_Group1.Models;
 
-namespace VisitorManagerTest
+namespace ModelsTest
 {
     [TestClass]
     public class VisitorManagerTest

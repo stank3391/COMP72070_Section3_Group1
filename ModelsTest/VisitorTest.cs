@@ -1,12 +1,12 @@
 using COMP72070_Section3_Group1.Models;
 
-namespace VisitorTest
+namespace ModelsTest
 {
     [TestClass]
     public class VisitorTest
     {
         [TestMethod]
-        public void Test_Id_Setter()
+        public void Test_Set_id()
         {
             // Arrange
             Visitor visitor = new Visitor("123abc");
@@ -20,7 +20,7 @@ namespace VisitorTest
         }
 
         [TestMethod]
-        public void Test_IsAuthenticated_Setter_True()
+        public void Test_Set_isAuthenticated_True()
         {
             // Arrange
             Visitor visitor = new Visitor("123abc");
@@ -34,7 +34,7 @@ namespace VisitorTest
         }
 
         [TestMethod]
-        public void Test_IsAuthenticated_Setter_False()
+        public void Test_Set_isAuthenticated_False()
         {
             // Arrange
             Visitor visitor = new Visitor("123abc");
@@ -48,7 +48,7 @@ namespace VisitorTest
         }
 
         [TestMethod]
-        public void Test_Username_Setter()
+        public void Test_Set_username()
         {
             // Arrange
             Visitor visitor = new Visitor("123abc");
@@ -75,7 +75,7 @@ namespace VisitorTest
         }
 
         [TestMethod]
-        public void Test_Id_Getter()
+        public void Test_Get_id()
         {
             // Arrange
             Visitor visitor = new Visitor("123abc");
@@ -89,7 +89,7 @@ namespace VisitorTest
         }
 
         [TestMethod]
-        public void Test_IsAuthenticated_Getter_False()
+        public void Test_Get_isAuthenticated_False()
         {
             // Arrange
             Visitor visitor = new Visitor("123abc");
@@ -103,7 +103,7 @@ namespace VisitorTest
         }
 
         [TestMethod]
-        public void Test_IsAuthenticated_Getter_True()
+        public void Test_Get_isAuthenticated_True()
         {
             // Arrange
             Visitor visitor = new Visitor("123abc");
@@ -118,7 +118,7 @@ namespace VisitorTest
         }
 
         [TestMethod]
-        public void Test_Username_Getter()
+        public void Test_Get_username()
         {
             // Arrange
             Visitor visitor = new Visitor("123abc");
