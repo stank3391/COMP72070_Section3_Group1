@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 
 namespace SystemTest
@@ -27,6 +28,25 @@ namespace SystemTest
             //Assert
             Assert.IsNotNull(p.body);
             Assert.IsNotNull(p.header);
+        }
+        [TestMethod]
+        public void SerializationOfPackets()
+        {
+            char[] words = { 'H', 'E', 'L', 'L', 'O', };
+            Packet p = new Packet("69", Packet.Type.Post, Encoding.ASCII.GetBytes(words));
+            byte[] serializedPacket = Packet.SerializePacket(p);
+            Packet packetIn = Packet.DeserializePacket(serializedPacket);
+            Assert.AreEqual(p.ToString(), packetIn.ToString());
+        }
+        [TestMethod]
+        public void PacketNullValue()
+        {
+            char[] words = { 'H', 'E', 'L', 'L', 'O', };
+            Packet p = new Packet("69", Packet.Type.Post, Encoding.ASCII.GetBytes(words));
+            p.body = null;
+            //byte[] serializedPacket = Packet.SerializePacket(p);
+            //Packet packetIn = Packet.DeserializePacket(serializedPacket);
+            Assert.AreEqual(p.header.bodyLen, 0);
         }
     }
 }

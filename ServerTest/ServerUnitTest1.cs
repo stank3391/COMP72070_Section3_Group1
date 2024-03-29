@@ -21,5 +21,23 @@ namespace ServerTest
             //    Assert.AreEqual((byte) words[i], actual[i]);
             //}
         }
+        [TestMethod]
+        public void ServerMainTest()
+        {
+            //TcpServer.Program.Main();
+            //TcpServer.TcpServer tcpServer = new TcpServer.TcpServer();
+        }
+        //[TestMethod]
+        //public void TcpServerTestPlaceholderSavePosts()
+        //{
+        //    TcpServer.TcpServer myServ = new TcpServer.TcpServer();
+        //    myServ.PlaceholderSavePosts();
+        //}
+        //[TestMethod]
+        //public void TcpServerTestPlaceholderLoadPosts()
+        //{
+        //    TcpServer.TcpServer myServ = new TcpServer.TcpServer();
+        //    myServ.PlaceholderLoadPosts();
+        //}
     }
 }
