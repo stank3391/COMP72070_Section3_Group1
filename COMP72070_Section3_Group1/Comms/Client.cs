@@ -102,7 +102,7 @@ namespace COMP72070_Section3_Group1.Comms
         /// </summary>
         public void SendAck()
         {
-            Packet ackPacket = new Packet("CLIENT", Packet.Type.Ack);
+            Packet ackPacket = new Packet("ASP_SERVER", Packet.Type.Ack);
             SendPacket(ackPacket);
         }
 
@@ -149,7 +149,7 @@ namespace COMP72070_Section3_Group1.Comms
         {
             Console.WriteLine("Client.FetchPosts(): Start");
             // send a ready packet to the server
-            Packet readyPacket = new Packet("CLIENT", Packet.Type.ReadyPost);
+            Packet readyPacket = new Packet("ASP_SERVER", Packet.Type.ReadyPost);
             this.SendPacket(readyPacket);
 
             // receive the ack packet
@@ -180,7 +180,7 @@ namespace COMP72070_Section3_Group1.Comms
             Console.WriteLine("Client.FetchImages(): Start");
 
             // send a ready packet to the server
-            Packet readyPacket = new Packet("CLIENT", Packet.Type.ReadyImage);
+            Packet readyPacket = new Packet("ASP_SERVER", Packet.Type.ReadyImage);
             this.SendPacket(readyPacket);
 
             // receive the ack packet

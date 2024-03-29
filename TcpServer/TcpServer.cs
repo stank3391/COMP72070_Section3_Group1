@@ -156,46 +156,46 @@ namespace TcpServer
             {
                 case Packet.Type.Ack:
                     Console.WriteLine("TcpServer.HandlePacket(): Ack received");
-                    Log.CreateLog(Log.fileName, "yao", "Acknowledgement Signal Recieved");
+                    Log.CreateLog(Log.fileName, packet.header.sourceId, "Acknowledgement Signal Recieved");
 
                     break;
                 case Packet.Type.Error:
                     Console.WriteLine("TcpServer.HandlePacket(): Error received");
-                    Log.CreateLog(Log.fileName, "yao", "Error Signal Recieved");
+                    Log.CreateLog(Log.fileName, packet.header.sourceId, "Error Signal Recieved");
                     break;
                 case Packet.Type.ReadyPost:
                     Console.WriteLine("TcpServer.HandlePacket(): ReadyPost received");
-                    Log.CreateLog(Log.fileName, "yao", "ReadyPost Signal Recieved");
+                    Log.CreateLog(Log.fileName, packet.header.sourceId, "ReadyPost Signal Recieved");
                     HandleReadyPostPacket();
                     break;
                 case Packet.Type.ReadyImage:
                     Console.WriteLine("TcpServer.HandlePacket(): ReadyImage received");
-                    Log.CreateLog(Log.fileName, "yao", "ReadyImage Signal Recieved");
+                    Log.CreateLog(Log.fileName, packet.header.sourceId, "ReadyImage Signal Recieved");
                     HandleReadyImagePacket();
                     break;
                 case Packet.Type.Post:
                     Console.WriteLine("TcpServer.HandlePacket(): Post received");
-                    Log.CreateLog(Log.fileName, "yao", "Post Signal Recieved");
+                    Log.CreateLog(Log.fileName, packet.header.sourceId, "Post Signal Recieved");
                     HandlePostPacket(packet);
                     break;
                 case Packet.Type.Image:
                     Console.WriteLine("TcpServer.HandlePacket(): Image received");
-                    Log.CreateLog(Log.fileName, "yao", "Image Signal Recieved");
+                    Log.CreateLog(Log.fileName, packet.header.sourceId, "Image Signal Recieved");
                     HandleImagePacket(packet);
                     break;
                 case Packet.Type.Auth:
                     Console.WriteLine("TcpServer.HandlePacket(): Auth received");
                     HandleAuthPacket(packet);
-                    Log.CreateLog(Log.fileName, "yao", "Auth Signal Recieved");
+                    Log.CreateLog(Log.fileName, packet.header.sourceId, "Auth Signal Recieved");
                     break;
                 case Packet.Type.Acc:
                     Console.WriteLine("TcpServer.HandlePacket(): Acc received");
                     HandleAccPacket(packet);
-                    Log.CreateLog(Log.fileName, "yao", "Acc Signal Recieved");
+                    Log.CreateLog(Log.fileName, packet.header.sourceId, "Acc Signal Recieved");
                     break;
                 default:
                     Console.WriteLine("TcpServer.HandlePacket(): Unknown packet type received");
-                    Log.CreateLog(Log.fileName, "yao", "Unknown Signal Recieved");
+                    Log.CreateLog(Log.fileName, packet.header.sourceId, "Unknown Signal Recieved");
                     break;
             }
 
@@ -219,7 +219,7 @@ namespace TcpServer
                 Console.WriteLine($"Account creation failed: Username already exists{userData.username}");
 
                 // Send acc fail packet
-                Packet response = new Packet("SERVER", Packet.Type.AccFail);
+                Packet response = new Packet("TCP_SERVER", Packet.Type.AccFail);
                 byte[] serializedPacket = Packet.SerializePacket(response);
                 stream.Write(serializedPacket, 0, serializedPacket.Length);
             }
@@ -232,7 +232,7 @@ namespace TcpServer
                 PlaceholderSaveAccounts();
 
                 // Send acc success packet
-                Packet response = new Packet("SERVER", Packet.Type.AccSuccess);
+                Packet response = new Packet("TCP_SERVER", Packet.Type.AccSuccess);
                 byte[] serializedPacket = Packet.SerializePacket(response);
                 stream.Write(serializedPacket, 0, serializedPacket.Length);
 
@@ -254,7 +254,7 @@ namespace TcpServer
                 postCount = posts.Count;
             }
             byte[] body = Encoding.ASCII.GetBytes(postCount.ToString());
-            Packet packet = new Packet("SERVER", Packet.Type.Ack, body);
+            Packet packet = new Packet("TCP_SERVER", Packet.Type.Ack, body);
             byte[] serializedPacket = Packet.SerializePacket(packet);
             stream.Write(serializedPacket, 0, serializedPacket.Length);
 
@@ -263,7 +263,7 @@ namespace TcpServer
             {
                 Console.WriteLine($"TcpServer.HandleReadyPostPacket(): Sending post {i + 1} of {postCount}");
                 body = posts[i].ToByte();
-                packet = new Packet("SERVER", Packet.Type.Post, body);
+                packet = new Packet("TCP_SERVER", Packet.Type.Post, body);
                 serializedPacket = Packet.SerializePacket(packet);
                 stream.Write(serializedPacket, 0, serializedPacket.Length);
 
@@ -281,7 +281,7 @@ namespace TcpServer
 
             int imageCount = files.Length;
             byte[] body = Encoding.ASCII.GetBytes(imageCount.ToString());
-            Packet packet = new Packet("SERVER", Packet.Type.Ack, body);
+            Packet packet = new Packet("TCP_SERVER", Packet.Type.Ack, body);
             byte[] serializedPacket = Packet.SerializePacket(packet);
             stream.Write(serializedPacket, 0, serializedPacket.Length);
 
@@ -381,7 +381,7 @@ namespace TcpServer
         /// </summary>
         private void SendAck()
         {
-            Packet ackPacket = new Packet("SERVER", Packet.Type.Ack);
+            Packet ackPacket = new Packet("TCP_SERVER", Packet.Type.Ack);
             byte[] serializedPacket = Packet.SerializePacket(ackPacket);
             stream.Write(serializedPacket, 0, serializedPacket.Length);
         }
@@ -409,7 +409,7 @@ namespace TcpServer
                 Console.WriteLine("LoginAction successful!");
 
                 // send auth success packet
-                Packet response = new Packet("SERVER", Packet.Type.AuthSuccess);
+                Packet response = new Packet("TCP_SERVER", Packet.Type.AuthSuccess);
                 byte[] serializedPacket = Packet.SerializePacket(response);
                 stream.Write(serializedPacket, 0, serializedPacket.Length);
             }
@@ -418,7 +418,7 @@ namespace TcpServer
                 Console.WriteLine("Invalid username or password.");
 
                 // send auth fail packet
-                Packet reponse = new Packet("SERVER", Packet.Type.AuthFail);
+                Packet reponse = new Packet("TCP_SERVER", Packet.Type.AuthFail);
                 byte[] serializedPacket = Packet.SerializePacket(reponse);
                 stream.Write(serializedPacket, 0, serializedPacket.Length);
             }
