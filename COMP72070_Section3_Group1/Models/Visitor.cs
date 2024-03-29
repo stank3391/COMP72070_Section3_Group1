@@ -13,20 +13,14 @@ namespace COMP72070_Section3_Group1.Models
 
         public string? username { get; set; } = ""; // placeholder until authentication is implemented
 
+        /// <summary>
+        /// Creates a new visitor with the given id
+        /// </summary>
+        /// <param name="id"></param>
         public Visitor(string id)
         {
             this.id = id;
             Console.WriteLine($"Visitor created: {id}");
-        }
-
-        /// <summary>
-        /// Authenticates the visitor
-        /// returns true
-        /// FOR TESTING PURPOSES
-        /// </summary>
-        public void Authenticate(string username, string password)
-        {
-            isAuthenicated = true;
         }
     }
 }
