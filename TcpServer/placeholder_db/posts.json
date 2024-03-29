@@ -1,12 +1,5 @@
 [
   {
-    "id": 283468845,
-    "content": "hello",
-    "author": "admin",
-    "date": "2024-03-29T07:28:25",
-    "imageName": ""
-  },
-  {
     "id": 1,
     "content": "HEELOO!!! I am a post9",
     "author": "user9",
@@ -82,13 +75,6 @@
     "author": "Average British Dude",
     "date": "2024-03-18T07:02:47",
     "imageName": "testimg2.jpg"
-  },
-  {
-    "id": 1,
-    "content": "This Application is so much fun!",
-    "author": "Akrem",
-    "date": "2024-03-18T07:02:47",
-    "imageName": ""
   },
   {
     "id": 1,

@@ -116,6 +116,7 @@ namespace COMP72070_Section3_Group1.Controllers
                 if (Path.GetExtension(file.FileName) != ".jpg" && Path.GetExtension(file.FileName) != ".png")
                 {
                     Console.WriteLine($"HomeController.SubmitPost(): Invalid file extension {file.FileName}");
+                    TempData["Message"] = "Invalid file extension"; // special variable that persists for one redirect
                     return RedirectToAction("AstroPost", "Home");
                 }
 
