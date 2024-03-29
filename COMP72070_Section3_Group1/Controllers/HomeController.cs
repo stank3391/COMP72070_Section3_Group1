@@ -220,18 +220,38 @@ namespace COMP72070_Section3_Group1.Controllers
                 // update visitor
                 _visitorManager.UpdateVisitor(visitor);
 
+                TempData["Message"] = $"Welcome {visitor.username}"; //!!! special variable that persists for one redirect
+
                 // redirect to home page need success message
                 return RedirectToAction("Index", "Home");
             }
             else
             {
                 visitor.isAuthenicated = false;
-                TempData["Message"] = "LoginAction Fail"; //!!! special variable that persists for one redirect
+                TempData["Message"] = "Login Fail"; //!!! special variable that persists for one redirect
 
                 // return to login page need error message
                 return RedirectToAction("Login", "Home");
             }
         }
 
+        public IActionResult LogoutAction()
+        {
+            // get current visitor id
+            string visitorId = HttpContext.Session.GetString("VisitorId");
+            Visitor visitor = _visitorManager.GetVisitor(visitorId);
+
+            // set visitor as logged out
+            visitor.isAuthenicated = false;
+            visitor.username = "";
+
+            // update visitor
+            _visitorManager.UpdateVisitor(visitor);
+
+            TempData["Message"] = "You have been logged out"; // special variable that persists for one redirect
+
+            // redirect to home page
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

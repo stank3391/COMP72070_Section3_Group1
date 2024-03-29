@@ -79,13 +79,15 @@
                                     <p class="dropdown-item">
                                         <text>Hello @visitor.username!</text>
                                     </p>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" asp-asp-controller="Home" asp-action="LogoutAction">Log Out</a>
                                 }
                                 else
                                 {
                                     <a class="dropdown-item" asp-controller="Home" asp-action="Login">Login</a>
                                 }
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" onclick="window.close();">Log Out</a>
+                                
+                                
                             </div>
                         </li>
                     </ul>
