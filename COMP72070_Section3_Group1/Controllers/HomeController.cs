@@ -14,14 +14,27 @@ using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace COMP72070_Section3_Group1.Controllers
 {
+    /// <summary>
+    /// Main controller for the website
+    /// Handles all the routing
+    /// </summary>
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly VisitorManager _visitorManager;
-        private readonly Client _client;
-        private readonly List<Post> _postList;
-        private readonly IWebHostEnvironment _environment;
+        private readonly ILogger<HomeController> _logger; // logger for debugging
+        private readonly VisitorManager _visitorManager; // visitor manager for handling visitors
+        private readonly Client _client; // client for sending and receiving packets
+        private readonly List<Post> _postList; // list of posts singleton   
+        private readonly IWebHostEnvironment _environment; // environment for file handling (getting file path)
 
+        /// <summary>
+        /// Constructor for the HomeController
+        /// Initializes the logger, visitor manager, client, post list, and environment
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="visitorManager"></param>
+        /// <param name="client"></param>
+        /// <param name="postList"></param>
+        /// <param name="environment"></param>
         public HomeController(ILogger<HomeController> logger, VisitorManager visitorManager, Client client, List<Post> postList, IWebHostEnvironment environment)
         {
             _logger = logger;
@@ -31,6 +44,13 @@ namespace COMP72070_Section3_Group1.Controllers
             this._postList = postList;
             this._environment = environment;
         }
+
+        /// <summary>
+        /// Main page of the website 
+        /// Displays all the posts
+        /// Adds the visitor to the viewbag for authenticated view
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Index()
         {
             // add visitor to viewbag
@@ -41,6 +61,10 @@ namespace COMP72070_Section3_Group1.Controllers
             return View(_postList);
         }
 
+        /// <summary>
+        /// Privacy page of the website
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Privacy()
         {
             // add visitor to viewbag
@@ -50,6 +74,15 @@ namespace COMP72070_Section3_Group1.Controllers
 
             return View();
         }
+
+        /// <summary>
+        /// AstroPost page
+        /// Displays the form for posting
+        /// Adds the visitor to the viewbag for authenticated view
+        /// Redirects to login page if not authenticated
+        /// Adds a message if not authenticated
+        /// </summary>
+        /// <returns></returns>
         public IActionResult AstroPost()
         {
             // add visitor to viewbag
@@ -65,6 +98,13 @@ namespace COMP72070_Section3_Group1.Controllers
 
             return View();
         }
+
+        /// <summary>
+        /// Profile page
+        /// Displays the profile of the user
+        /// Allows the user to update their profile picture
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Profile()
         {
             // get visitor from session
@@ -76,6 +116,14 @@ namespace COMP72070_Section3_Group1.Controllers
             return View(visitor);
         }
 
+        /// <summary>
+        /// SubmitProfilePic action
+        /// Submits the profile picture to the server
+        /// Updates the visitor with the new image name
+        /// Adds a message if the file extension is invalid
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
         public IActionResult SubmitProfilePic(IFormFile file)
         {
             // get visitor from session
@@ -129,22 +177,43 @@ namespace COMP72070_Section3_Group1.Controllers
             return RedirectToAction("Profile", "Home");
         }
 
+        /// <summary>
+        /// Login page
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Login()
         {
             return View();
         }
-
+        /// <summary>
+        /// CreateAccount page
+        /// </summary>
+        /// <returns></returns>
         public IActionResult CreateAccount()
         {
             return View();
         }
 
+        /// <summary>
+        /// Error page
+        /// </summary>
+        /// <returns></returns>
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        /// <summary>
+        /// SubmitPost action
+        /// Submits the post to the server
+        /// Adds the post to the post list
+        /// Adds alert message if the content is empty
+        /// Adds alert message if the file extension is invalid
+        /// </summary>
+        /// <param name="content"></param>
+        /// <param name="file"></param>
+        /// <returns></returns>
         public IActionResult SubmitPost(string content, IFormFile file)
         {
             //Account test = new Account();
@@ -210,11 +279,19 @@ namespace COMP72070_Section3_Group1.Controllers
             // add post to top of list
             _postList.Insert(0, post);
 
-            //return View;
-            return RedirectToAction("AstroPost", "Home");
+            //return to home page;
+            return RedirectToAction("Index", "Home");
 
         }
 
+        /// <summary>
+        /// CreateAccountAction
+        /// Creates an account for the user
+        /// Adds alert message if the username is invalid
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         public IActionResult CreateAccountAction(string username, string password)
         {
             //validate username and password
@@ -265,6 +342,15 @@ namespace COMP72070_Section3_Group1.Controllers
 
         }
 
+        /// <summary>
+        /// LoginAction
+        /// Logs the user in by sending the username and password to the server
+        /// Adds alert message if the login fails
+        /// update visitor info with username and image name
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         public IActionResult LoginAction(string username, string password)
         {
             string combinedInfo = $"Username: {username}, Password: {password}";
@@ -314,6 +400,11 @@ namespace COMP72070_Section3_Group1.Controllers
             }
         }
 
+        /// <summary>
+        /// LogoutAction
+        /// Logs the user out
+        /// </summary>
+        /// <returns></returns>
         public IActionResult LogoutAction()
         {
             // get current visitor id

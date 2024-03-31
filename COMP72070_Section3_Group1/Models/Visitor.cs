@@ -4,6 +4,7 @@ namespace COMP72070_Section3_Group1.Models
 {
     /// <summary>
     /// Visitor class to store the visitor's id and authentication status
+    /// ids are from the session dictionary: HttpContext.Session.GetString("VisitorId");
     /// </summary>
     public class Visitor
     {
@@ -11,7 +12,7 @@ namespace COMP72070_Section3_Group1.Models
 
         public bool isAuthenicated { get; set; } = false; // placeholder until authentication is implemented
 
-        public string? username { get; set; } = ""; // placeholder until authentication is implemented
+        public string? username { get; set; } = ""; // username of the account the visitor is logged into
 
         public string? imageName { get; set; } = ""; // image name of the profile picture
 

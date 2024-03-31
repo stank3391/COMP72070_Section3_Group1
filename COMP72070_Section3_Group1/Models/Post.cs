@@ -30,7 +30,7 @@ namespace COMP72070_Section3_Group1.Models
         }
 
         /// <summary>
-        /// Deserializes a byte array into a post
+        /// Constructs a post from a byte array
         /// </summary>
         public Post(byte[] body)
         {
@@ -45,6 +45,13 @@ namespace COMP72070_Section3_Group1.Models
             this.imageName = post.imageName;
         }
 
+        /// <summary>
+        /// Constructor for the Post class
+        /// imageName optional
+        /// </summary>
+        /// <param name="visitor"></param>
+        /// <param name="content"></param>
+        /// <param name="imageName"></param>
         public Post (Visitor visitor, string content, string imageName = "")
         {
             this.id = Guid.NewGuid().GetHashCode();

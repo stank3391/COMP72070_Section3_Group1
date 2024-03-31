@@ -2,6 +2,8 @@
 {
     /// <summary>
     /// Manages the visitors 
+    /// contains a dictionary of visitors mapped to their ids
+    /// ids are from the session dictionary HttpContext.Session.GetString("VisitorId");
     /// </summary>
     public class VisitorManager
     {

@@ -5,6 +5,9 @@ using System.Text;
 
 namespace TcpServer
 {
+    /// <summary>
+    /// Main class for running the tcpserver
+    /// </summary>
     class Program
     {
         public static void Main()

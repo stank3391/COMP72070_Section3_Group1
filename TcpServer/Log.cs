@@ -7,9 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/// <summary>
+/// Class to log actions to an excel file
+/// Uses OpenXML to write to the file
+/// </summary>
 public class Log
 {
-    public static string fileName = "logs.xlsx";
+    public static string fileName = "logs.xlsx"; // name of the file to write to
 
     public static void CreateLog(string filename, string username, string action)
     {
