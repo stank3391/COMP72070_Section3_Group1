@@ -112,7 +112,7 @@ namespace TcpServer
                     break;
                 case Packet.Type.Post:
                     Console.WriteLine("TcpServer.HandlePacket(): Post received");
-                    Log.CreateLog(Log.fileName, packet.header.sourceId, "Post Signal Recieved");
+                    //Log.CreateLog(Log.fileName, packet.header.sourceId, "Post Signal Recieved");
                     HandlePostPacket(packet);
                     break;
                 case Packet.Type.Image:

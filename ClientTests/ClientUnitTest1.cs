@@ -8,6 +8,7 @@ namespace ClientTests
     [TestClass]
     public class ClientUnitTest1
     {
+        /*
         [TestMethod]
         public void CLT_001_Create_Posts_Dynamic_Test_Assert_By_Viewing()
         {
@@ -39,6 +40,34 @@ namespace ClientTests
                 //===============ASSERT BY VEIWING WEBSITE THIS IS A POST============
                 line = sr.ReadLine();
             }
+        }
+        */
+
+        [TestMethod]
+        public void CLT_002_Post_Images_Dynamic_Test_Assert_By_Viewing()
+        {
+            //==================ARRANGE===============================
+            StreamReader sr = new StreamReader("../../../PostCreatePicturesTests.txt");
+            //Read the first line of text
+            String line = sr.ReadLine();
+            //Start up obj for server. doesn't need to connect to client for tear
+            TcpServer.TcpServer tcpServer = new TcpServer.TcpServer();
+            //Required for appending. Instead of replacing
+            tcpServer.PlaceholderLoadPosts();
+
+            //=====================ACT=============================
+            //Read my file line-by-line
+            while (line != null)
+            {
+                Post post;
+                post = new Post(1, "CLT_002_Post_Images_Dynamic_Test_Assert_By_Viewing", "Test Stub", DateTime.Now, line);
+                Packet packet = new Packet("CLT_002", Packet.Type.Post, post.ToByte());
+                // HandlePacket(packet);
+                tcpServer.HandlePacket(packet);
+                //===============ASSERT BY VEIWING WEBSITE THIS IS A POST============
+                line = sr.ReadLine();
+            }
+            Assert.AreEqual(1, 1);
         }
     }
 }

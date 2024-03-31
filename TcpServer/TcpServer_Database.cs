@@ -9,8 +9,8 @@ namespace TcpServer
     public partial class TcpServer
     {
         // database props
-        public string postsPath = "../../../placeholder_db/posts.json"; // path to the posts database
-        public string accountsPath = "../../../placeholder_db/accounts.json"; // path to the accounts database
+        public string postsPath = "../../../../../COMP72070_Section3_Group1/TcpServer/placeholder_db/posts.json"; // path to the posts database
+        public string accountsPath = "../../../../../COMP72070_Section3_Group1/TcpServer/placeholder_db/accounts.json"; // path to the accounts database
         public List<Post> posts = new List<Post>(); // list of posts from the database
         public List<Account> accounts = new List<Account>(); // list of accounts from the database
 
