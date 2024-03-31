@@ -9,10 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-Account accountInstance = new Account();
-
-builder.Services.AddSingleton<Account>(accountInstance);
-
 // add visitor manager to track visitors
 VisitorManager VISITORMANAGER = new VisitorManager();
 builder.Services.AddSingleton<VisitorManager>(VISITORMANAGER);
@@ -20,6 +16,7 @@ builder.Services.AddSingleton<VisitorManager>(VISITORMANAGER);
 // store posts to be displayed
 List<Post> POSTLIST = new List<Post>();// fetch the posts from the server
 builder.Services.AddSingleton<List<Post>>(POSTLIST);
+
 
 // add client for communicating with the server
 Client CLIENT = new Client();

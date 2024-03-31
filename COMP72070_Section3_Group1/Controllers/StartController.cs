@@ -68,21 +68,5 @@ namespace COMP72070_Section3_Group1.Controllers
 
             return RedirectToAction("Index", "Home"); // redirect to the home page
         }
-
-        public IActionResult ExampleAccount(string username, string password)
-        {
-            string combinedInfo = $"Username: {username}, Password: {password}";
-
-            // new session code
-            string visitorId = HttpContext.Session.GetString("VisitorId");
-            Visitor visitor = _visitorManager.GetVisitor(visitorId);
-
-            Packet packet = new Packet(visitor.id, Packet.Type.Auth, Encoding.ASCII.GetBytes(combinedInfo));
-
-            _client.SendPacket(packet);
-
-            // Return to the current view
-            return RedirectToAction("Index", "Home");
-        }
     }
 }

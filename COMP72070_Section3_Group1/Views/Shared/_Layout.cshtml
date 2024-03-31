@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@using Newtonsoft.Json
+@using COMP72070_Section3_Group1.Models;
+@{
+    var visitor = ViewBag.Visitor as COMP72070_Section3_Group1.Models.Visitor;
+}
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -36,16 +41,19 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="loginwgoogle">Login or Create an Account!</a>
+                        @* <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Login" asp-action="Index">Login</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="CreateAccount" asp-action="Index">Create an Account</a>
+                        </li> *@
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="AstroPost">AstroPost</a>
                         </li>
-                        <li class="nav-item">
+                        @* <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="AstroMessage">AstroMessage</a>
                         </li>
                         <li class="nav-item">
@@ -53,7 +61,7 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="AstroSpace">AstroSpace</a>
-                        </li>
+                        </li> *@
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
@@ -64,10 +72,22 @@
                                 Account
                             </a>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="accountDropdown">
-                                <a class="dropdown-item" href="#">Profile</a>
-                                <a class="dropdown-item" href="#">Settings</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">Log Out</a>
+                                @* <a class="dropdown-item" href="#">Profile</a>
+                                <a class="dropdown-item" href="#">Settings</a> *@
+                                @if (visitor != null && visitor.isAuthenicated)
+                                {
+                                    <p class="dropdown-item">
+                                        <text>Hello @visitor.username!</text>
+                                    </p>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" asp-asp-controller="Home" asp-action="LogoutAction">Log Out</a>
+                                }
+                                else
+                                {
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="Login">Login</a>
+                                }
+                                
+                                
                             </div>
                         </li>
                     </ul>

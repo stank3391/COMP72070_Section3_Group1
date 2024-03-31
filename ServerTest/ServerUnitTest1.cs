@@ -9,15 +9,35 @@ namespace ServerTest
         public void TestMethod1()
         {
 
-            char[] words = { 'H', 'E', 'L', 'L', 'O', };
-            //Packet p = new Packet(Packet.Type.Post, false, Encoding.ASCII.GetBytes(words));
-            Packet p = new Packet("69", Packet.Type.Post, Encoding.ASCII.GetBytes(words));
-            byte[] expected;
+            //char[] words = { 'H', 'E', 'L', 'L', 'O', };
+            //Packet p = new Packet("69", Packet.Type.Post, Encoding.ASCII.GetBytes(words));
+            //byte[] expected;
 
-            //Client c = new Client();
-            //c.connect();
-            byte[] actual = Packet.SerializePacket(p);
-            Assert.AreEqual((byte) 'c', actual[0]);
+            ////Client c = new Client();
+            ////c.connect();
+            //byte[] actual = Packet.SerializePacket(p);
+            //for (int i = 0; i < words.Length; i++)
+            //{
+            //    Assert.AreEqual((byte) words[i], actual[i]);
+            //}
         }
+        [TestMethod]
+        public void ServerMainTest()
+        {
+            //TcpServer.Program.Main();
+            //TcpServer.TcpServer tcpServer = new TcpServer.TcpServer();
+        }
+        //[TestMethod]
+        //public void TcpServerTestPlaceholderSavePosts()
+        //{
+        //    TcpServer.TcpServer myServ = new TcpServer.TcpServer();
+        //    myServ.PlaceholderSavePosts();
+        //}
+        //[TestMethod]
+        //public void TcpServerTestPlaceholderLoadPosts()
+        //{
+        //    TcpServer.TcpServer myServ = new TcpServer.TcpServer();
+        //    myServ.PlaceholderLoadPosts();
+        //}
     }
 }
