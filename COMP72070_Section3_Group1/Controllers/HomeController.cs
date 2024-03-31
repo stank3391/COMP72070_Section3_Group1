@@ -217,6 +217,15 @@ namespace COMP72070_Section3_Group1.Controllers
 
         public IActionResult CreateAccountAction(string username, string password)
         {
+            //validate username and password
+            // - cannot be empty
+            // - cannot contain ','
+            if (username == null || username == "" || password == null || password == "" || username.Contains(",") || password.Contains(","))
+            {
+                TempData["Message"] = "Invalid username"; // special variable that persists for one redirect
+                return RedirectToAction("CreateAccount", "Home");
+            }
+
             string combinedInfo = $"Username: {username}, Password: {password}";
 
             // get visitor id from session
