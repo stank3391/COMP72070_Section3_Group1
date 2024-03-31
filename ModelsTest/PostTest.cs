@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json;
 using COMP72070_Section3_Group1.Models;
 
 namespace ModelsTest
@@ -36,20 +37,22 @@ namespace ModelsTest
         public void Test_Constructor_Bytes()
         {
             // Arrange
-            byte[] body = Encoding.ASCII.GetBytes("1,content,author,2021-01-01,imageName");
-            Post post = new Post(body);
+            DateTime date = DateTime.Now;
+            Post post = new Post(1, "content", "author", date, "imageName");
+            byte[] body = post.ToByte();
+            Post actualPost = new Post(body);
             int expectedId = 1;
             string expectedContent = "content";
             string expectedAuthor = "author";
-            DateTime expectedDate = DateTime.Parse("2021-01-01");
+            DateTime expectedDate = date;
             string expectedImageName = "imageName";
 
             // Act
-            int actualId = post.id;
-            string actualContent = post.content;
-            string actualAuthor = post.author;
-            DateTime actualDate = post.date;
-            string actualImageName = post.imageName;
+            int actualId = actualPost.id;
+            string actualContent = actualPost.content;
+            string actualAuthor = actualPost.author;
+            DateTime actualDate = actualPost.date;
+            string actualImageName = actualPost.imageName;
 
             // Assert
             Assert.AreEqual(expectedId, actualId);
@@ -210,11 +213,13 @@ namespace ModelsTest
         {
             // Arrange
             DateTime date = DateTime.Now;
-            Post post = new Post(1, "content", "author", date, "imageName");
-            byte[] expected = Encoding.ASCII.GetBytes("1,content,author," + date + ",imageName");
+            Post post1 = new Post(1, "content", "author", date, "imageName");
+            Post post2 = post1;
+            string expectedString = JsonSerializer.Serialize(post2);
+            byte[] expected = Encoding.ASCII.GetBytes(expectedString);
 
             // Act
-            byte[] actual = post.ToByte();
+            byte[] actual = post1.ToByte();
 
             // Assert
             CollectionAssert.AreEqual(expected, actual);

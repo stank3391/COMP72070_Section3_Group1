@@ -9,10 +9,10 @@ namespace TcpServer
     public partial class TcpServer
     {
         // database props
-        private string postsPath = "../../../placeholder_db/posts.json"; // path to the posts database
-        private string accountsPath = "../../../placeholder_db/accounts.json"; // path to the accounts database
-        private List<Post> posts = new List<Post>(); // list of posts from the database
-        private List<Account> accounts = new List<Account>(); // list of accounts from the database
+        public string postsPath = "../../../placeholder_db/posts.json"; // path to the posts database
+        public string accountsPath = "../../../placeholder_db/accounts.json"; // path to the accounts database
+        public List<Post> posts = new List<Post>(); // list of posts from the database
+        public List<Account> accounts = new List<Account>(); // list of accounts from the database
 
         /// <summary>
         /// save all posts to palceholder database

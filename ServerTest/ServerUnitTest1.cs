@@ -1,43 +1,30 @@
 using System.Text;
+using TcpServer;
+using COMP72070_Section3_Group1.Models;
+using Microsoft.EntityFrameworkCore.Query;
+using System.Runtime.InteropServices;
 
 namespace ServerTest
 {
     [TestClass]
     public class ServerUnitTest1
     {
-        [TestMethod]
-        public void TestMethod1()
-        {
 
-            //char[] words = { 'H', 'E', 'L', 'L', 'O', };
-            //Packet p = new Packet("69", Packet.Type.Post, Encoding.ASCII.GetBytes(words));
-            //byte[] expected;
-
-            ////Client c = new Client();
-            ////c.connect();
-            //byte[] actual = Packet.SerializePacket(p);
-            //for (int i = 0; i < words.Length; i++)
-            //{
-            //    Assert.AreEqual((byte) words[i], actual[i]);
-            //}
-        }
         [TestMethod]
-        public void ServerMainTest()
+        public void Test_HandleAuthPacket()
         {
-            //TcpServer.Program.Main();
-            //TcpServer.TcpServer tcpServer = new TcpServer.TcpServer();
+            // Arrange
+            TcpServer.TcpServer server = new TcpServer.TcpServer();
+            string username = "username";
+            string password = "password";
+            server.accounts.Add(new Account(username, password));
+            Packet packet = new Packet("TCP_CLIENT", Packet.Type.Auth, Encoding.ASCII.GetBytes($"{username},{password}"));
+
+            // Act
+            bool actual = server.VerifyLogin(username, password);
+
+            // Assert
+            Assert.IsTrue(actual);
         }
-        //[TestMethod]
-        //public void TcpServerTestPlaceholderSavePosts()
-        //{
-        //    TcpServer.TcpServer myServ = new TcpServer.TcpServer();
-        //    myServ.PlaceholderSavePosts();
-        //}
-        //[TestMethod]
-        //public void TcpServerTestPlaceholderLoadPosts()
-        //{
-        //    TcpServer.TcpServer myServ = new TcpServer.TcpServer();
-        //    myServ.PlaceholderLoadPosts();
-        //}
     }
 }
