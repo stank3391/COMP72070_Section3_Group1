@@ -59,6 +59,11 @@ namespace TcpServer
 
             accounts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Account>>(json);
 
+            if (accounts == null)
+            {
+                accounts = new List<Account>();
+            }
+
             Console.WriteLine("Accounts list loaded from placeholder database.");
         }
 

@@ -307,6 +307,13 @@ namespace COMP72070_Section3_Group1.Controllers
 
             // get visitor id from session
             string visitorId = HttpContext.Session.GetString("VisitorId");
+            if (visitorId == null)
+            {
+                visitorId = Guid.NewGuid().ToString();
+                HttpContext.Session.SetString("VisitorId", visitorId);
+                Visitor tempVisitor = new Visitor(visitorId);
+                _visitorManager.AddVisitor(tempVisitor);
+            }
             Visitor visitor = _visitorManager.GetVisitor(visitorId);
 
             // send account creation request to server
