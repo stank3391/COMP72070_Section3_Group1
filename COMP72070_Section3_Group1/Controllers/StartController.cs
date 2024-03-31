@@ -12,6 +12,8 @@ namespace COMP72070_Section3_Group1.Controllers
     /// <summary>
     /// THIS MUST RUN FIRST 
     /// Will redirect to the home/index page dw
+    /// creates a new visitor object and adds it to the visitor manager
+    /// used to track and manage visitors
     /// </summary>
     public class StartController : Controller
     {
