@@ -35,6 +35,11 @@ namespace TcpServer
 
             posts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Post>>(json);
 
+            if (posts == null)
+            {
+                posts = new List<Post>();
+            }
+
             Console.WriteLine("Posts list loaded from placeholder database.");
         }
 

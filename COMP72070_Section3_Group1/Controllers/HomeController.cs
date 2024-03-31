@@ -276,6 +276,9 @@ namespace COMP72070_Section3_Group1.Controllers
 
             Console.WriteLine($"HomeController.SubmitPost(): Post sent {post.content}");
 
+            // wait for ack
+            _client.WaitForAck();
+
             // add post to top of list
             _postList.Insert(0, post);
 
@@ -321,6 +324,7 @@ namespace COMP72070_Section3_Group1.Controllers
             _client.SendPacket(packet);
 
             // receive response from server
+            Console.WriteLine("HomeController.CreateAccountAction(): Waiting Acc for response");
             Packet response = _client.ReceivePacket();
 
             // check if account creation was successful

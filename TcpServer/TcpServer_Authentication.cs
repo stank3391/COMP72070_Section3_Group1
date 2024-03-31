@@ -98,6 +98,13 @@ namespace TcpServer
             return accounts.Any(account => account.username == username && account.password == password);
         }
 
+        /// <summary>
+        /// Handles the authentication packet
+        /// Sends an auth success packet if the login is successful
+        /// Sends an auth fail packet if the login is unsuccessful
+        /// The body of the auth success packet is the profile image name
+        /// </summary>
+        /// <param name="packet"></param>
         public void HandleAuthPacket(Packet packet)
         {
             //packet.Deserialize

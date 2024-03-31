@@ -91,6 +91,9 @@ namespace TcpServer
             // save the posts to the database
             this.PlaceholderSavePosts();
 
+            // send ack packet
+            this.SendAck();
+
             Console.WriteLine("TcpServer.HandlePostPacket(): End");
         }
 
