@@ -25,6 +25,7 @@ public class Packet
         ReadyImage, // ready packet - ready to receive images
         ReadyDM, // ready packet - ready to receive direct messages
         Image, // image packet
+        UpdateAcc, // update account image packet
     };
 
     public struct Header
