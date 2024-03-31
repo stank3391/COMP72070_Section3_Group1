@@ -4,7 +4,7 @@
 @model List<COMP72070_Section3_Group1.Models.Post>
 
 
-<div>
+<div class accesskey="post-wrapper">
     @foreach (var post in Model)
     {
         <div class="post-container">
@@ -12,7 +12,7 @@
             @if (!string.IsNullOrEmpty(post.imageName))
             {
                 <img src="/images/@post.imageName" alt="Image description"
-                    onerror="this.onerror=null; this.src='/images/placeholder.jpg';">
+                    onerror="this.onerror=null; this.src='/images/placeholder_image.jpg';">
             }
 
             <!-- Display the post content -->
@@ -165,15 +165,6 @@
 
 }
 </style>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function (event) {
-        var message = '@TempData["Message"]';
-        if (message) {
-            alert(message);
-        }
-    });
-</script>
 
 <script>
  document.addEventListener("DOMContentLoaded", function () {

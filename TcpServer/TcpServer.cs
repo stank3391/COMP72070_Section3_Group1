@@ -193,6 +193,11 @@ namespace TcpServer
                     HandleAccPacket(packet);
                     Log.CreateLog(Log.fileName, packet.header.sourceId, "Acc Signal Recieved");
                     break;
+                case Packet.Type.UpdateAcc:
+                    Console.WriteLine("TcpServer.HandlePacket(): UpdateAccImage received");
+                    HandleUpdateAccPacket(packet);
+                    Log.CreateLog(Log.fileName, packet.header.sourceId, "UpdateAccImage Signal Recieved");
+                    break;
                 default:
                     Console.WriteLine("TcpServer.HandlePacket(): Unknown packet type received");
                     Log.CreateLog(Log.fileName, packet.header.sourceId, "Unknown Signal Recieved");
@@ -305,6 +310,48 @@ namespace TcpServer
             Console.WriteLine("TcpServer.HandleReadyImagePacket(): End");
         }
 
+        public void HandleUpdateAccPacket(Packet packet)
+        {
+            // convert the packet body to a string
+            string bodyString = Encoding.ASCII.GetString(packet.body);
+
+            // parse the input string to extract username, field, and value
+            // body is in the format "username,field,value"
+            string[] bodyParts = bodyString.Split(',');
+            string username = bodyParts[0];
+            string field = bodyParts[1];
+            string value = bodyParts[2];
+
+            // find the account in the list
+            Account account = accounts.Find(account => account.username == username);
+            if (account == null)
+            {
+                Console.WriteLine($"Account not found: {username}");
+                return;
+            }
+
+            // update the account field
+            switch (field)
+            {
+                case "password":
+                    account.password = value;
+                    break;
+                case "imageName":
+                    account.imageName = value;
+                    break;
+                default:
+                    Console.WriteLine($"Invalid field: {field}");
+                    return;
+            }
+
+            // update the account in the list
+            accounts[accounts.FindIndex(account => account.username == username)] = account;
+
+            // save the updated list to the database
+            PlaceholderSaveAccounts();
+            
+        }
+
         /// <summary>
         /// Handles the post packet
         /// inserts the post to the top of the list
@@ -408,8 +455,11 @@ namespace TcpServer
             {
                 Console.WriteLine("LoginAction successful!");
 
-                // send auth success packet
-                Packet response = new Packet("TCP_SERVER", Packet.Type.AuthSuccess);
+                // get profile image name
+                string imageName = accounts.Find(account => account.username == userData.username).imageName;
+
+                // send auth success packet with the image name as the body
+                Packet response = new Packet("TCP_SERVER", Packet.Type.AuthSuccess, Encoding.ASCII.GetBytes(imageName));
                 byte[] serializedPacket = Packet.SerializePacket(response);
                 stream.Write(serializedPacket, 0, serializedPacket.Length);
             }

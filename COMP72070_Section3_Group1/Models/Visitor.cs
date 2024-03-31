@@ -13,6 +13,8 @@ namespace COMP72070_Section3_Group1.Models
 
         public string? username { get; set; } = ""; // placeholder until authentication is implemented
 
+        public string? imageName { get; set; } = ""; // image name of the profile picture
+
         /// <summary>
         /// Creates a new visitor with the given id
         /// </summary>

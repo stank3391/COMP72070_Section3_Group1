@@ -1,0 +1,52 @@
+﻿@{
+    ViewData["Title"] = "Profile";
+}
+
+@model COMP72070_Section3_Group1.Models.Visitor;
+
+<div class="info-container">
+<h1>Profile</h1>
+<hr></hr>
+<h2>Hi, @Model.username !</h2>
+<img src="/images/@Model.imageName" style="width:150px;height:150px;" alt="Image"
+     onerror="this.onerror=null; this.src='/images/placeholder_image.jpg';">
+<form asp-action="SubmitProfilePic" asp-controller="Home" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" />
+    <button class="submit-button" type="submit">Upload Picture</button>
+</form>
+</div>
+
+
+<style>
+
+    .info-container {
+        text-align: center;
+        padding: 50px;
+        margin-top: 50px;
+        background-color: white;
+        border-radius: 50px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        z-index: 1;
+    }
+
+    h1{
+        color: #333;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .submit-button {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #4285f4;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        .submit-button:hover {
+            background-color: #347ae3;
+        }
+</style>

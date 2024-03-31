@@ -9,6 +9,7 @@ using Microsoft.Build.ObjectModelRemoting;
 using NuGet.LibraryModel;
 using COMP72070_Section3_Group1.Comms;
 using Newtonsoft.Json;
+using DocumentFormat.OpenXml.Wordprocessing;
 
 
 namespace COMP72070_Section3_Group1.Controllers
@@ -63,6 +64,69 @@ namespace COMP72070_Section3_Group1.Controllers
             }
 
             return View();
+        }
+        public IActionResult Profile()
+        {
+            // get visitor from session
+            string visitorId = HttpContext.Session.GetString("VisitorId");
+            Visitor visitor = _visitorManager.GetVisitor(visitorId);
+            ViewBag.Visitor = visitor;
+            
+            // add visitor to view
+            return View(visitor);
+        }
+
+        public IActionResult SubmitProfilePic(IFormFile file)
+        {
+            // get visitor from session
+            string visitorId = HttpContext.Session.GetString("VisitorId");
+            Visitor visitor = _visitorManager.GetVisitor(visitorId);
+            ViewBag.Visitor = visitor;
+
+            // check if the file is empty
+            string fileName = "";
+            if (file != null && file.Length > 0)
+            {
+                Console.WriteLine($"HomeController.SubmitProfilePic(): File received {file.FileName}");
+
+                // check if file extension is valid
+                if (Path.GetExtension(file.FileName) != ".jpg" && Path.GetExtension(file.FileName) != ".png")
+                {
+                    Console.WriteLine($"HomeController.SubmitProfilePic(): Invalid file extension {file.FileName}");
+                    TempData["Message"] = "Invalid file extension"; // special variable that persists for one redirect
+                    return RedirectToAction("Profile", "Home");
+                }
+
+                // generate unique file name
+                fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+
+                // save to wwwroot/images
+                string path = Path.Combine(_environment.WebRootPath, "images", fileName);
+
+                using (FileStream fileStream = new FileStream(path, FileMode.Create))
+                {
+                    file.CopyTo(fileStream);
+                }
+                Console.WriteLine($"HomeController.SubmitProfilePic(): File saved {fileName}");
+
+                // send image 
+                _client.SendImage(path);
+
+                // send update account packet
+                if (visitor.username == null)
+                {
+                    // should not happen, b/c vistor should only be able to reach this page if logged in
+                    ViewData["Message"] = "You must be logged in to update your profile picture";
+                    return RedirectToAction("Login", "Home");
+                }
+                _client.SendUpdateAccount(visitor.username, "imageName", fileName);
+
+                // update visitor with new image name
+                visitor.imageName = fileName;
+                _visitorManager.UpdateVisitor(visitor);
+            }
+
+            return RedirectToAction("Profile", "Home");
         }
 
         public IActionResult Login()
@@ -153,6 +217,15 @@ namespace COMP72070_Section3_Group1.Controllers
 
         public IActionResult CreateAccountAction(string username, string password)
         {
+            //validate username and password
+            // - cannot be empty
+            // - cannot contain ','
+            if (username == null || username == "" || password == null || password == "" || username.Contains(",") || password.Contains(","))
+            {
+                TempData["Message"] = "Invalid username"; // special variable that persists for one redirect
+                return RedirectToAction("CreateAccount", "Home");
+            }
+
             string combinedInfo = $"Username: {username}, Password: {password}";
 
             // get visitor id from session
@@ -216,6 +289,12 @@ namespace COMP72070_Section3_Group1.Controllers
 
                 // set visitor username
                 visitor.username = username;
+
+                // get image name from body
+                string imageName = Encoding.ASCII.GetString(response.body);
+
+                // set visitor image name
+                visitor.imageName = imageName;
 
                 // update visitor
                 _visitorManager.UpdateVisitor(visitor);
