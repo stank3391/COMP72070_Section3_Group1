@@ -64,8 +64,7 @@ namespace COMP72070_Section3_Group1.Comms
         /// </summary>
         public void SendPacket(Packet packet)
         {
-            
-            //Console.WriteLine("Client.SendPacket(): Start");
+           
             // serialize the packet
             byte[] serializedPacket = Packet.SerializePacket(packet);
 
@@ -73,8 +72,7 @@ namespace COMP72070_Section3_Group1.Comms
             stream.Write(serializedPacket, 0, serializedPacket.Length);
 
             Console.WriteLine($"Client.SendPacket(): Packet sent: Type {packet.header.packetType}");
-            //Console.WriteLine("Client.SendPacket(): End");
-            // close the stream
+
         }
 
         /// <summary>
@@ -102,7 +100,7 @@ namespace COMP72070_Section3_Group1.Comms
         /// </summary>
         public void SendAck()
         {
-            Packet ackPacket = new Packet("CLIENT", Packet.Type.Ack);
+            Packet ackPacket = new Packet("ASP_SERVER", Packet.Type.Ack);
             SendPacket(ackPacket);
         }
 
@@ -149,7 +147,7 @@ namespace COMP72070_Section3_Group1.Comms
         {
             Console.WriteLine("Client.FetchPosts(): Start");
             // send a ready packet to the server
-            Packet readyPacket = new Packet("CLIENT", Packet.Type.ReadyPost);
+            Packet readyPacket = new Packet("ASP_SERVER", Packet.Type.ReadyPost);
             this.SendPacket(readyPacket);
 
             // receive the ack packet
@@ -180,7 +178,7 @@ namespace COMP72070_Section3_Group1.Comms
             Console.WriteLine("Client.FetchImages(): Start");
 
             // send a ready packet to the server
-            Packet readyPacket = new Packet("CLIENT", Packet.Type.ReadyImage);
+            Packet readyPacket = new Packet("ASP_SERVER", Packet.Type.ReadyImage);
             this.SendPacket(readyPacket);
 
             // receive the ack packet
@@ -255,6 +253,23 @@ namespace COMP72070_Section3_Group1.Comms
             {
                 Console.WriteLine($"Client.WaitForAck(): ERROR: Expecting ACK packet, but '{ackPacket.header.packetType}' received");
             }
+        }
+
+        public void SendUpdateAccount(string username, string field, string value)
+        {
+            Console.WriteLine("Client.SendUpdateAccount()");
+
+            // create body
+            string body = $"{username},{field},{value}";
+
+            // convert body to bytes
+            byte[] bodyBytes = Encoding.ASCII.GetBytes(body);
+
+            // create packet
+            Packet packet = new Packet("ASP_SERVER", Packet.Type.UpdateAcc, bodyBytes);
+
+            // send packet
+            this.SendPacket(packet);
         }
     }
 }

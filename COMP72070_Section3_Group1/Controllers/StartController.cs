@@ -12,6 +12,8 @@ namespace COMP72070_Section3_Group1.Controllers
     /// <summary>
     /// THIS MUST RUN FIRST 
     /// Will redirect to the home/index page dw
+    /// creates a new visitor object and adds it to the visitor manager
+    /// used to track and manage visitors
     /// </summary>
     public class StartController : Controller
     {
@@ -67,38 +69,6 @@ namespace COMP72070_Section3_Group1.Controllers
             }
 
             return RedirectToAction("Index", "Home"); // redirect to the home page
-        }
-
-        public IActionResult ExampleAccount(string username, string password)
-        {
-            string combinedInfo = $"Username: {username}, Password: {password}";
-
-            // new session code
-            string visitorId = HttpContext.Session.GetString("VisitorId");
-            Visitor visitor = _visitorManager.GetVisitor(visitorId);
-
-            Packet packet = new Packet(visitor.id, Packet.Type.Auth, Encoding.ASCII.GetBytes(combinedInfo));
-
-            _client.SendPacket(packet);
-
-            // Return to the current view
-            return RedirectToAction("Index", "Home");
-        }
-
-        public IActionResult CreateAccount(string username, string password)
-        {
-            string combinedInfo = $"Username: {username}, Password: {password}";
-
-            // new session code
-            string visitorId = HttpContext.Session.GetString("VisitorId");
-            Visitor visitor = _visitorManager.GetVisitor(visitorId);
-
-            Packet packet = new Packet(visitor.id, Packet.Type.Acc, Encoding.ASCII.GetBytes(combinedInfo));
-            
-            _client.SendPacket(packet);
-
-            // Return to the current view
-            return RedirectToAction("Index", "Home");
         }
     }
 }

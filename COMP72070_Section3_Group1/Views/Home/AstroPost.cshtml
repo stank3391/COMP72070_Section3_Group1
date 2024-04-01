@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "post";
+    ViewData["Title"] = "Post";
 }
 
 <script type="text/javascript">
@@ -36,8 +36,6 @@
     }
 </script>
 
-
-
 <script>
     function Showalert() {
         txtValueA.Text = "one of the basic";
@@ -46,64 +44,52 @@
 </script>
 
 
+<div class="post-container">
+    <h1>Post</h1>
+    <hr></hr>
+    <asp:Literal runat="server" id="txtValueA" EnableViewState="false" />
+    <form asp-controller="Home" asp-action="SubmitPost" method="post" enctype="multipart/form-data">
+        <textarea id="content" rows="12" cols="60" maxlength="256" name="content" placeholder="Write Here..." required></textarea>
+        <br></br>
+        <input type="file" id="file" name="file">
+        <button class="post-button" onclick="Showalert()">Post</button>
+        <div id="counter">0</div>
+    </form>
+</div>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <script src="jquery-3.7.1.min.js"></script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <style>
+<style>
 
-        .post-container {
-            text-align: center;
-            padding: 50px;
-            margin-top: 50px;
-            background-color: white;
-            border-radius: 50px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            z-index: 1;
-        }
+    .post-container {
+        text-align: center;
+        padding: 50px;
+        margin-top: 50px;
+        background-color: white;
+        border-radius: 50px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        z-index: 1;
+    }
 
-        h1 {
-            color: #333;
-            font-family: 'Arial', sans-serif;
-        }
+    h1 {
+        color: #333;
+        font-family: 'Arial', sans-serif;
+    }
 
-        .post-button {
-            display: inline-block;
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #4285f4;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+    .post-button {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #4285f4;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
 
         .post-button:hover {
             background-color: #347ae3;
         }
-    </style>
-</head>
-<body>
-    <div class="post-container">
-        <h1>Post</h1>
-        <hr></hr>
-        <h2>@Model.errorMessage</h2>
-        <asp:Literal runat="server" id="txtValueA" EnableViewState="false" />
-        <form asp-controller="Home" asp-action="SubmitPost" method="post" enctype="multipart/form-data">
-            <textarea id="content" rows="12" cols="60" maxlength="256" name="content" placeholder="Write Here..."></textarea>
-            <br></br>
-            <input type="file" id="file" name="file">
-            <button class="post-button" onclick="Showalert()">Post</button>
-            <div id="counter">0</div>
-        </form>
+</style>
 
-    </div>
-</body>
-</html>
 
 

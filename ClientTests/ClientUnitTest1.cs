@@ -1,6 +1,7 @@
 using System.Net.Sockets;
 using COMP72070_Section3_Group1.Models;
 using Microsoft.Extensions.Hosting;
+using COMP72070_Section3_Group1.Comms;
 
 namespace ClientTests
 {

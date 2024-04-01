@@ -13,7 +13,11 @@ public class Packet
         Post,   // post packet
         DM,     // direct message packet
         Auth,   // authentication packet
-        Acc,    // ???
+        AuthSuccess, // authentication success packet 
+        AuthFail, // authentication fail packet
+        Acc,    // account creation packet
+        AccSuccess, // account creation success packet
+        AccFail, // account creation fail packet
         Ack,    // acknowledgement packet
         Test,   // test packet
         Error,  // error packet
@@ -21,6 +25,7 @@ public class Packet
         ReadyImage, // ready packet - ready to receive images
         ReadyDM, // ready packet - ready to receive direct messages
         Image, // image packet
+        UpdateAcc, // update account image packet
     };
 
     public struct Header

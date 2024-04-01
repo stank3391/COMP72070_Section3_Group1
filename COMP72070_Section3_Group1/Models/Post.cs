@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Text.Json;
 namespace COMP72070_Section3_Group1.Models
 {
     /// <summary>
@@ -29,24 +30,28 @@ namespace COMP72070_Section3_Group1.Models
         }
 
         /// <summary>
-        /// Deserializes a byte array into a post
+        /// Constructs a post from a byte array
         /// </summary>
         public Post(byte[] body)
         {
-            // convert byte array to string
-            string data = Encoding.ASCII.GetString(body);
+            // convert byte array to json then to field
+            string json = Encoding.UTF8.GetString(body);
+            Post post = JsonSerializer.Deserialize<Post>(json);
 
-            // split the string into fields
-            string[] fields = data.Split(',');
-
-            // set the fields
-            id = int.Parse(fields[0]);
-            content = fields[1];
-            author = fields[2];
-            date = DateTime.Parse(fields[3]);
-            imageName = fields[4];
+            this.id = post.id;
+            this.content = post.content;
+            this.author = post.author;
+            this.date = post.date;
+            this.imageName = post.imageName;
         }
 
+        /// <summary>
+        /// Constructor for the Post class
+        /// imageName optional
+        /// </summary>
+        /// <param name="visitor"></param>
+        /// <param name="content"></param>
+        /// <param name="imageName"></param>
         public Post (Visitor visitor, string content, string imageName = "")
         {
             this.id = Guid.NewGuid().GetHashCode();
@@ -61,11 +66,10 @@ namespace COMP72070_Section3_Group1.Models
         /// </summary>
         public byte[] ToByte()
         {
-            // create data string
-            string body = $"{id},{content},{author},{date.ToString()},{imageName}";
-
-            // convert data to byte array
-            byte[] bodyBytes = Encoding.ASCII.GetBytes(body);
+            // convert field to json then to byte array
+            string json = JsonSerializer.Serialize(this);
+            byte[] bodyBytes = Encoding.UTF8.GetBytes(json);
+            
 
             return bodyBytes;
         }

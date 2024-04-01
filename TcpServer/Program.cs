@@ -5,6 +5,9 @@ using System.Text;
 
 namespace TcpServer
 {
+    /// <summary>
+    /// Main class for running the tcpserver
+    /// </summary>
     class Program
     {
         public static void Main()
@@ -12,6 +15,7 @@ namespace TcpServer
             TcpServer server = new TcpServer();
             //server.UpdatePosts();
             server.PlaceholderLoadPosts();
+            server.PlaceholderLoadAccounts();
             server.Start();
         }
     }

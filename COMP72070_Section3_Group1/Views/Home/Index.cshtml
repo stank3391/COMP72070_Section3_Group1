@@ -1,113 +1,19 @@
 ﻿@{
     ViewData["Title"] = "Astro";
 }
-@model List<COMP72070_Section3_Group1.Models.Post> 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AstroHub</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-        }
+@model List<COMP72070_Section3_Group1.Models.Post>
 
-        .post-container {
-            text-align: center;
-            padding: 50px;
-            background-color: white;
-            border-radius: 5%;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin: 0 auto 40px;
-            max-width: 80%;
-            max-height: 70%;
-        }
-            .post-container img {
-                max-width: 100%;
-                max-height: 100%;
-                height: auto;
-                margin-bottom: 10px;
-                border-radius: 5%;
-            }
 
-        h1 {
-            color: #333;
-            font-family: 'Arial', sans-serif;
-        }
-
-        .middle-paragraph {
-            text-align: left;
-            padding: 10px;
-        }
-
-        .bottom-section {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-        }
-        .left-element {
-            flex-grow: 1;
-            text-align: left;
-            padding: 10px;
-        }
-            .username {
-                display: inline;
-                text-decoration: none;
-                color: black;
-                transition: color 0.3s ease;
-            }
-                .username:hover {
-                    color: gray;
-                    text-decoration: underline;
-                }
-        .right-elements {
-            display: flex;
-            align-items: center;
-        }
-            .right-elements img {
-                width: 100px;
-                height: 100px;
-                margin-left: 20px;
-            }
-
-        .star-button, .comment-button {
-            display: inline-block;
-            padding: 10px 20px;
-            font-size: 16px;
-            color: black;
-            border: 2px solid black;
-            border-radius: 75px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin: 0 5px;
-            max-width: 25%;
-            max-height: 25%;
-        }
-        .star-button {
-            background-color: lightyellow;
-            margin-left: 20px;
-        }
-            .star-button:hover {
-                background-color: yellow;
-            }
-        .comment-button {
-            background-color: aliceblue;
-            margin-left: 20px;
-        }
-            .comment-button:hover {
-                background-color: #347ae3;
-            }
-    </style>
-</head>
-<body>
+<div class accesskey="post-wrapper">
     @foreach (var post in Model)
     {
         <div class="post-container">
             <!-- Dynamically set the image source, alt text, and other attributes based on the post's properties -->
-            <img src="/images/@post.imageName" alt="Image description" onerror="this.onerror=null; this.src='/images/placeholder.jpg';">
-            >
+            @if (!string.IsNullOrEmpty(post.imageName))
+            {
+                <img src="/images/@post.imageName" alt="Image description"
+                    onerror="this.onerror=null; this.src='/images/placeholder_image.jpg';">
+            }
 
             <!-- Display the post content -->
             <p class="middle-paragraph">@post.content</p>
@@ -115,19 +21,164 @@
             <div class="bottom-section">
                 <div class="left-element">
                     <!-- Display the username (author) -->
-                    <a class="username" href="#">@post.author</a>
+                    <a class="username" href="#">Author: @post.author</a>
                 </div>
                 <div class="right-elements">
                     <!-- Star (Like) and Comment buttons -->
-                    <a href="#"><img class="star-button" src="/images/star-regular.svg" alt="Star"></a>
+                    <a href="#" class="star-btn-wrapper" style="position: relative;">
+                        <img class="star-button" src="/images/star-regular.svg" alt="Star">
+                    </a>
                     <a href="#"><img class="comment-button" src="/images/comment-regular.svg" alt="Comment"></a>
                 </div>
             </div>
         </div>
-    }  
+    }
+</div>
 
-</body>
-</html>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .post-container {
+        text-align: center;
+        padding: 50px;
+        background-color: white;
+        border-radius: 5%;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin: 0 auto 40px;
+        max-width: 80%;
+        max-height: 70%;
+    }
+
+    .post-container img {
+        max-width: 100%;
+        max-height: 100%;
+        height: auto;
+        margin-bottom: 10px;
+        border-radius: 5%;
+    }
+
+    h1 {
+        color: #333;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .middle-paragraph {
+        text-align: left;
+        padding: 10px;
+    }
+
+    .bottom-section {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+
+    .left-element {
+        flex-grow: 1;
+        text-align: left;
+        padding: 10px;
+    }
+
+    .username {
+        display: inline;
+        text-decoration: none;
+        color: black;
+        transition: color 0.3s ease;
+    }
+
+    .username:hover {
+        color: gray;
+        text-decoration: underline;
+    }
+
+    .right-elements {
+        display: flex;
+        align-items: center;
+    }
+
+    .right-elements img {
+        width: 100px;
+        height: 100px;
+        margin-left: 20px;
+    }
+
+    .star-button,
+    .comment-button {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 16px;
+        color: black;
+        border: 2px solid black;
+        border-radius: 75px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin: 0 5px;
+        max-width: 25%;
+        max-height: 25%;
+    }
+
+    .star-button {
+        background-color: lightyellow;
+        margin-left: 20px;
+    }
+
+    .star-button:hover {
+        background-color: yellow;
+    }
+
+    .comment-button {
+        background-color: aliceblue;
+        margin-left: 20px;
+    }
+
+    .comment-button:hover {
+        background-color: #347ae3;
+    }
+
+    @@keyframes floatAndFade {
+        0% {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        100% {
+            transform: translateY(-100px);
+            opacity: 0;
+        }
+    }
+
+    .floating-star {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(1);
+        width: 25%;
+        height: 25%;
+        background-image: url('/images/star-regular.svg');
+        background-size: contain;
+        background-repeat: no-repeat;
+        animation: floatAndFade 1s ease-out forwards;
+    }
+
+}
+</style>
 
 <script>
+ document.addEventListener("DOMContentLoaded", function () {
+    // Star button effect
+    document.querySelectorAll('.star-btn-wrapper').forEach(button => {
+        button.addEventListener('click', function (e) {
+            e.preventDefault();
+            var floatingStar = document.createElement('div');
+            floatingStar.classList.add('floating-star');
+            this.appendChild(floatingStar);
+            setTimeout(() => {
+                floatingStar.remove();
+            }, 1000); 
+        });
+    });
+});
 </script>
