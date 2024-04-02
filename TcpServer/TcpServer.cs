@@ -167,6 +167,7 @@ namespace TcpServer
             Packet ackPacket = new Packet("TCP_SERVER", Packet.Type.Ack);
             byte[] serializedPacket = Packet.SerializePacket(ackPacket);
             stream.Write(serializedPacket, 0, serializedPacket.Length);
+            Log.CreateLog(Log.fileName, "SERVER", "ACK sent");
         }
         
     }
