@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SystemTest", "SystemTest\Sy
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModelsTest", "ModelsTest\ModelsTest.csproj", "{769AB1C9-8810-42C4-A82E-5F10D6805C8D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PacketTest", "PacketTest\PacketTest.csproj", "{7DCA26FC-474F-47BF-A605-72CF2E296340}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{769AB1C9-8810-42C4-A82E-5F10D6805C8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{769AB1C9-8810-42C4-A82E-5F10D6805C8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{769AB1C9-8810-42C4-A82E-5F10D6805C8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7DCA26FC-474F-47BF-A605-72CF2E296340}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DCA26FC-474F-47BF-A605-72CF2E296340}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DCA26FC-474F-47BF-A605-72CF2E296340}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DCA26FC-474F-47BF-A605-72CF2E296340}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
