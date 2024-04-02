@@ -374,9 +374,12 @@ namespace COMP72070_Section3_Group1.Controllers
             Packet packet = new Packet(visitor.id, Packet.Type.Auth, Encoding.ASCII.GetBytes(combinedInfo));
             _client.SendPacket(packet);
 
+            Log.CreateLog(Log.ClientLogName, "ASP_SERVER", $"Packet sent. Type: {packet.header.packetType}");
+
             // receive response
             Packet response = _client.ReceivePacket();
 
+            Log.CreateLog(Log.ClientLogName, "TCP_SERVER", $"Packet received. Type: {response.header.packetType}");
 
             // check if auth was successful
             if (response.header.packetType == Packet.Type.AuthSuccess)
