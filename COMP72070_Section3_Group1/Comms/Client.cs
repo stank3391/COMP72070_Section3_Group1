@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using COMP72070_Section3_Group1.Models;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using NuGet.Packaging;
 
 namespace COMP72070_Section3_Group1.Comms
@@ -113,8 +114,7 @@ namespace COMP72070_Section3_Group1.Comms
             Packet packet = new Packet(sourceId, Packet.Type.Post, post.ToByte());
             SendPacket(packet);
 
-            //Console.WriteLine($"Client.SendPost(): Post sent: {post.content}");
-            //Console.WriteLine("Client.SendPost(): End");
+            Log.CreateLog(Log.ClientLogName, post.author, $"Post packet sent: {post.content}");
         }
 
         /// <summary>
@@ -135,7 +135,6 @@ namespace COMP72070_Section3_Group1.Comms
 
             Console.WriteLine($"Post received: {post.content}");
 
-            //Console.WriteLine("Client.ReceivePost(): End");
             return post;
         }
 
@@ -149,6 +148,8 @@ namespace COMP72070_Section3_Group1.Comms
             // send a ready packet to the server
             Packet readyPacket = new Packet("ASP_SERVER", Packet.Type.ReadyPost);
             this.SendPacket(readyPacket);
+
+            Log.CreateLog(Log.ClientLogName, "ASP_SERVER", $"Packet sent. Type: {readyPacket.header.packetType}");
 
             // receive the ack packet
             Packet ackPacket = this.ReceivePacket();
@@ -171,6 +172,8 @@ namespace COMP72070_Section3_Group1.Comms
             }
 
             Console.WriteLine("Client.FetchPosts(): End");
+            Log.CreateLog(Log.ClientLogName, "TCP_SERVER", $"Posts received. Count: {postCount}");
+
         }
 
         public void FetchImages()
@@ -180,6 +183,8 @@ namespace COMP72070_Section3_Group1.Comms
             // send a ready packet to the server
             Packet readyPacket = new Packet("ASP_SERVER", Packet.Type.ReadyImage);
             this.SendPacket(readyPacket);
+
+            Log.CreateLog(Log.ClientLogName, "ASP_SERVER", $"Packet sent. Type: {readyPacket.header.packetType}");
 
             // receive the ack packet
             Packet packetIn = this.ReceivePacket();
@@ -225,6 +230,8 @@ namespace COMP72070_Section3_Group1.Comms
 
 
             Console.WriteLine("Client.FetchImages(): End");
+
+            Log.CreateLog(Log.ClientLogName, "TCP_SERVER", $"Images received. Count: {imageCount}");
         }
 
         public void SendImage(string imagePath)
@@ -243,6 +250,8 @@ namespace COMP72070_Section3_Group1.Comms
             }
             
             Console.WriteLine($"Client.SendImage(): Image sent: {imagePath}");
+
+            Log.CreateLog(Log.ClientLogName, "ASP_SERVER", $"Image sent: {imagePath} in {imagePackets.Count()} packets");
         }
 
         public void WaitForAck()
@@ -270,6 +279,14 @@ namespace COMP72070_Section3_Group1.Comms
 
             // send packet
             this.SendPacket(packet);
+
+            Log.CreateLog(Log.ClientLogName, "ASP_SERVER", $"Update account packet sent: {username}, {field}, {value}");
+            
+            // wait for ack
+            this.WaitForAck();
+
+            Log.CreateLog(Log.ClientLogName, "TCP_SERVER", $"Ack received for update account packet");
         }
+
     }
 }

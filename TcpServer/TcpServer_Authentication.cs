@@ -25,10 +25,13 @@ namespace TcpServer
             {
                 Console.WriteLine($"Account creation failed: Username already exists{userData.username}");
 
+                
+
                 // Send acc fail packet
                 Packet response = new Packet("TCP_SERVER", Packet.Type.AccFail);
-                byte[] serializedPacket = Packet.SerializePacket(response);
-                stream.Write(serializedPacket, 0, serializedPacket.Length);
+                this.SendPacket(response);
+
+                Log.CreateLog(Log.ServerLogName, "TCP_SERVER", $"Packet sent. Type: {response.header.packetType}");
             }
             else
             {
@@ -44,6 +47,10 @@ namespace TcpServer
                 stream.Write(serializedPacket, 0, serializedPacket.Length);
 
                 Console.WriteLine($"Account created successfully: {userData.username}");
+
+                Log.CreateLog(Log.ServerLogName, "TCP_SERVER", $"Packet sent. Type: {response.header.packetType}");
+
+
             }
         }
 
@@ -86,7 +93,13 @@ namespace TcpServer
 
             // save the updated list to the database
             PlaceholderSaveAccounts();
-            
+
+            // send an ack packet
+            Packet response = new Packet("TCP_SERVER", Packet.Type.Ack);
+            this.SendPacket(response);
+
+            Log.CreateLog(Log.ServerLogName, "TCP_SERVER", $"Packet sent. Type: {response.header.packetType}");
+
         }
 
         /// <summary>
@@ -123,18 +136,20 @@ namespace TcpServer
 
                 // send auth success packet with the image name as the body
                 Packet response = new Packet("TCP_SERVER", Packet.Type.AuthSuccess, Encoding.ASCII.GetBytes(imageName));
-                byte[] serializedPacket = Packet.SerializePacket(response);
-                stream.Write(serializedPacket, 0, serializedPacket.Length);
+                this.SendPacket(response);
+                Log.CreateLog(Log.ServerLogName, "TCP_SERVER", $"Packet sent. Type: {response.header.packetType}");
             }
             else
             {
                 Console.WriteLine("Invalid username or password.");
 
                 // send auth fail packet
-                Packet reponse = new Packet("TCP_SERVER", Packet.Type.AuthFail);
-                byte[] serializedPacket = Packet.SerializePacket(reponse);
-                stream.Write(serializedPacket, 0, serializedPacket.Length);
+                Packet response = new Packet("TCP_SERVER", Packet.Type.AuthFail);
+                this.SendPacket (response);
+                Log.CreateLog(Log.ServerLogName, "TCP_SERVER", $"Packet sent. Type: {response.header.packetType}");
             }
+
+            
         }
 
         /// <summary>

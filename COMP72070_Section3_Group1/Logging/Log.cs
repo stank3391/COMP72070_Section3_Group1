@@ -13,7 +13,8 @@ using System.Threading.Tasks;
 /// </summary>
 public class Log
 {
-    public static string fileName = "logs.xlsx"; // name of the file to write to
+    public static string ServerLogName = "ServerLogs.xlsx"; // name of the file to write to
+    public static string ClientLogName = "ClientLogs.xlsx"; // name of the file to write to
 
     public static void CreateLog(string filename, string username, string action)
     {

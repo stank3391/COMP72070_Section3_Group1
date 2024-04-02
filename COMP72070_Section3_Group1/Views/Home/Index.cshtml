@@ -35,6 +35,22 @@
     }
 </div>
 
+<div id="commentModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Comments</h2>
+        <div id="commentsList">
+            <!-- list -->
+        </div>
+        <h3>Add a Comment</h3>
+        <form id="commentForm">
+            <textarea id="commentText" placeholder="Your comment..."></textarea>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</div>
+
+
 <style>
     body {
         margin: 0;
@@ -163,6 +179,57 @@
         animation: floatAndFade 1s ease-out forwards;
     }
 
+    /* The Modal (background) */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    /* Modal Content */
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto; /* 15% from the top and centered */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; /* Could be more or less, depending on screen size */
+    }
+
+    /* The Close Button */
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+    #commentsList {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    #commentForm {
+        margin-top: 20px;
+    }
+
+    #commentText {
+        width: 100%;
+        margin-bottom: 10px;
+    }
 }
 </style>
 
@@ -182,3 +249,48 @@
     });
 });
 </script>
+
+
+<!-- comment script-->
+ <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Existing star button logic...
+
+        // Comment button modal display
+        document.querySelectorAll('.comment-button').forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+                var modal = document.getElementById('commentModal');
+                modal.style.display = "block";
+
+                // Load comments for this post here
+                // You will need to identify the post whose comments button was clicked
+                // and load the appropriate comments into '#commentsList'
+            });
+        });
+
+        // When the user clicks on <span> (x), close the modal
+        document.querySelector('.close').addEventListener('click', function () {
+            var modal = document.getElementById('commentModal');
+            modal.style.display = "none";
+        });
+
+        // Handle modal form submission here
+        document.getElementById('commentForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            var commentText = document.getElementById('commentText').value;
+            // Implement comment submission logic here
+            // Reset the form after submission
+            document.getElementById('commentForm').reset();
+            // Close the modal or refresh comments list as needed
+        });
+
+        // Clicking outside of the modal closes it
+        window.onclick = function (event) {
+            var modal = document.getElementById('commentModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    });
+ </script>
