@@ -31,6 +31,9 @@ namespace COMP72070_Section3_Group1.Comms
             this.tcpClient = tcpClient;
         }
 
+        /// <summary>
+        /// Connects to the server via tcp
+        /// </summary>
         public void Connect()
         {
             Console.WriteLine("Client.Connect(): Start");
@@ -176,6 +179,11 @@ namespace COMP72070_Section3_Group1.Comms
 
         }
 
+        /// <summary>
+        /// Fetch all images from server
+        /// 1. Send a readyImage packet to the server
+        /// 2. Receive the number of images from the server
+        /// </summary>
         public void FetchImages()
         {
             Console.WriteLine("Client.FetchImages(): Start");
@@ -234,6 +242,9 @@ namespace COMP72070_Section3_Group1.Comms
             Log.CreateLog(Log.ClientLogName, "TCP_SERVER", $"Images received. Count: {imageCount}");
         }
 
+        /// <summary>
+        /// send an image to the server
+        /// </summary>
         public void SendImage(string imagePath)
         {
             // convert image in to bytes
@@ -254,6 +265,9 @@ namespace COMP72070_Section3_Group1.Comms
             Log.CreateLog(Log.ClientLogName, "ASP_SERVER", $"Image sent: {imagePath} in {imagePackets.Count()} packets");
         }
 
+        /// <summary>
+        /// receive a ACK packet from server
+        /// </summary>
         public void WaitForAck()
         {
             Packet ackPacket = this.ReceivePacket();
@@ -264,6 +278,9 @@ namespace COMP72070_Section3_Group1.Comms
             }
         }
 
+        /// <summary>
+        /// send a packet to request the server to update an account
+        /// </summary>
         public void SendUpdateAccount(string username, string field, string value)
         {
             Console.WriteLine("Client.SendUpdateAccount()");

@@ -27,8 +27,17 @@ namespace TcpServer
         /// </summary>
         public TcpServer()
         {
-            this.listener = new TcpListener(this.localAddress, this.port);
+            try
+            { 
+                this.listener = new TcpListener(this.localAddress, this.port); 
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("TcpServer.TcpServer(): Error creating TcpListener");
+                Console.WriteLine(e.Message);
+            }      
         }
+
 
         /// <summary>
         /// Listens and connects to clients. 
