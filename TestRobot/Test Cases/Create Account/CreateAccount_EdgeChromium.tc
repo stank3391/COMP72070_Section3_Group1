@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<TestCaseEntity>
-   <description></description>
-   <name>CreateAccount_EdgeChromium</name>
-   <tag></tag>
-   <comment></comment>
-   <testCaseGuid>c58ca5dc-d429-4d61-9b1a-adc7fcffddbb</testCaseGuid>
-</TestCaseEntity>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description></description>
+   <name>Full_CreateAccountPostCommentLogout_Positive</name>
+   <tag></tag>
+   <comment></comment>
+   <testCaseGuid>f5b7f39d-82d4-444c-8646-8c7f47c79d48</testCaseGuid>
+</TestCaseEntity>
