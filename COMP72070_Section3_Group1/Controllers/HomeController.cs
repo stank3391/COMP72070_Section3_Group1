@@ -434,6 +434,9 @@ namespace COMP72070_Section3_Group1.Controllers
 
             TempData["Message"] = "You have been logged out"; // special variable that persists for one redirect
 
+            // log
+            Log.CreateLog(Log.ClientLogName, visitor.username, "Logout");
+
             // redirect to home page
             return RedirectToAction("Index", "Home");
         }

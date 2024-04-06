@@ -1,3 +1,5 @@
+using COMP72070_Section3_Group1.Views.CreateAccout;
+using COMP72070_Section3_Group1.Views.Home;
 using System;
 using System.Text;
 using TcpServer;
@@ -48,6 +50,18 @@ namespace SystemTest
             //byte[] serializedPacket = Packet.SerializePacket(p);
             //Packet packetIn = Packet.DeserializePacket(serializedPacket);
             Assert.AreEqual(p.header.bodyLen, 0);
+        }
+        [TestMethod]
+        public void LoginWithGoogleModelTest()
+        {
+            loginwgoogleModel lwg = new loginwgoogleModel();
+            lwg.OnGet();
+        }
+        [TestMethod]
+        public void CreateAccountModelTest()
+        {
+            createaccountModel cam = new createaccountModel();
+            cam.OnGet();
         }
     }
 }
